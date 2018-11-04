@@ -1,0 +1,138 @@
+@import "vars";
+@import "mixins";
+
+.card {
+  form {
+    .btn-lg {
+      padding: $gutter-size 0;
+    }
+  }
+}
+
+.card-title {
+  @extend .page-title;
+}
+
+.card-header {
+  font-size: 1.5rem;
+  font-weight: 200;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  padding: $gutter-size 0;
+  color: rgba(0, 0, 0, 0.4);
+
+  .icon {
+    left: 0;
+    right: 0;
+    top: -22px;
+    font-size: 7rem;
+    position: absolute;
+    color: rgba(0, 0, 0, 0.06);
+  }
+}
+
+.card-sub-title {
+  margin-top: -10px;
+}
+
+.card-body {
+  padding: $gutter-size;
+
+  h4 {
+    .menu-button {
+      float: left;
+      display: block;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.card-footer {
+  text-align: center;
+  padding: $gutter-size 0;
+
+  a {
+    text-transform: uppercase;
+  }
+}
+
+/**
+ * Activity
+ */
+.card-activity {
+  cursor: pointer;
+  margin-bottom: $gutter-size;
+
+  .card-header {
+    display: flex;
+    color: $color-dim;
+    text-align: left;
+    padding: $gutter-size;
+  }
+
+  .card-body {
+    padding-bottom: 0;
+  }
+
+  .card-footer {
+    color: $color-dim;
+    text-align: left;
+    padding: $gutter-size;
+    background-color: transparent;
+    border-top: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-text {
+    img {
+      width: 100%;
+    }
+
+    .text {
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .avatar {
+    height: 44px;
+    margin-right: $gutter-size;
+  }
+
+  a {
+    color: #000;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.card-activity-user {
+  flex-grow: 2;
+}
+
+.card-activity-date {
+  font-size: 0.8rem;
+}
+
+.card-activity-username {
+
+}
+
+.card-activity-location {
+  font-size: 0.8rem;
+}
+
+.card-activity-like {
+  .icon-like-liked {
+    color: $color-liked;
+  }
+}
+
+.card-activity-comment-commented {
+  color: $color-liked;
+}

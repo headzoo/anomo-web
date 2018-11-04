@@ -1,0 +1,42 @@
+@import "vars";
+@import "mixins";
+
+$primary:       $color-primary;
+$secondary:     $color-secondary;
+$success:       $color-success;
+$info:          $color-info;
+$warning:       $color-warning;
+$danger:        $color-danger;
+
+@import "~bootstrap/scss/bootstrap";
+
+.container {
+  @include media-lg {
+    max-width: 1276px;
+  }
+}
+
+.column {
+  &.no-gutter {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+.alert {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: $gutter-size;
+}
+
+.display-5 {
+  font-size: 1.5rem;
+}
+
+.display-6 {
+  font-size: 1.25rem;
+}
+
+.form-control:focus {
+  border: 1px solid #ced4da !important;
+}

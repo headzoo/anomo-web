@@ -1,0 +1,10 @@
+proxy:
+    path: /proxy
+    controller: App\Controller\DefaultController:proxyAction
+
+catch_all:
+    path: "{catchAll}"
+    controller: App\Controller\DefaultController:indexAction
+    requirements:
+        catchAll: ".*"
+

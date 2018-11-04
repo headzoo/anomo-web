@@ -1,0 +1,86 @@
+@import "vars";
+@import "mixins";
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.gutter-bottom {
+  padding-bottom: $gutter-size;
+}
+
+.gutter-bottom-lg {
+  padding-bottom: $gutter-size * 2;
+}
+
+.gutter-bottom-sm {
+  padding-bottom: $gutter-size / 2;
+}
+
+.gutter-top {
+  padding-top: $gutter-size;
+}
+
+.gutter-top-lg {
+  padding-top: $gutter-size * 2;
+}
+
+.gutter-top-sm {
+  padding-top: $gutter-size / 2;
+}
+
+.middle {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+
+.circle {
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.loader {
+  width: 57px;
+  height: 57px;
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Positions an element in the middle of the page
+.middle {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+
+// Creates a container where it's children are in the middle of the page
+.v-middle {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(90vh - #{$header-height});
+}

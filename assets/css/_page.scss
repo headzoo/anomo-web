@@ -1,0 +1,30 @@
+@import "vars";
+@import "mixins";
+
+.page-title {
+  color: #333;
+  padding: $gutter-size 0;
+  font-size: 2rem;
+  font-weight: 200;
+  margin-bottom: 0;
+
+  &.card-title {
+    padding-top: 0;
+    font-size: 1.25rem;
+    font-weight: 200;
+    text-align: center;
+    padding-bottom: $gutter-size;
+  }
+}
+
+.page-title-lg {
+  font-size: 3rem;
+
+  @include media-xs {
+    font-size: 2rem;
+  }
+}
+
+.page-full-height {
+  min-height: calc(100vh - #{$header-height});
+}
