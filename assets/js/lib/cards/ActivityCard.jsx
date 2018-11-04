@@ -117,14 +117,13 @@ class ActivityCard extends React.PureComponent {
    */
   render() {
     const { activity, className, ...props } = this.props;
-console.log(activity);
 
     return (
       <Card
         className={classNames('card-activity', className)}
         {...objects.propsFilter(props, ActivityCard.propTypes, ['routerParams', 'routerQuery', 'staticContext'])}
       >
-        <Link name="activity" params={{ id: activity.ActivityID }}>
+        <Link name="activity" params={{ refID: activity.RefID }} state={{ activity }}>
           {this.renderHeader()}
           {this.renderBody()}
           {this.renderFooter()}

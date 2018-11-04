@@ -23,6 +23,19 @@ class Activity {
 
     return this.proxy.get(url);
   };
+
+  /**
+   * @param {number} refID
+   * @returns {Promise}
+   */
+  getByRefID = (refID) => {
+    const url = endpoints.get('activityGetByRefID', {
+      token: this.user.getToken(),
+      refID
+    });
+
+    return this.proxy.get(url);
+  };
 }
 
 export default Activity;

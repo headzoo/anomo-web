@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { Row, Column, Card, CardBody } from 'lib/bootstrap';
+import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
 import { Page, Loading, withRouter } from 'lib';
 import routes from 'store/routes';

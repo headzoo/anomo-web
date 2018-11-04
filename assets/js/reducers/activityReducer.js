@@ -41,12 +41,31 @@ function get(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function set(state, action) {
+  const activity = objects.clone(action.activity);
+  if (activity.Message) {
+    activity.Message = JSON.parse(activity.Message);
+  }
+
+  return {
+    ...state,
+    activity
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function activityReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.ACTIVITY_LOADING:
       return loading(state, action);
     case types.ACTIVITY_GET:
       return get(state, action);
+    case types.ACTIVITY_SET:
+      return set(state, action);
     default: return state;
   }
 }

@@ -2,7 +2,7 @@ import { strings, objects } from 'utils';
 
 const pathsAndRoutes = {
   home:     '/',
-  activity: '/activity',
+  activity: '/activity/:refID',
   login:    '/login',
   logout:   '/logout',
   contact:  '/contact',

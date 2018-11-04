@@ -53,6 +53,7 @@ export const defaultUser = {
  */
 export const defaultActivity = {
   activities: [],
+  activity:   {},
   page:       0,
   totalPages: 0,
   radius:     0,

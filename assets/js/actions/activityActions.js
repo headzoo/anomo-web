@@ -1,5 +1,6 @@
 export const ACTIVITY_LOADING = 'ACTIVITY_LOADING';
 export const ACTIVITY_GET     = 'ACTIVITY_GET';
+export const ACTIVITY_SET     = 'ACTIVITY_SET';
 
 /**
  * @param {boolean} isLoading
@@ -40,6 +41,29 @@ export function activityGet() {
             page:       parseInt(data.Page, 10),
             totalPages: parseInt(data.TotalPage, 10),
             radius:     parseFloat(data.Radius)
+          });
+        }
+      })
+      .finally(() => {
+        dispatch(activityIsLoading(false));
+      });
+  };
+}
+
+/**
+ * @param {number} refID
+ * @returns {function(*, *, {anomo: *})}
+ */
+export function activityGetByRefID(refID) {
+  return (dispatch, getState, { anomo }) => {
+    dispatch(activityIsLoading(true));
+
+    anomo.activity.getByRefID(refID)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type:     ACTIVITY_SET,
+            activity: data.Activity
           });
         }
       })
