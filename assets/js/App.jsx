@@ -9,6 +9,7 @@ import history from 'store/history';
 import routes from 'store/routes';
 import HomePage from 'pages/HomePage';
 import ActivityPage from 'pages/ActivityPage';
+import ProfilePage from 'pages/ProfilePage';
 import LoginPage from 'pages/LoginPage';
 import LogoutPage from 'pages/LogoutPage';
 
@@ -75,6 +76,7 @@ class App extends React.PureComponent {
         <Switch>
           <Route exact path={routes.path('home')} component={HomePage} />
           <Route exact path={routes.path('activity')} component={ActivityPage} />
+          <Route exact path={routes.path('profile')} component={ProfilePage} />
           <Route exact path={routes.path('login')} component={LoginPage} />
           <Route exact path={routes.path('logout')} component={LogoutPage} />
         </Switch>

@@ -6,6 +6,7 @@ import { objects } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
 import { Text, Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
+import routes from 'store/routes';
 
 /**
  *
@@ -30,6 +31,26 @@ class ActivityCard extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   */
+  handleImageClick = (e) => {
+    const { activity } = this.props;
+
+    e.preventDefault();
+    window.open(activity.Image);
+  };
+
+  /**
+   * @param {Event} e
+   */
+  handleUserClick = (e) => {
+    const { activity, history } = this.props;
+
+    e.preventDefault();
+    history.push(routes.route('profile', { userName: activity.FromUserName }));
+  };
+
+  /**
    * @returns {*}
    */
   renderHeader = () => {
@@ -37,11 +58,11 @@ class ActivityCard extends React.PureComponent {
 
     return (
       <CardHeader>
-        <div className="card-activity-avatar">
+        <div className="card-activity-avatar" onClick={this.handleUserClick}>
           <Avatar src={activity.Avatar} />
         </div>
         <div className="card-activity-user">
-          <div className="card-activity-username">
+          <div className="card-activity-username" onClick={this.handleUserClick}>
             {activity.FromUserName}
           </div>
           <div className="card-activity-location">
@@ -72,7 +93,10 @@ class ActivityCard extends React.PureComponent {
             </Text>
           )}
           {activity.Image && (
-            <Image data={{ src: activity.Image, alt: '' }} />
+            <Image
+              data={{ src: activity.Image, alt: 'Image' }}
+              onClick={this.handleImageClick}
+            />
           )}
         </CardText>
       </CardBody>

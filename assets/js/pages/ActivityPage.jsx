@@ -12,6 +12,7 @@ import * as activityActions from 'actions/activityActions';
 class ActivityPage extends React.PureComponent {
   static propTypes = {
     activity:           PropTypes.object.isRequired,
+    match:              PropTypes.object.isRequired,
     location:           PropTypes.object.isRequired,
     activityGetByRefID: PropTypes.func.isRequired
   };
