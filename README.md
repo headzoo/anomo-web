@@ -4,7 +4,7 @@ Anomo Web Client
 ## Installation
 
 ```
-git clone git dev.anomo.com
+git clone https://github.com/headzoo/anomo-web.git dev.anomo.com
 cd dev.anomo.com
 composer install
 yarn install
