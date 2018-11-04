@@ -19,7 +19,7 @@ export function activityGet() {
   return (dispatch, getState, { anomo }) => {
     dispatch(activityIsLoading(true));
 
-    const feed = JSON.parse(localStorage.getItem('feed'));
+/*    const feed = JSON.parse(localStorage.getItem('feed'));
     dispatch({
       type:       ACTIVITY_GET,
       activities: feed.Activities,
@@ -28,7 +28,7 @@ export function activityGet() {
       radius:     parseFloat(feed.Radius)
     });
     dispatch(activityIsLoading(false));
-    return;
+    return;*/
 
     anomo.activity.get()
       .then((data) => {

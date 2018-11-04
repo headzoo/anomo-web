@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
-import { Page, Loading } from 'lib';
+import { Page, Loading, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
 /**
@@ -13,7 +14,8 @@ class HomePage extends React.PureComponent {
   static propTypes = {
     user:        PropTypes.object.isRequired,
     activity:    PropTypes.object.isRequired,
-    activityGet: PropTypes.func.isRequired
+    activityGet: PropTypes.func.isRequired,
+    history:     PropTypes.object.isRequired
   };
 
   static defaultProps = {};
@@ -22,10 +24,12 @@ class HomePage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { user, activityGet } = this.props;
+    const { user, activityGet, history } = this.props;
 
     if (user.isAuthenticated) {
       activityGet();
+    } else {
+      history.push(routes.route('login'));
     }
   };
 
@@ -89,4 +93,4 @@ class HomePage extends React.PureComponent {
 export default connect(
   mapStateToProps('user', 'activity'),
   mapActionsToProps(activityActions)
-)(HomePage);
+)(withRouter(HomePage));
