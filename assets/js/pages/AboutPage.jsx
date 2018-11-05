@@ -13,7 +13,7 @@ class AboutPage extends React.PureComponent {
     return (
       <Page title="About">
         <Row>
-          <Column xs={4} offsetXs={4}>
+          <Column md={4} offsetMd={4} xs={12}>
             <Card>
               <CardHeader>
                 About
