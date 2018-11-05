@@ -4,8 +4,10 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
+import { PostForm } from 'lib/forms';
 import { Page, Loading, withRouter } from 'lib';
 import routes from 'store/routes';
+import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
 
 /**
@@ -13,10 +15,11 @@ import * as activityActions from 'actions/activityActions';
  */
 class FeedPage extends React.PureComponent {
   static propTypes = {
-    user:           PropTypes.object.isRequired,
-    activity:       PropTypes.object.isRequired,
-    activityGetAll: PropTypes.func.isRequired,
-    history:        PropTypes.object.isRequired
+    user:             PropTypes.object.isRequired,
+    activity:         PropTypes.object.isRequired,
+    activityGetAll:   PropTypes.func.isRequired,
+    userSubmitStatus: PropTypes.func.isRequired,
+    history:          PropTypes.object.isRequired
   };
 
   static defaultProps = {};
@@ -80,6 +83,17 @@ class FeedPage extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   * @param {*} values
+   */
+  handlePostSubmit = (e, values) => {
+    const { userSubmitStatus } = this.props;
+
+    e.preventDefault();
+    userSubmitStatus(values.message);
+  };
+
+  /**
    * @returns {*}
    */
   renderFeed = () => {
@@ -112,6 +126,11 @@ class FeedPage extends React.PureComponent {
       <Page title="Anomo">
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
+            <PostForm onSubmit={this.handlePostSubmit} withUpload />
+          </Column>
+        </Row>
+        <Row>
+          <Column md={4} offsetMd={4} xs={12}>
             {this.renderFeed()}
           </Column>
         </Row>
@@ -122,5 +141,5 @@ class FeedPage extends React.PureComponent {
 
 export default connect(
   mapStateToProps('user', 'activity'),
-  mapActionsToProps(activityActions)
+  mapActionsToProps(activityActions, userActions)
 )(withRouter(FeedPage));

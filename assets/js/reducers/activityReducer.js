@@ -86,6 +86,18 @@ function likeLoading(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function commentsLoading(state, action) {
+  return {
+    ...state,
+    isCommentsLoading: action.isCommentsLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function get(state, action) {
   const activities = action.activities.slice(0).map((a) => {
     return sanitizeActivity(a);
@@ -136,6 +148,8 @@ export default function activityReducer(state = {}, action = {}) {
       return loading(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
+    case types.ACTIVITY_COMMENTS_LOADING:
+      return commentsLoading(state, action);
     case types.ACTIVITY_GET:
       return get(state, action);
     case types.ACTIVITY_SET:

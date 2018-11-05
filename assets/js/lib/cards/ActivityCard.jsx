@@ -96,7 +96,7 @@ class ActivityCard extends React.PureComponent {
     return (
       <CardBody>
         <CardText>
-          {activity.Message.message && (
+          {(activity.Message && activity.Message.message) && (
             <Twemoji text={activity.Message.message} />
           )}
           {activity.Image && (

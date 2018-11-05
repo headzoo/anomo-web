@@ -104,6 +104,7 @@
 
   .avatar {
     height: 44px;
+    width: 44px;
     margin-right: $gutter-size;
   }
 
@@ -145,4 +146,46 @@
 .card-activity-comment-commented,
 .card-comment-comment-commented {
   color: $color-liked;
+}
+
+.card-form-post {
+  margin-bottom: $gutter-size;
+
+  textarea {
+    height: $input-height;
+    overflow: hidden;
+    transition: height 0.2s ease-in-out;
+
+    &:focus {
+      overflow: auto;
+      height: $input-height * 3;
+    }
+  }
+
+  form {
+    display: flex;
+
+    .card-form-post-upload {
+      width: 45px;
+
+      .icon {
+        cursor: pointer;
+        font-size: 2.5em;
+        color: $color-dim;
+
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+
+    .card-form-post-message {
+      flex-grow: 2;
+      padding-right: 5px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
 }

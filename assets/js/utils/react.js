@@ -14,9 +14,11 @@ export function reactDisplayName(WrappedComponent) {
  */
 export function reactTraverseChildren(children, cb) {
   React.Children.map(children, (child) => {
-    cb(child);
-    if (child.props && child.props.children) {
-      reactTraverseChildren(child.props.children, cb);
+    if (child) {
+      cb(child);
+      if (child.props && child.props.children) {
+        reactTraverseChildren(child.props.children, cb);
+      }
     }
   });
 }

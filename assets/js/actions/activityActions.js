@@ -1,8 +1,9 @@
-export const ACTIVITY_LOADING      = 'ACTIVITY_LOADING';
-export const ACTIVITY_LIKE_LOADING = 'ACTIVITY_LIKE_LOADING';
-export const ACTIVITY_GET          = 'ACTIVITY_GET';
-export const ACTIVITY_SET          = 'ACTIVITY_SET';
-export const ACTIVITY_RESET        = 'ACTIVITY_RESET';
+export const ACTIVITY_LOADING          = 'ACTIVITY_LOADING';
+export const ACTIVITY_LIKE_LOADING     = 'ACTIVITY_LIKE_LOADING';
+export const ACTIVITY_COMMENTS_LOADING = 'ACTIVITY_COMMENTS_LOADING';
+export const ACTIVITY_GET              = 'ACTIVITY_GET';
+export const ACTIVITY_SET              = 'ACTIVITY_SET';
+export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
 
 /**
  * @param {boolean} isLoading
@@ -19,10 +20,21 @@ export function activityIsLoading(isLoading) {
  * @param {boolean} isLoading
  * @returns {{type: string, isLoading: *}}
  */
-export function activityLikeIsLoading(isLoading) {
+export function activityIsLikeLoading(isLoading) {
   return {
     type: ACTIVITY_LIKE_LOADING,
     isLoading
+  };
+}
+
+/**
+ * @param {boolean} isCommentsLoading
+ * @returns {{type: string, isLoading: *}}
+ */
+export function activityIsCommentsLoading(isCommentsLoading) {
+  return {
+    type: ACTIVITY_COMMENTS_LOADING,
+    isCommentsLoading
   };
 }
 
@@ -110,6 +122,7 @@ export function activityGet(refID, actionType) {
       })
       .finally(() => {
         dispatch(activityIsLoading(false));
+        dispatch(activityIsCommentsLoading(false));
       });
   };
 }
@@ -121,7 +134,7 @@ export function activityGet(refID, actionType) {
  */
 export function activityLike(refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
-    dispatch(activityLikeIsLoading(true));
+    dispatch(activityIsLikeLoading(true));
 
     const url = endpoints.get('activityLike', {
       token: user.getToken(),
@@ -135,7 +148,7 @@ export function activityLike(refID, actionType) {
         }
       })
       .finally(() => {
-        dispatch(activityLikeIsLoading(false));
+        dispatch(activityIsLikeLoading(false));
       });
   };
 }

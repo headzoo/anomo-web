@@ -26,6 +26,10 @@ class AboutPage extends React.PureComponent {
                   <p>
                     Site created by @headzoo and @Nason002.
                   </p>
+                  <p>
+                    Source code available
+                    on <a href="https://github.com/headzoo/anomo-web" target="_blank" rel="noopener noreferrer">Github</a>.
+                  </p>
                 </CardText>
               </CardBody>
             </Card>

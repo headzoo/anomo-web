@@ -103,7 +103,7 @@ class LoginPage extends React.PureComponent {
     return (
       <Page title="Login">
         <Row>
-          <Column className="v-middle" sm={6} xs={12} offsetSm={3}>
+          <Column className="v-middle" sm={4} xs={12} offsetSm={4}>
             <Card fullWidth>
               <CardHeader icon="lock">
                 Login

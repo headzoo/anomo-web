@@ -46,6 +46,7 @@ export const defaultUser = {
   RestrictMenuKey:            [],
   isAuthenticated:            false,
   isSending:                  false,
+  isStatusSending:            false,
   errorMessage:               ''
 };
 
@@ -53,12 +54,13 @@ export const defaultUser = {
  *
  */
 export const defaultActivity = {
-  activities: [],
-  activity:   {},
-  page:       0,
-  totalPages: 0,
-  radius:     0,
-  isLoading:  false
+  activities:        [],
+  activity:          {},
+  page:              0,
+  totalPages:        0,
+  radius:            0,
+  isLoading:         false,
+  isCommentsLoading: false
 };
 
 /**
@@ -77,6 +79,10 @@ const commonFormElements = {
  *
  */
 export const defaultForms = {
+  post: {
+    message: '',
+    ...commonFormElements
+  },
   contact: {
     name:    '',
     email:   '',

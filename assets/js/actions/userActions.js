@@ -1,9 +1,11 @@
+import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 
-export const USER_ERROR   = 'USER_ERROR';
-export const USER_SENDING = 'USER_SENDING';
-export const USER_LOGIN   = 'USER_LOGIN';
-export const USER_LOGOUT  = 'USER_LOGOUT';
+export const USER_ERROR          = 'USER_ERROR';
+export const USER_SENDING        = 'USER_SENDING';
+export const USER_STATUS_SENDING = 'USER_STATUS_SENDING';
+export const USER_LOGIN          = 'USER_LOGIN';
+export const USER_LOGOUT         = 'USER_LOGOUT';
 
 /**
  * @param {string} errorMessage
@@ -24,6 +26,17 @@ export function userIsSending(isSending) {
   return {
     type: USER_SENDING,
     isSending
+  };
+}
+
+/**
+ * @param {boolean} isStatusSending
+ * @returns {{type, isSending: *}}
+ */
+export function userIsStatusSending(isStatusSending) {
+  return {
+    type: USER_STATUS_SENDING,
+    isStatusSending
   };
 }
 
@@ -92,5 +105,36 @@ export function userRefresh() {
     } else {
       dispatch(uiIsLoading(false));
     }
+  };
+}
+
+/**
+ * @param {string} message
+ * @returns {function(*, *, {endpoints: *})}
+ */
+export function userSubmitStatus(message) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    const formName = 'post';
+
+    dispatch(userIsStatusSending(true));
+    dispatch(formSubmitting(formName, true));
+
+    const url = endpoints.get('userStatus', {
+      token: user.getToken()
+    });
+    proxy.post(url, {
+      'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
+      'IsAnonymous':   0,
+      'TopicID':       1
+    }).then((resp) => {
+      if (resp.code === 'OK') {
+        dispatch(formReset(formName));
+      } else {
+        dispatch(formError(formName, 'There was an error.'));
+      }
+    }).finally(() => {
+      dispatch(userIsStatusSending(false));
+      dispatch(formSubmitting(formName, false));
+    });
   };
 }
