@@ -111,7 +111,7 @@ class FeedPage extends React.PureComponent {
     return (
       <Page title="Anomo">
         <Row>
-          <Column xs={4} offsetXs={4}>
+          <Column md={4} offsetMd={4} xs={12}>
             {this.renderFeed()}
           </Column>
         </Row>

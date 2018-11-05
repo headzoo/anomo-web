@@ -86,13 +86,13 @@ class ActivityPage extends React.PureComponent {
     return (
       <Page title="Activity">
         <Row>
-          <Column xs={4} offsetXs={4}>
+          <Column md={4} offsetMd={4} xs={12}>
             <ActivityCard activity={activity} clickableImage />
           </Column>
         </Row>
         <Row>
           {activity.ListComment.map(comment => (
-            <Column key={comment.ID} xs={4} offsetXs={4}>
+            <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
               <CommentCard comment={comment} />
             </Column>
           ))}
