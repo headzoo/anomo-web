@@ -36,13 +36,14 @@ export function activityReset() {
 }
 
 /**
+ * @param {number} lastActivityID
  * @returns {function(*, *, {anomo: *})}
  */
-export function activityGetAll() {
+export function activityGetAll(lastActivityID = 0) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-    const feed = JSON.parse(localStorage.getItem('feed'));
+/*    const feed = JSON.parse(localStorage.getItem('feed'));
     dispatch({
       type:       ACTIVITY_GET,
       activities: feed.Activities,
@@ -51,14 +52,15 @@ export function activityGetAll() {
       radius:     parseFloat(feed.Radius)
     });
     dispatch(activityIsLoading(false));
-    return;
+    return;*/
 
     const url = endpoints.get('activityGetAll', {
-      token: user.getToken()
+      token: user.getToken(),
+      lastActivityID
     });
     proxy.get(url)
       .then((data) => {
-        localStorage.setItem('feed', JSON.stringify(data));
+        // localStorage.setItem('feed', JSON.stringify(data));
         if (data.code === 'OK') {
           dispatch({
             type:       ACTIVITY_GET,

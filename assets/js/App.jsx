@@ -7,7 +7,7 @@ import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
 import history from 'store/history';
 import routes from 'store/routes';
-import HomePage from 'pages/HomePage';
+import FeedPage from 'pages/FeedPage';
 import ActivityPage from 'pages/ActivityPage';
 import ProfilePage from 'pages/ProfilePage';
 import LoginPage from 'pages/LoginPage';
@@ -74,7 +74,7 @@ class App extends React.PureComponent {
     return (
       <Router history={history}>
         <Switch>
-          <Route exact path={routes.path('home')} component={HomePage} />
+          <Route exact path={routes.path('home')} component={FeedPage} />
           <Route exact path={routes.path('activity')} component={ActivityPage} />
           <Route exact path={routes.path('profile')} component={ProfilePage} />
           <Route exact path={routes.path('login')} component={LoginPage} />
