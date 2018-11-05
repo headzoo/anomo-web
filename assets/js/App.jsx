@@ -5,7 +5,7 @@ import { userRefresh } from 'actions/userActions';
 import { errorMessage, windowResize } from 'actions/uiActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
-import { Mask, Loading } from 'lib';
+import { PrivateRoute, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
@@ -83,9 +83,9 @@ class App extends React.PureComponent {
     return (
       <Router history={history}>
         <Switch>
-          <Route exact path={routes.path('home')} component={FeedPage} />
-          <Route exact path={routes.path('activity')} component={ActivityPage} />
-          <Route exact path={routes.path('profile')} component={ProfilePage} />
+          <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
+          <PrivateRoute exact path={routes.path('activity')} component={ActivityPage} />
+          <PrivateRoute exact path={routes.path('profile')} component={ProfilePage} />
           <Route exact path={routes.path('login')} component={LoginPage} />
           <Route exact path={routes.path('logout')} component={LogoutPage} />
           <Route exact path={routes.path('about')} component={AboutPage} />

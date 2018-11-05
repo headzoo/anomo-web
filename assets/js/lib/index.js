@@ -19,3 +19,4 @@ export { default as CollapseButton } from './CollapseButton';
 export { default as MembersDropdown } from './MembersDropdown';
 export { default as Pluralize } from './Pluralize';
 export { default as Mask } from './Mask';
+export { default as PrivateRoute } from './PrivateRoute';

@@ -6,7 +6,6 @@ import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
 import { PostForm } from 'lib/forms';
 import { Page, Loading, withRouter } from 'lib';
-import routes from 'store/routes';
 import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
 
@@ -18,11 +17,8 @@ class FeedPage extends React.PureComponent {
     user:             PropTypes.object.isRequired,
     activity:         PropTypes.object.isRequired,
     activityGetAll:   PropTypes.func.isRequired,
-    userSubmitStatus: PropTypes.func.isRequired,
-    history:          PropTypes.object.isRequired
+    userSubmitStatus: PropTypes.func.isRequired
   };
-
-  static defaultProps = {};
 
   /**
    * @param {*} props
@@ -39,12 +35,10 @@ class FeedPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { user, activityGetAll, history } = this.props;
+    const { user, activityGetAll } = this.props;
 
     if (user.isAuthenticated) {
       activityGetAll();
-    } else {
-      history.push(routes.route('login'));
     }
   };
 
