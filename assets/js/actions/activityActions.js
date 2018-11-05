@@ -42,7 +42,7 @@ export function activityGetAll() {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-/*    const feed = JSON.parse(localStorage.getItem('feed'));
+    const feed = JSON.parse(localStorage.getItem('feed'));
     dispatch({
       type:       ACTIVITY_GET,
       activities: feed.Activities,
@@ -51,14 +51,14 @@ export function activityGetAll() {
       radius:     parseFloat(feed.Radius)
     });
     dispatch(activityIsLoading(false));
-    return;*/
+    return;
 
     const url = endpoints.get('activityGetAll', {
       token: user.getToken()
     });
     proxy.get(url)
       .then((data) => {
-        // localStorage.setItem('feed', JSON.stringify(data));
+        localStorage.setItem('feed', JSON.stringify(data));
         if (data.code === 'OK') {
           dispatch({
             type:       ACTIVITY_GET,

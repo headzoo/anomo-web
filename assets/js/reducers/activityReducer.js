@@ -1,6 +1,57 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeString(str) {
+  return str
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r');
+}
+
+/**
+ * @param {string} message
+ * @returns {string}
+ */
+function escapeUnicode(message) {
+  return JSON.parse(`"${escapeString(message)}"`);
+}
+
+/**
+ * @param {string|*} message
+ * @returns {string}
+ */
+function filterMessage(message) {
+  message = JSON.parse(message);
+  if (message.message) {
+    message.message = escapeUnicode(message.message);
+  }
+
+  return message;
+}
+
+/**
+ * @param {*} activity
+ * @returns {*}
+ */
+function sanitizeActivity(activity) {
+  const a = objects.clone(activity);
+
+  a.LikeIsLoading = false;
+  if (a.Message) {
+    a.Message = filterMessage(a.Message);
+  }
+  if (a.ListComment) {
+    a.ListComment = a.ListComment.map((comment) => {
+      comment.Content = escapeUnicode(comment.Content);
+      return comment;
+    });
+  }
+
+  return a;
+}
 
 /**
  * @param {*} state
@@ -37,11 +88,7 @@ function likeLoading(state, action) {
  */
 function get(state, action) {
   const activities = action.activities.slice(0).map((a) => {
-    if (a.Message) {
-      a.Message = JSON.parse(a.Message);
-    }
-    a.LikeIsLoading = false;
-    return a;
+    return sanitizeActivity(a);
   });
 
   return {
@@ -59,11 +106,7 @@ function get(state, action) {
  * @returns {*}
  */
 function set(state, action) {
-  const activity = objects.clone(action.activity);
-  if (activity.Message && typeof activity.Message === 'string') {
-    activity.Message = JSON.parse(activity.Message);
-  }
-  activity.LikeIsLoading = false;
+  const activity = sanitizeActivity(action.activity);
 
   return {
     ...state,
