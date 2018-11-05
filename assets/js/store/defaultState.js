@@ -60,7 +60,8 @@ export const defaultActivity = {
   totalPages:        0,
   radius:            0,
   isLoading:         false,
-  isCommentsLoading: false
+  isCommentsLoading: false,
+  isCommentSending:  false
 };
 
 /**

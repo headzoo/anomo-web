@@ -37,26 +37,28 @@ class PostForm extends React.PureComponent {
       <Card className="card-form-post">
         <CardBody>
           <Form name="post" onSubmit={onSubmit} disabled={post.isSubmitting} required>
-            {withUpload && (
-              <div className="card-form-post-upload">
-                <Icon
-                  name="camera"
-                  title="Upload"
-                  onClick={this.handleUploadClick}
+            <div className="card-form-post-inputs">
+              {withUpload && (
+                <div className="card-form-post-upload">
+                  <Icon
+                    name="camera"
+                    title="Upload"
+                    onClick={this.handleUploadClick}
+                  />
+                </div>
+              )}
+              <div className="card-form-post-message">
+                <Textarea
+                  name="message"
+                  id="form-post-message"
+                  placeholder="Add to conversation"
                 />
               </div>
-            )}
-            <div className="card-form-post-message">
-              <Textarea
-                name="message"
-                id="form-post-message"
-                placeholder="Add to conversation"
-              />
-            </div>
-            <div className="card-form-post-btn">
-              <Button block>
-                Post
-              </Button>
+              <div className="card-form-post-btn">
+                <Button block>
+                  Post
+                </Button>
+              </div>
             </div>
           </Form>
         </CardBody>

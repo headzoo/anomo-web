@@ -87,7 +87,7 @@ class User {
    * @returns {Promise}
    */
   login = (username, password) => {
-    return this.proxy.post(endpoints.get('userLogin'), {
+    return this.proxy.post(endpoints.create('userLogin'), {
       UserName: username,
       Password: md5(password)
     }).then((data) => {
@@ -109,7 +109,7 @@ class User {
 
     this.removeID();
     this.removeToken();
-    const url = endpoints.get('userLogout', {
+    const url = endpoints.create('userLogout', {
       token: this.getToken()
     });
 
@@ -121,7 +121,7 @@ class User {
    * @returns {*}
    */
   info = (id) => {
-    const url = endpoints.get('userInfo', {
+    const url = endpoints.create('userInfo', {
       token:  this.getToken(),
       UserID: id
     });

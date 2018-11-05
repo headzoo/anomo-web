@@ -17,6 +17,7 @@ class ActivityPage extends React.PureComponent {
     location:                  PropTypes.object.isRequired,
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
+    activitySubmitComment:     PropTypes.func.isRequired,
     activityIsCommentsLoading: PropTypes.func.isRequired
   };
 
@@ -77,8 +78,11 @@ class ActivityPage extends React.PureComponent {
    * @param {*} values
    */
   handleCommentSubmit = (e, values) => {
+    const { activitySubmitComment } = this.props;
+    const { activity } = this.state;
+
     e.preventDefault();
-    console.log(values);
+    activitySubmitComment(values.message, activity.RefID, activity.ActionType, activity.TopicID);
   };
 
   /**

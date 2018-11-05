@@ -119,7 +119,7 @@ export function userSubmitStatus(message) {
     dispatch(userIsStatusSending(true));
     dispatch(formSubmitting(formName, true));
 
-    const url = endpoints.get('userStatus', {
+    const url = endpoints.create('userStatus', {
       token: user.getToken()
     });
     proxy.post(url, {
