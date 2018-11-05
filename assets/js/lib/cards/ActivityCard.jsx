@@ -2,20 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
-import { objects } from 'utils';
+import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
 import { Text, Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
 import routes from 'store/routes';
+import * as activityActions from 'actions/activityActions';
 
 /**
  *
  */
 class ActivityCard extends React.PureComponent {
   static propTypes = {
-    activity:  PropTypes.object.isRequired,
-    className: PropTypes.string,
-    history:   PropTypes.object.isRequired
+    activity:     PropTypes.object.isRequired,
+    className:    PropTypes.string,
+    history:      PropTypes.object.isRequired,
+    activityLike: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -26,8 +28,10 @@ class ActivityCard extends React.PureComponent {
    * @param {Event} e
    */
   handleHeartClick = (e) => {
+    const { activity, activityLike } = this.props;
+
     e.preventDefault();
-    console.log('clicked');
+    activityLike(activity.RefID, activity.ActionType);
   };
 
   /**
@@ -123,6 +127,7 @@ class ActivityCard extends React.PureComponent {
         <div className="card-activity-like">
           <LikeIcon
             liked={isLiked}
+            loading={activity.LikeIsLoading}
             onClick={this.handleHeartClick}
           />&nbsp;
           {likes}&nbsp;
@@ -140,14 +145,15 @@ class ActivityCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, className, ...props } = this.props;
+    const { activity, className } = this.props;
 
     return (
-      <Card
-        className={classNames('card-activity', className)}
-        {...objects.propsFilter(props, ActivityCard.propTypes, ['routerParams', 'routerQuery', 'staticContext'])}
-      >
-        <Link name="activity" params={{ refID: activity.RefID }} state={{ activity }}>
+      <Card className={classNames('card-activity', className)}>
+        <Link
+          name="activity"
+          params={{ refID: activity.RefID, actionType: activity.ActionType }}
+          state={{ activity }}
+        >
           {this.renderHeader()}
           {this.renderBody()}
           {this.renderFooter()}
@@ -157,4 +163,7 @@ class ActivityCard extends React.PureComponent {
   }
 }
 
-export default withRouter(ActivityCard);
+export default connect(
+  mapStateToProps(),
+  mapActionsToProps(activityActions)
+)(withRouter(ActivityCard));

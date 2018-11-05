@@ -26,12 +26,29 @@ class Activity {
 
   /**
    * @param {number} refID
+   * @param {number} actionType
    * @returns {Promise}
    */
-  getByRefID = (refID) => {
+  getByRefID = (refID, actionType) => {
     const url = endpoints.get('activityGetByRefID', {
       token: this.user.getToken(),
-      refID
+      refID,
+      actionType
+    });
+
+    return this.proxy.get(url);
+  };
+
+  /**
+   * @param {number} refID
+   * @param {number} actionType
+   * @returns {Promise}
+   */
+  like = (refID, actionType) => {
+    const url = endpoints.get('activityLike', {
+      token: this.user.getToken(),
+      refID,
+      actionType
     });
 
     return this.proxy.get(url);

@@ -8,7 +8,8 @@ const urls = {
   userLogout:         `${base}/user/logout/{token}`,
   userInfo:           `${base}/user/get_user_info/{token}/{UserID}`,
   activityGet:        `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/0/0`,
-  activityGetByRefID: `${base}/activity/detail/{token}/{refID}/1`
+  activityGetByRefID: `${base}/activity/detail/{token}/{refID}/{actionType}`,
+  activityLike:       `${base}/activity/like/{token}/{refID}/{actionType}/false`
 };
 
 /**

@@ -1,6 +1,8 @@
-export const ACTIVITY_LOADING = 'ACTIVITY_LOADING';
-export const ACTIVITY_GET     = 'ACTIVITY_GET';
-export const ACTIVITY_SET     = 'ACTIVITY_SET';
+export const ACTIVITY_LOADING      = 'ACTIVITY_LOADING';
+export const ACTIVITY_LIKE_LOADING = 'ACTIVITY_LIKE_LOADING';
+export const ACTIVITY_GET          = 'ACTIVITY_GET';
+export const ACTIVITY_SET          = 'ACTIVITY_SET';
+export const ACTIVITY_RESET        = 'ACTIVITY_RESET';
 
 /**
  * @param {boolean} isLoading
@@ -14,9 +16,29 @@ export function activityIsLoading(isLoading) {
 }
 
 /**
+ * @param {boolean} isLoading
+ * @returns {{type: string, isLoading: *}}
+ */
+export function activityLikeIsLoading(isLoading) {
+  return {
+    type: ACTIVITY_LIKE_LOADING,
+    isLoading
+  };
+}
+
+/**
+ * @returns {{type: string}}
+ */
+export function activityReset() {
+  return {
+    type: ACTIVITY_RESET
+  };
+}
+
+/**
  * @returns {function(*, *, {anomo: *})}
  */
-export function activityGet() {
+export function activityGetAll() {
   return (dispatch, getState, { anomo }) => {
     dispatch(activityIsLoading(true));
 
@@ -51,24 +73,54 @@ export function activityGet() {
 }
 
 /**
+ * @param {*} activity
+ * @returns {{type: string, activity: *}}
+ */
+export function activitySet(activity) {
+  return {
+    type: ACTIVITY_SET,
+    activity
+  };
+}
+
+/**
  * @param {number} refID
+ * @param {number} actionType
  * @returns {function(*, *, {anomo: *})}
  */
-export function activityGetByRefID(refID) {
+export function activityGet(refID, actionType) {
   return (dispatch, getState, { anomo }) => {
     dispatch(activityIsLoading(true));
 
-    anomo.activity.getByRefID(refID)
+    anomo.activity.getByRefID(refID, actionType)
       .then((data) => {
         if (data.code === 'OK') {
-          dispatch({
-            type:     ACTIVITY_SET,
-            activity: data.Activity
-          });
+          dispatch(activitySet(data.Activity));
         }
       })
       .finally(() => {
         dispatch(activityIsLoading(false));
+      });
+  };
+}
+
+/**
+ * @param {number} refID
+ * @param {number} actionType
+ * @returns {function(*, *, {anomo: *})}
+ */
+export function activityLike(refID, actionType) {
+  return (dispatch, getState, { anomo }) => {
+    dispatch(activityLikeIsLoading(true));
+
+    anomo.activity.like(refID, actionType)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch(activityGet(refID, actionType));
+        }
+      })
+      .finally(() => {
+        dispatch(activityLikeIsLoading(false));
       });
   };
 }

@@ -11,10 +11,11 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityPage extends React.PureComponent {
   static propTypes = {
-    activity:           PropTypes.object.isRequired,
-    match:              PropTypes.object.isRequired,
-    location:           PropTypes.object.isRequired,
-    activityGetByRefID: PropTypes.func.isRequired
+    activity:      PropTypes.object.isRequired,
+    match:         PropTypes.object.isRequired,
+    location:      PropTypes.object.isRequired,
+    activityGet:   PropTypes.func.isRequired,
+    activityReset: PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -33,13 +34,15 @@ class ActivityPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { location, match, activityGetByRefID } = this.props;
+    const { location, match, activityGet } = this.props;
     const { state } = location;
 
     if (state.activity) {
-      this.setState({ activity: state.activity });
+      this.setState({ activity: state.activity }, () => {
+        activityGet(match.params.refID, match.params.actionType);
+      });
     } else {
-      activityGetByRefID(match.params.refID);
+      activityGet(match.params.refID, match.params.actionType);
     }
   };
 
@@ -55,6 +58,15 @@ class ActivityPage extends React.PureComponent {
       && objects.isEqual(prevState.activity, activity)) {
       this.setState({ activity: this.props.activity.activity });
     }
+  };
+
+  /**
+   *
+   */
+  componentWillUnmount = () => {
+    const { activityReset } = this.props;
+
+    activityReset();
   };
 
   /**

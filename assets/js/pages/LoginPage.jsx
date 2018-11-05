@@ -6,7 +6,7 @@ import { connect, mapStateToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardHeader, CardText, Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
 import { Page, withRouter } from 'lib';
-import * as routes from 'store/routes';
+import routes from 'store/routes';
 
 /**
  *

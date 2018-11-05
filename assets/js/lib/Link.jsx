@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import * as routes from 'store/routes';
+import routes from 'store/routes';
 
 /**
  *

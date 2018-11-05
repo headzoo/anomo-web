@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect, mapStateToProps } from 'utils/state';
 import { userLogout } from 'actions/userActions';
 import { withRouter } from 'lib';
-import * as routes from 'store/routes';
+import routes from 'store/routes';
 
 /**
  *

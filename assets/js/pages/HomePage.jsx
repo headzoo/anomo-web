@@ -12,10 +12,10 @@ import * as activityActions from 'actions/activityActions';
  */
 class HomePage extends React.PureComponent {
   static propTypes = {
-    user:        PropTypes.object.isRequired,
-    activity:    PropTypes.object.isRequired,
-    activityGet: PropTypes.func.isRequired,
-    history:     PropTypes.object.isRequired
+    user:           PropTypes.object.isRequired,
+    activity:       PropTypes.object.isRequired,
+    activityGetAll: PropTypes.func.isRequired,
+    history:        PropTypes.object.isRequired
   };
 
   static defaultProps = {};
@@ -24,10 +24,10 @@ class HomePage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { user, activityGet, history } = this.props;
+    const { user, activityGetAll, history } = this.props;
 
     if (user.isAuthenticated) {
-      activityGet();
+      activityGetAll();
     } else {
       history.push(routes.route('login'));
     }
@@ -37,10 +37,10 @@ class HomePage extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { user, activityGet } = this.props;
+    const { user, activityGetAll } = this.props;
 
     if (prevProps.user.isAuthenticated !== user.isAuthenticated && user.isAuthenticated) {
-      activityGet();
+      activityGetAll();
     }
   };
 

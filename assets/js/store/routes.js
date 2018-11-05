@@ -2,7 +2,7 @@ import { strings, objects } from 'utils';
 
 const pathsAndRoutes = {
   home:     '/',
-  activity: '/activity/:refID',
+  activity: '/activity/:refID/:actionType',
   profile:  '/profile/:userName',
   login:    '/login',
   logout:   '/logout',
@@ -15,7 +15,7 @@ const pathsAndRoutes = {
  * @param {string} name
  * @returns {string}
  */
-export function path(name) {
+function path(name) {
   if (!pathsAndRoutes[name]) {
     throw new Error(`Path ${name} not found.`);
   }
@@ -27,7 +27,7 @@ export function path(name) {
  * @param {*} params
  * @returns {string}
  */
-export function route(name, params = {}) {
+function route(name, params = {}) {
   let p           = path(name);
   const remaining = {};
 
