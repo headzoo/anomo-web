@@ -6,6 +6,7 @@ const pathsAndRoutes = {
   profile:  '/profile/:userName',
   login:    '/login',
   logout:   '/logout',
+  about:    '/about',
   contact:  '/contact',
   privacy:  '/privacy',
   tou:      '/tou'

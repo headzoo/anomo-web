@@ -19,7 +19,9 @@ class Nav extends React.PureComponent {
   render() {
     const { user } = this.props;
 
-    const navItems = [];
+    const navItems = [
+      { name: 'about', label: 'About' }
+    ];
 
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

@@ -93,7 +93,7 @@ class FeedPage extends React.PureComponent {
         loader={<Loading className="text-center" />}
         hasMore
       >
-        <Row className="gutter-top">
+        <Row>
           {activities.map(a => (
             <Column key={a.ActivityID}>
               <ActivityCard activity={a} />

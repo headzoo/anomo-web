@@ -5,7 +5,7 @@ let config = {
   lang:   'en',
   https:  true,
   styles: {
-    primaryColor:     '#00A8AF',
+    primaryColor:     '#00d2d9',
     placeholderImage: ''
   }
 };

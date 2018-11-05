@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { browser, objects } from 'utils';
 import { Container } from 'lib/bootstrap';
-import { Nav } from 'lib';
+import { Nav, Footer } from 'lib';
 
 /**
  *
@@ -12,6 +12,7 @@ class Page extends React.PureComponent {
   static propTypes = {
     title:      PropTypes.string.isRequired,
     withNav:    PropTypes.bool,
+    withFooter: PropTypes.bool,
     fullHeight: PropTypes.bool,
     className:  PropTypes.string,
     children:   PropTypes.node
@@ -19,6 +20,7 @@ class Page extends React.PureComponent {
 
   static defaultProps = {
     withNav:    true,
+    withFooter: true,
     fullHeight: false,
     className:  '',
     children:   ''
@@ -45,7 +47,7 @@ class Page extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { withNav, fullHeight, className, children, ...props } = this.props;
+    const { withNav, withFooter, fullHeight, className, children, ...props } = this.props;
 
     const classes = classNames('page', {
       'page-full-height': fullHeight
@@ -57,6 +59,7 @@ class Page extends React.PureComponent {
         <Container fluid>
           {children}
         </Container>
+        {withFooter && <Footer />}
       </div>
     );
   }

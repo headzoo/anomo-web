@@ -86,7 +86,7 @@ class ActivityPage extends React.PureComponent {
     return (
       <Page title="Activity">
         <Row>
-          <Column className="gutter-top" xs={4} offsetXs={4}>
+          <Column xs={4} offsetXs={4}>
             <ActivityCard activity={activity} clickableImage />
           </Column>
         </Row>

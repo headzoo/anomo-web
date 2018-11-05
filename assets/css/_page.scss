@@ -1,6 +1,13 @@
 @import "vars";
 @import "mixins";
 
+.page {
+  .container,
+  .container-fluid {
+    padding-top: $gutter-size;
+  }
+}
+
 .page-title {
   color: #333;
   padding: $gutter-size 0;

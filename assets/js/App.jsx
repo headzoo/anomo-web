@@ -13,6 +13,7 @@ import ActivityPage from 'pages/ActivityPage';
 import ProfilePage from 'pages/ProfilePage';
 import LoginPage from 'pages/LoginPage';
 import LogoutPage from 'pages/LogoutPage';
+import AboutPage from 'pages/AboutPage';
 
 /**
  *
@@ -87,6 +88,7 @@ class App extends React.PureComponent {
           <Route exact path={routes.path('profile')} component={ProfilePage} />
           <Route exact path={routes.path('login')} component={LoginPage} />
           <Route exact path={routes.path('logout')} component={LogoutPage} />
+          <Route exact path={routes.path('about')} component={AboutPage} />
         </Switch>
       </Router>
     );
