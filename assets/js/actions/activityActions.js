@@ -39,10 +39,10 @@ export function activityReset() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityGetAll() {
-  return (dispatch, getState, { anomo }) => {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-    const feed = JSON.parse(localStorage.getItem('feed'));
+/*    const feed = JSON.parse(localStorage.getItem('feed'));
     dispatch({
       type:       ACTIVITY_GET,
       activities: feed.Activities,
@@ -51,11 +51,14 @@ export function activityGetAll() {
       radius:     parseFloat(feed.Radius)
     });
     dispatch(activityIsLoading(false));
-    return;
+    return;*/
 
-    anomo.activity.get()
+    const url = endpoints.get('activityGetAll', {
+      token: user.getToken()
+    });
+    proxy.get(url)
       .then((data) => {
-        localStorage.setItem('feed', JSON.stringify(data));
+        // localStorage.setItem('feed', JSON.stringify(data));
         if (data.code === 'OK') {
           dispatch({
             type:       ACTIVITY_GET,
@@ -89,10 +92,15 @@ export function activitySet(activity) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityGet(refID, actionType) {
-  return (dispatch, getState, { anomo }) => {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-    anomo.activity.getByRefID(refID, actionType)
+    const url = endpoints.get('activityGet', {
+      token: user.getToken(),
+      actionType,
+      refID
+    });
+    proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch(activitySet(data.Activity));
@@ -110,10 +118,15 @@ export function activityGet(refID, actionType) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityLike(refID, actionType) {
-  return (dispatch, getState, { anomo }) => {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityLikeIsLoading(true));
 
-    anomo.activity.like(refID, actionType)
+    const url = endpoints.get('activityLike', {
+      token: user.getToken(),
+      actionType,
+      refID
+    });
+    proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch(activityGet(refID, actionType));

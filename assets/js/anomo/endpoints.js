@@ -4,12 +4,12 @@ const base = 'https://ws.anomo.com/v101/index.php/webservice';
 
 // https://github.com/unofficial-anomo-api/open/wiki/New-Anomo-2.11-Update-API-End-Points
 const urls = {
-  userLogin:          `${base}/user/login`,
-  userLogout:         `${base}/user/logout/{token}`,
-  userInfo:           `${base}/user/get_user_info/{token}/{UserID}`,
-  activityGet:        `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/0/0`,
-  activityGetByRefID: `${base}/activity/detail/{token}/{refID}/{actionType}`,
-  activityLike:       `${base}/activity/like/{token}/{refID}/{actionType}/false`
+  userLogin:      `${base}/user/login`,
+  userLogout:     `${base}/user/logout/{token}`,
+  userInfo:       `${base}/user/get_user_info/{token}/{UserID}`,
+  activityGetAll: `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/0/0`,
+  activityGet:    `${base}/activity/detail/{token}/{refID}/{actionType}`,
+  activityLike:   `${base}/activity/like/{token}/{refID}/{actionType}/false`
 };
 
 /**

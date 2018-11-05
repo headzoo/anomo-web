@@ -31,18 +31,18 @@ export function userIsSending(isSending) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { anomo }) => {
+  return (dispatch, getState, { user }) => {
     dispatch(userIsSending(true));
     dispatch(userError(''));
 
-    anomo.user.login(username, password)
-      .then((user) => {
-        if (user.code && user.code === 'FAIL') {
+    user.login(username, password)
+      .then((u) => {
+        if (u.code && u.code === 'FAIL') {
           dispatch(userError('Username or password is incorrect.'));
         } else {
           dispatch({
             type: USER_LOGIN,
-            user
+            user: u
           });
         }
       })
@@ -56,8 +56,8 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogout() {
-  return (dispatch, getState, { anomo }) => {
-    anomo.user.logout();
+  return (dispatch, getState, { user }) => {
+    user.logout();
     dispatch({
       type: USER_LOGOUT
     });
@@ -68,13 +68,13 @@ export function userLogout() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userRefresh() {
-  return (dispatch, getState, { anomo }) => {
-    const id = anomo.user.getID();
-    if (id && anomo.user.hasToken()) {
+  return (dispatch, getState, { user }) => {
+    const id = user.getID();
+    if (id && user.hasToken()) {
       dispatch(userIsSending(true));
       dispatch(userError(''));
 
-      anomo.user.info(id)
+      user.info(id)
         .then((data) => {
           if (data.code === 'OK') {
             dispatch({

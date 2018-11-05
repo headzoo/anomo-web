@@ -16,7 +16,7 @@ export default function configureStore(initialState = {}) {
     createRootReducer(),
     deepmerge(defaultState, initialState),
     composeEnhancers(
-      applyMiddleware(thunk.withExtraArgument({ anomo }))
+      applyMiddleware(thunk.withExtraArgument(anomo))
     )
   );
 }

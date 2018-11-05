@@ -1,5 +1,6 @@
 import User from './User';
-import Activity from './Activity';
+import Proxy from './Proxy';
+import endpoints from './endpoints';
 
 /**
  *
@@ -9,8 +10,9 @@ class Client {
    *
    */
   constructor() {
-    this.user     = new User();
-    this.activity = new Activity(this.user);
+    this.user      = new User();
+    this.proxy     = new Proxy();
+    this.endpoints = endpoints;
   }
 }
 
