@@ -3,6 +3,7 @@ import deepmerge from 'deepmerge';
 let config = {
   debug:  false,
   lang:   'en',
+  https:  true,
   styles: {
     primaryColor:     '#00A8AF',
     placeholderImage: ''

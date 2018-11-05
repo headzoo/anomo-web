@@ -52,12 +52,16 @@ class Image extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { data, circle, className, ...props } = this.props;
-    const { src } = this.state;
+    const { data, circle, config, className, ...props } = this.props;
+    let { src } = this.state;
 
     const classes = classNames(className, {
       'circle': circle
     });
+
+    if (config.https) {
+      src = src.replace('http://', 'https://');
+    }
 
     return (
       <img
