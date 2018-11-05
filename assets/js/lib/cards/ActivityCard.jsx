@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
+import { Twemoji } from 'react-emoji-render';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Text, Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
+import { Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
@@ -96,9 +97,7 @@ class ActivityCard extends React.PureComponent {
       <CardBody>
         <CardText>
           {activity.Message.message && (
-            <Text nl2p>
-              {activity.Message.message}
-            </Text>
+            <Twemoji text={activity.Message.message} />
           )}
           {activity.Image && (
             <Image

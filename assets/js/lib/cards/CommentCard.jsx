@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
+import { Twemoji } from 'react-emoji-render';
 import { dates } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { Text, Image, Avatar, Pluralize, Link, withRouter } from 'lib';
@@ -90,9 +91,7 @@ class CommentCard extends React.PureComponent {
       <CardBody>
         <CardText>
           {comment.Content && (
-            <Text nl2p>
-              {comment.Content}
-            </Text>
+            <Twemoji text={comment.Content} />
           )}
           {comment.Image && (
             <Image
