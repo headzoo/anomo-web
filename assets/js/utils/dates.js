@@ -150,7 +150,22 @@ export function datesGetCalendar(year = 0, month = 0, recurse = true) {
   };
 }
 
+/**
+ * @param {Date|string} date
+ * @returns {number}
+ */
+export function datesGetAge(date) {
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  const ageDifMs = Date.now() - date.getTime();
+  const ageDate  = new Date(ageDifMs);
+
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 export default {
+  getAge:          datesGetAge,
   getYear:         datesGetYear,
   getMonth:        datesGetMonth,
   getDayOfMonth:   datesGetDayOfMonth,

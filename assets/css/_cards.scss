@@ -58,9 +58,10 @@
 }
 
 /**
- * Activity
+ * Activity & Comment
  */
-.card-activity {
+.card-activity,
+.card-comment {
   cursor: pointer;
   margin-bottom: $gutter-size;
 
@@ -111,11 +112,13 @@
   }
 }
 
-.card-activity-user {
+.card-activity-user,
+.card-comment-user {
   flex-grow: 2;
 }
 
-.card-activity-date {
+.card-activity-date,
+.card-comment-date {
   font-size: 0.8rem;
 }
 
@@ -123,16 +126,19 @@
 
 }
 
-.card-activity-location {
+.card-activity-location,
+.card-comment-location {
   font-size: 0.8rem;
 }
 
-.card-activity-like {
+.card-activity-like,
+.card-comment-like {
   .icon-like-liked {
     color: $color-liked;
   }
 }
 
-.card-activity-comment-commented {
+.card-activity-comment-commented,
+.card-comment-comment-commented {
   color: $color-liked;
 }

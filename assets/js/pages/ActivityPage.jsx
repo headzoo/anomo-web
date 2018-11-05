@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { ActivityCard } from 'lib/cards';
+import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
 import { Page, withRouter } from 'lib';
 import * as activityActions from 'actions/activityActions';
@@ -79,12 +79,23 @@ class ActivityPage extends React.PureComponent {
       return null;
     }
 
+    if (!activity.ListComment) {
+      activity.ListComment = [];
+    }
+
     return (
       <Page title="Activity">
         <Row>
           <Column className="gutter-top" xs={4} offsetXs={4}>
-            <ActivityCard activity={activity} />
+            <ActivityCard activity={activity} clickableImage />
           </Column>
+        </Row>
+        <Row>
+          {activity.ListComment.map(comment => (
+            <Column key={comment.ID} xs={4} offsetXs={4}>
+              <CommentCard comment={comment} />
+            </Column>
+          ))}
         </Row>
       </Page>
     );

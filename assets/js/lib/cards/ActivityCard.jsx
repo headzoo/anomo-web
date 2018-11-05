@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
-import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
 import { Text, Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
@@ -14,14 +14,16 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityCard extends React.PureComponent {
   static propTypes = {
-    activity:     PropTypes.object.isRequired,
-    className:    PropTypes.string,
-    history:      PropTypes.object.isRequired,
-    activityLike: PropTypes.func.isRequired
+    activity:       PropTypes.object.isRequired,
+    className:      PropTypes.string,
+    history:        PropTypes.object.isRequired,
+    activityLike:   PropTypes.func.isRequired,
+    clickableImage: PropTypes.bool
   };
 
   static defaultProps = {
-    className: ''
+    className:      '',
+    clickableImage: false
   };
 
   /**
@@ -38,10 +40,12 @@ class ActivityCard extends React.PureComponent {
    * @param {Event} e
    */
   handleImageClick = (e) => {
-    const { activity } = this.props;
+    const { activity, clickableImage } = this.props;
 
-    e.preventDefault();
-    window.open(activity.Image);
+    if (clickableImage) {
+      e.preventDefault();
+      window.open(activity.Image);
+    }
   };
 
   /**
@@ -63,14 +67,14 @@ class ActivityCard extends React.PureComponent {
     return (
       <CardHeader>
         <div className="card-activity-avatar" onClick={this.handleUserClick}>
-          <Avatar src={activity.Avatar} />
+          <Avatar src={activity.Avatar || ''} />
         </div>
         <div className="card-activity-user">
           <div className="card-activity-username" onClick={this.handleUserClick}>
             {activity.FromUserName}
           </div>
           <div className="card-activity-location">
-            21 &middot; {activity.NeighborhoodName || 'Earth'}
+            {dates.getAge(activity.BirthDate || '1980-12-10')} &middot; {activity.NeighborhoodName || 'Earth'}
           </div>
         </div>
         <div className="card-activity-date">
@@ -113,8 +117,8 @@ class ActivityCard extends React.PureComponent {
   renderFooter = () => {
     const { activity } = this.props;
 
-    const comments  = parseInt(activity.Comment, 10);
-    const likes     = parseInt(activity.Like, 10);
+    const comments  = parseInt(activity.Comment || 0, 10);
+    const likes     = parseInt(activity.Like || 0, 10);
     const isLiked   = (activity.IsLike && activity.IsLike === '1');
     const isComment = (activity.IsComment && activity.IsComment === '1');
 
