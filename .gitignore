@@ -1,4 +1,5 @@
 .idea
+bin/deploy.sh
 *.pem
 ###> symfony/framework-bundle ###
 /.env

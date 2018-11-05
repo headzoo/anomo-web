@@ -8,10 +8,10 @@ git clone https://github.com/headzoo/anomo-web.git dev.anomo.com
 cd dev.anomo.com
 composer install
 yarn install
-yarn run build
+yarn run dev
 ```
 
-You can use `npm install` and `npm run build` if not using Yarn.
+You can use `npm install` and `npm run dev` if not using Yarn.
 
 ## Running
 
