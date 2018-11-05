@@ -1,5 +1,17 @@
+export const UI_LOADING       = 'UI_LOADING';
 export const UI_WINDOW_RESIZE = 'UI_WINDOW_RESIZE';
 export const UI_ERROR_MESSAGE = 'UI_ERROR_MESSAGE';
+
+/**
+ * @param {boolean} isLoading
+ * @returns {{type, isLoading: *}}
+ */
+export function uiIsLoading(isLoading) {
+  return {
+    type: UI_LOADING,
+    isLoading
+  };
+}
 
 /**
  * @param {string} em

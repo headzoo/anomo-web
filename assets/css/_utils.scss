@@ -84,3 +84,16 @@
   justify-content: center;
   min-height: calc(90vh - #{$header-height});
 }
+
+.mask {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: 0;
+  opacity: 0.5;
+  z-index: 1050;
+  position: fixed;
+  overflow: hidden;
+  background-color: #000;
+}

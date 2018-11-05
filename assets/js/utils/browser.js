@@ -159,14 +159,58 @@ export function browserTrigger(event, rest =  null) {
   }
 }
 
+/**
+ * @param {number|HTMLElement} top
+ * @param {string|number} behavior
+ * @param {string} rest
+ */
+export function browserScroll(top = 0, behavior = 'smooth', rest = 'smooth') {
+  if (typeof top !== 'number' && typeof top !== 'string') {
+    top.scroll({
+      left:     0,
+      top:      behavior,
+      behavior: rest
+    });
+  } else {
+    window.scroll({
+      left: 0,
+      top,
+      behavior
+    });
+  }
+}
+
+/**
+ *
+ */
+export function browserHideScrollbars() {
+  // firefox, chrome
+  document.documentElement.style.overflow = 'hidden';
+  // ie only
+  document.body.scroll = 'no';
+}
+
+/**
+ *
+ */
+export function browserShowScrollbars() {
+  // firefox, chrome
+  document.documentElement.style.overflow = 'auto';
+  // ie only
+  document.body.scroll = 'yes';
+}
+
 export default {
-  on:        browserOn,
-  off:       browserOff,
-  trigger:   browserTrigger,
-  title:     browserTitle,
-  scrollTop: browserScrollToTop,
-  parseHash: browserParseHash,
-  storage:   {
+  on:             browserOn,
+  off:            browserOff,
+  trigger:        browserTrigger,
+  title:          browserTitle,
+  scroll:         browserScroll,
+  scrollTop:      browserScrollToTop,
+  hideScrollbars: browserHideScrollbars,
+  showScrollbars: browserShowScrollbars,
+  parseHash:      browserParseHash,
+  storage:        {
     get:       browserStorageGet,
     set:       browserStorageSet,
     push:      browserStoragePush,

@@ -5,6 +5,7 @@ import { userRefresh } from 'actions/userActions';
 import { errorMessage, windowResize } from 'actions/uiActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
+import { Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
@@ -68,6 +69,13 @@ class App extends React.PureComponent {
     if (ui.errorMessage) {
       return (
         <div>{ui.errorMessage}</div>
+      );
+    }
+    if (ui.isLoading) {
+      return (
+        <Mask visible>
+          <Loading middle />
+        </Mask>
       );
     }
 

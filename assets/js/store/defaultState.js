@@ -5,6 +5,7 @@ import { objects } from 'utils';
  */
 export const defaultUi = {
   deviceSize:   'xs',
+  isLoading:    true,
   errorMessage: '',
   errorInfo:    {}
 };

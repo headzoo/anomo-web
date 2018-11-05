@@ -1,3 +1,5 @@
+import { uiIsLoading } from 'actions/uiActions';
+
 export const USER_ERROR   = 'USER_ERROR';
 export const USER_SENDING = 'USER_SENDING';
 export const USER_LOGIN   = 'USER_LOGIN';
@@ -85,7 +87,10 @@ export function userRefresh() {
         })
         .finally(() => {
           dispatch(userIsSending(false));
+          dispatch(uiIsLoading(false));
         });
+    } else {
+      dispatch(uiIsLoading(false));
     }
   };
 }

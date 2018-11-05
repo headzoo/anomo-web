@@ -9,6 +9,18 @@ const BREAK_XL = 1200;
 /**
  * @param {*} state
  * @param {*} action
+ * @returns {*}
+ */
+function loading(state, action) {
+  return {
+    ...state,
+    isLoading: action.isLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
  */
 function errorMessage(state, action) {
   return {
@@ -49,6 +61,8 @@ function windowResize(state, action) {
  */
 export default function uiReducer(state = {}, action = {}) {
   switch (action.type) {
+    case types.UI_LOADING:
+      return loading(state, action);
     case types.UI_ERROR_MESSAGE:
       return errorMessage(state, action);
     case types.UI_WINDOW_RESIZE:
