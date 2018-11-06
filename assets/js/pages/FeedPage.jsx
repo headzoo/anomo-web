@@ -14,7 +14,6 @@ import * as activityActions from 'actions/activityActions';
  */
 class FeedPage extends React.PureComponent {
   static propTypes = {
-    user:             PropTypes.object.isRequired,
     activity:         PropTypes.object.isRequired,
     activityGetAll:   PropTypes.func.isRequired,
     userSubmitStatus: PropTypes.func.isRequired
@@ -35,11 +34,9 @@ class FeedPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { user, activityGetAll } = this.props;
+    const { activityGetAll } = this.props;
 
-    if (user.isAuthenticated) {
-      activityGetAll();
-    }
+    activityGetAll();
   };
 
   /**
@@ -47,13 +44,8 @@ class FeedPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { user, activity, activityGetAll } = this.props;
+    const { activity } = this.props;
     let { activities } = this.state;
-
-    if (prevProps.user.isAuthenticated !== user.isAuthenticated && user.isAuthenticated) {
-      activityGetAll(this.lastActivityID);
-      return;
-    }
 
     if (!objects.isEqual(activity.activities, prevProps.activity.activities)
       && objects.isEqual(activities, prevState.activities)) {
@@ -136,6 +128,6 @@ class FeedPage extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('user', 'activity'),
+  mapStateToProps('activity'),
   mapActionsToProps(activityActions, userActions)
 )(withRouter(FeedPage));
