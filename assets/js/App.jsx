@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Router, Switch, Route } from 'react-router-dom';
 import { userRefresh } from 'actions/userActions';
 import { errorMessage, windowResize } from 'actions/uiActions';
+import { notificationsIntervalStart } from 'actions/notificationsActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
 import { PrivateRoute, ScrollToTop, Mask, Loading } from 'lib';
@@ -31,6 +32,7 @@ class App extends React.PureComponent {
     const { dispatch } = this.props;
 
     dispatch(userRefresh());
+    dispatch(notificationsIntervalStart());
     dispatch(windowResize(window.innerWidth));
     this.resizeOff = browser.on('resize', this.handleResize);
   }

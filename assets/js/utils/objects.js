@@ -53,18 +53,28 @@ export function objectIsEmpty(obj) {
  *
  * @param {Object} obj1
  * @param {Object} obj2
- * @param {Array} exclude
+ * @param {Array|object} rest
  * @returns {*}
  */
-export function objectPropsFilter(obj1, obj2, exclude = []) {
+export function objectPropsFilter(obj1, obj2, ...rest) {
   const obj2Keys = Object.keys(obj2);
   const newProps = Object.assign({}, obj1);
   Object.keys(newProps)
     .filter(key => obj2Keys.indexOf(key) !== -1)
     .forEach(key => delete newProps[key]);
 
-  exclude.forEach((prop) => {
-    delete newProps[prop];
+  rest.forEach((r) => {
+    if (Array.isArray(r)) {
+      r.forEach((prop) => {
+        delete newProps[prop];
+      });
+    } else if (typeof r === 'object') {
+      Object.keys(r).forEach((prop) => {
+        delete newProps[prop];
+      });
+    } else if (typeof r === 'string') {
+      delete newProps[r];
+    }
   });
 
   return newProps;

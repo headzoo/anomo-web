@@ -4,6 +4,7 @@ import user from 'reducers/userReducer';
 import forms from 'reducers/formsReducer';
 import profile from 'reducers/profileReducer';
 import activity from 'reducers/activityReducer';
+import notifications from 'reducers/notificationsReducer';
 
 /**
  * @returns {Reducer}
@@ -14,6 +15,7 @@ export default function createRootReducer() {
     user,
     forms,
     profile,
-    activity
+    activity,
+    notifications
   });
 }

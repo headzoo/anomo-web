@@ -4,10 +4,11 @@ import { objects } from 'utils';
  *
  */
 export const defaultUi = {
-  deviceSize:   'xs',
-  isLoading:    true,
-  errorMessage: '',
-  errorInfo:    {}
+  deviceSize:               'xs',
+  isLoading:                true,
+  errorMessage:             '',
+  errorInfo:                {},
+  isNotificationsModalOpen: false
 };
 
 /**
@@ -84,6 +85,14 @@ export const defaultActivity = {
 /**
  *
  */
+export const defaultNotifications = {
+  newNumber:     0,
+  notifications: []
+};
+
+/**
+ *
+ */
 const commonFormElements = {
   errorMessage:   '',
   successMessage: '',
@@ -116,9 +125,10 @@ export const defaultForms = {
 };
 
 export default {
-  ui:       objects.clone(defaultUi),
-  user:     objects.clone(defaultUser),
-  forms:    objects.clone(defaultForms),
-  profile:  objects.clone(defaultProfile),
-  activity: objects.clone(defaultActivity)
+  ui:            objects.clone(defaultUi),
+  user:          objects.clone(defaultUser),
+  forms:         objects.clone(defaultForms),
+  profile:       objects.clone(defaultProfile),
+  activity:      objects.clone(defaultActivity),
+  notifications: objects.clone(defaultNotifications)
 };

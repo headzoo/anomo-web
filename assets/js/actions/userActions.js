@@ -1,6 +1,7 @@
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFetch } from 'actions/activityActions';
+import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR          = 'USER_ERROR';
 export const USER_SENDING        = 'USER_SENDING';
@@ -99,6 +100,7 @@ export function userRefresh() {
               user: data.results
             });
             dispatch(activityFetch());
+            dispatch(notificationsFetch());
           }
         })
         .finally(() => {

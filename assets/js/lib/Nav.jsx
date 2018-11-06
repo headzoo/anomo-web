@@ -1,23 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapStateToProps } from 'utils/state';
-import { Link } from 'lib';
+import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
+import { Badge } from 'lib/bootstrap';
+import { Link, Number } from 'lib';
+import * as uiActions from 'actions/uiActions';
 
 /**
  *
  */
 class Nav extends React.PureComponent {
   static propTypes = {
-    user: PropTypes.object.isRequired
+    user:                     PropTypes.object.isRequired,
+    notifications:            PropTypes.object.isRequired,
+    uiNotificationsModalOpen: PropTypes.func.isRequired
   };
 
-  static defaultProps = {};
+  /**
+   *
+   */
+  handleNotificationsClick = () => {
+    const { uiNotificationsModalOpen } = this.props;
+
+    uiNotificationsModalOpen(true);
+  };
 
   /**
    * @returns {*}
    */
   render() {
-    const { user } = this.props;
+    const { user, notifications } = this.props;
 
     const navItems = [
       { name: 'about', label: 'About' }
@@ -40,6 +51,15 @@ class Nav extends React.PureComponent {
           <span className="navbar-toggler-icon" />
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
+          {notifications.newNumber > 0 && (
+            <Badge
+              title="Notifications"
+              className="nav-notifications-badge"
+              onClick={this.handleNotificationsClick}
+            >
+              <Number value={notifications.newNumber} />
+            </Badge>
+          )}
           <ul className="navbar-nav">
             {navItems.map(item => (
               <li key={item.name} className="nav-item">
@@ -68,4 +88,7 @@ class Nav extends React.PureComponent {
   }
 }
 
-export default connect(mapStateToProps('user'))(Nav);
+export default connect(
+  mapStateToProps('user', 'notifications'),
+  mapActionsToProps(uiActions)
+)(Nav);

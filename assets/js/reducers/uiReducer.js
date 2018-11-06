@@ -21,6 +21,7 @@ function loading(state, action) {
 /**
  * @param {*} state
  * @param {*} action
+ * @returns {*}
  */
 function errorMessage(state, action) {
   return {
@@ -33,6 +34,7 @@ function errorMessage(state, action) {
 /**
  * @param {*} state
  * @param {*} action
+ * @returns {*}
  */
 function windowResize(state, action) {
   const { width } = action;
@@ -59,6 +61,18 @@ function windowResize(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function notificationsModalOpen(state, action) {
+  return {
+    ...state,
+    isNotificationsModalOpen: action.isNotificationsModalOpen
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function uiReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.UI_LOADING:
@@ -67,6 +81,8 @@ export default function uiReducer(state = {}, action = {}) {
       return errorMessage(state, action);
     case types.UI_WINDOW_RESIZE:
       return windowResize(state, action);
+    case types.UI_NOTIFICATIONS_MODAL_OPEN:
+      return notificationsModalOpen(state, action);
     default: return state;
   }
 }
