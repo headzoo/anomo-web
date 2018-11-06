@@ -123,7 +123,7 @@ class User {
   info = (id) => {
     const url = endpoints.create('userInfo', {
       token:  this.getToken(),
-      UserID: id
+      userID: id
     });
 
     return this.proxy.get(url);

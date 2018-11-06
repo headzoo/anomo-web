@@ -59,7 +59,7 @@ class ActivityCard extends React.PureComponent {
     const { activity, history } = this.props;
 
     e.preventDefault();
-    history.push(routes.route('profile', { userName: activity.FromUserName }));
+    history.push(routes.route('profile', { id: activity.FromUserID }));
   };
 
   /**

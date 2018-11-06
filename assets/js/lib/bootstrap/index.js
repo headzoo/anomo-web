@@ -17,3 +17,4 @@ export { default as Button } from './Button';
 export { default as ButtonGroup } from './ButtonGroup';
 export { default as Modal } from './Modal';
 export { default as ModalFooter } from './ModalFooter';
+export { default as Badge } from './Badge';

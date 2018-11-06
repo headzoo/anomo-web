@@ -13,7 +13,7 @@ export const defaultUi = {
 /**
  *
  */
-export const defaultUser = {
+const commonUserElements = {
   UserID:                     0,
   UserName:                   '',
   Email:                      '',
@@ -43,11 +43,27 @@ export const defaultUser = {
   AllowAnswerPollNotice:      0,
   ListIntent:                 [],
   Tags:                       [],
-  RestrictMenuKey:            [],
-  isAuthenticated:            false,
-  isSending:                  false,
-  isStatusSending:            false,
-  errorMessage:               ''
+  RestrictMenuKey:            []
+};
+
+/**
+ *
+ */
+export const defaultUser = {
+  ...commonUserElements,
+  isAuthenticated: false,
+  isSending:       false,
+  isStatusSending: false,
+  errorMessage:    ''
+};
+
+/**
+ *
+ */
+export const defaultProfile = {
+  ...commonUserElements,
+  isSending:    false,
+  errorMessage: ''
 };
 
 /**
@@ -99,5 +115,6 @@ export default {
   ui:       objects.clone(defaultUi),
   user:     objects.clone(defaultUser),
   forms:    objects.clone(defaultForms),
+  profile:  objects.clone(defaultProfile),
   activity: objects.clone(defaultActivity)
 };

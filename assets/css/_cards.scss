@@ -193,3 +193,88 @@
     margin-bottom: 0;
   }
 }
+
+/**
+ * Profile
+ */
+.card-profile {
+  border: 0;
+  border-radius: 0;
+
+  .card-body {
+    padding: 0;
+  }
+}
+
+.card-profile-cover-container {
+  height: 250px;
+  position: relative;
+  text-align: center;
+  background-size: cover;
+  padding: $gutter-size;
+
+  h1 {
+    color: #FFF;
+    font-size: 2rem;
+    margin-top: 10px;
+    margin-bottom: 0;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  }
+
+  .avatar {
+    width: 150px;
+    height: 150px;
+    background-color: #FFF;
+  }
+}
+
+.card-profile-cover-info {
+  top: $gutter-size;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1150;
+  position: absolute;
+}
+
+.card-profile-cover-mask {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: 0;
+  opacity: 0.5;
+  z-index: 1050;
+  position: absolute;
+  background-color: #000;
+}
+
+.card-profile-location {
+  color: #FFF;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.card-profile-container {
+  padding: $gutter-size;
+}
+
+.card-profile-about,
+.card-profile-intents,
+.card-profile-tags {
+  padding-bottom: $gutter-size;
+
+  h3 {
+    font-size: 1rem;
+    color: $color-dim;
+  }
+}
+
+.card-profile-badge {
+  padding: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}

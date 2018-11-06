@@ -1,31 +1,112 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapStateToProps } from 'utils';
-import { Row, Column } from 'lib/bootstrap';
-import { Page, withRouter } from 'lib';
+import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { Row, Column, Card, CardBody, CardText, Badge } from 'lib/bootstrap';
+import { Page, Loading, Avatar, withRouter } from 'lib';
+import * as profileActions from 'actions/profileActions';
 
 /**
  *
  */
 class ProfilePage extends React.PureComponent {
   static propTypes = {
-    match: PropTypes.object.isRequired
+    match:        PropTypes.object.isRequired,
+    profile:      PropTypes.object.isRequired,
+    profileFetch: PropTypes.func.isRequired
   };
 
-  static defaultProps = {};
+  /**
+   *
+   */
+  componentDidMount = () => {
+    const { profileFetch, match } = this.props;
+
+    profileFetch(match.params.id);
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderBody = () => {
+    const { profile } = this.props;
+
+    const coverStyles = {
+      backgroundImage: `url(${profile.CoverPicture})`
+    };
+
+    return (
+      <CardText>
+        <div className="card-profile-cover-container" style={coverStyles}>
+          <div className="card-profile-cover-info">
+            <Avatar src={profile.Avatar || ''} />
+            <h1>{profile.UserName}</h1>
+            <div className="card-profile-location">
+              {dates.getAge(profile.BirthDate || '1980-12-10')} &middot; {profile.NeighborhoodName || 'Earth'}
+            </div>
+          </div>
+          <div className="card-profile-cover-mask" />
+        </div>
+        <div className="card-profile-container">
+          {profile.AboutMe && (
+            <div className="card-profile-about">
+              <h3>About</h3>
+              {profile.AboutMe}
+            </div>
+          )}
+          {profile.ListIntent.length > 0 && (
+            <div className="card-profile-intents">
+              <h3>Intents</h3>
+              {profile.ListIntent.map(intent => (
+                <Badge className="card-profile-badge" key={intent.IntentID}>
+                  {intent.Name}
+                </Badge>
+              ))}
+            </div>
+          )}
+          {profile.Tags.length > 0 && (
+            <div className="card-profile-tags">
+              <h3>Interest</h3>
+              {profile.Tags.map(tag => (
+                <Badge className="card-profile-badge" key={tag.TagID}>
+                  {tag.Name}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardText>
+    );
+  };
 
   /**
    * @returns {*}
    */
   render() {
-    const { match } = this.props;
+    const { profile } = this.props;
+
+    if (profile.UserID === 0 || profile.isSending) {
+      return (
+        <Loading middle />
+      );
+    }
 
     return (
-      <Page title={match.params.userName}>
-        {match.params.userName}
+      <Page title={profile.UserName}>
+        <Row>
+          <Column md={4} offsetMd={4} xs={12}>
+            <Card className="card-profile">
+              <CardBody>
+                {this.renderBody()}
+              </CardBody>
+            </Card>
+          </Column>
+        </Row>
       </Page>
     );
   }
 }
 
-export default connect(mapStateToProps())(withRouter(ProfilePage));
+export default connect(
+  mapStateToProps('profile'),
+  mapActionsToProps(profileActions)
+)(withRouter(ProfilePage));
