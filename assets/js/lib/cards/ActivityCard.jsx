@@ -65,6 +65,11 @@ class ActivityCard extends React.PureComponent {
   renderHeader = () => {
     const { activity } = this.props;
 
+    if (activity.IsAnonymous === '1') {
+      activity.FromUserName = 'Anonymous';
+      activity.Avatar = '/images/anonymous-avatar-sm.jpg';
+    }
+
     return (
       <CardHeader>
         <div className="card-activity-avatar" onClick={this.handleUserClick}>
