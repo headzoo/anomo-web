@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
+import YouTube from 'react-youtube';
 import { Twemoji } from 'react-emoji-render';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
@@ -110,6 +111,11 @@ class ActivityCard extends React.PureComponent {
             <Image
               data={{ src: activity.Image, alt: 'Image' }}
               onClick={this.handleImageClick}
+            />
+          )}
+          {activity.VideoID && (
+            <YouTube
+              videoId={activity.VideoID}
             />
           )}
         </CardText>
