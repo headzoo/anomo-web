@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
@@ -97,16 +98,20 @@ class ActivityPage extends React.PureComponent {
 
     if (this.props.activity.isCommentsLoading) {
       return (
-        <Column className="text-center" md={4} offsetMd={4} xs={12}>
-          <Loading />
-        </Column>
+        <FadeAndSlideTransition key={0} duration={150}>
+          <Column className="text-center" md={4} offsetMd={4} xs={12}>
+            <Loading />
+          </Column>
+        </FadeAndSlideTransition>
       );
     }
 
     return activity.ListComment.map(comment => (
-      <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
-        <CommentCard comment={comment} />
-      </Column>
+      <FadeAndSlideTransition key={comment.ID} duration={150}>
+        <Column md={4} offsetMd={4} xs={12}>
+          <CommentCard comment={comment} />
+        </Column>
+      </FadeAndSlideTransition>
     ));
   };
 
@@ -132,9 +137,9 @@ class ActivityPage extends React.PureComponent {
             <PostForm onSubmit={this.handleCommentSubmit} />
           </Column>
         </Row>
-        <Row>
+        <TransitionGroup component={Row}>
           {this.renderComments()}
-        </Row>
+        </TransitionGroup>
       </Page>
     );
   }

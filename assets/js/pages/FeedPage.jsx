@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
 import { PostForm } from 'lib/forms';
@@ -93,15 +94,17 @@ class FeedPage extends React.PureComponent {
         loader={<Loading className="text-center" />}
         hasMore
       >
-        <Row>
+        <TransitionGroup component={Row}>
           {activities.map(a => (
             a.ActionType !== '28' ? (
-              <Column key={a.ActivityID}>
-                <ActivityCard activity={a} />
-              </Column>
+              <FadeAndSlideTransition key={a.ActivityID} duration={150}>
+                <Column>
+                  <ActivityCard activity={a} />
+                </Column>
+              </FadeAndSlideTransition>
             ) : null
           ))}
-        </Row>
+        </TransitionGroup>
       </InfiniteScroll>
     );
   };
