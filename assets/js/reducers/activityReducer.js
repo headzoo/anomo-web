@@ -63,7 +63,13 @@ function fetch(state, action) {
   const newActivities = action.activities.slice(0).map((a) => {
     return anomo.activities.sanitizeActivity(a);
   });
-  const activities = objects.clone(state.activities).concat(newActivities);
+
+  let activities = [];
+  if (action.refresh) {
+    activities = newActivities;
+  } else {
+    activities = objects.clone(state.activities).concat(newActivities);
+  }
 
   let lastActivityID = 0;
   const lastActivity = activities[activities.length - 1];

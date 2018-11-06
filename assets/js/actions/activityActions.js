@@ -62,13 +62,17 @@ export function activityReset() {
 }
 
 /**
+ * @param {boolean} refresh
  * @returns {function(*, *, {anomo: *})}
  */
-export function activityFetch() {
+export function activityFetch(refresh = false) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-    const { lastActivityID } = getState().activity;
+    let lastActivityID = 0;
+    if (!refresh) {
+      lastActivityID = getState().activity.lastActivityID; // eslint-disable-line
+    }
     const url = endpoints.create('activityFetch', {
       token: user.getToken(),
       lastActivityID
@@ -78,7 +82,8 @@ export function activityFetch() {
         if (data.code === 'OK') {
           dispatch({
             type:       ACTIVITY_FETCH,
-            activities: data.Activities
+            activities: data.Activities,
+            refresh
           });
         }
       })

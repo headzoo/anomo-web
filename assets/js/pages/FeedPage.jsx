@@ -30,6 +30,15 @@ class FeedPage extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleRefresh = () => {
+    const { activityFetch } = this.props;
+
+    activityFetch(true);
+  };
+
+  /**
    * @param {Event} e
    * @param {*} values
    */
@@ -51,7 +60,10 @@ class FeedPage extends React.PureComponent {
         next={this.handleNext}
         dataLength={activities.length}
         style={{ overflow: 'hidden' }}
+        refreshFunction={this.handleRefresh}
         loader={<Loading className="text-center" />}
+        releaseToRefreshContent={<Loading className="text-center" />}
+        pullDownToRefresh
         hasMore
       >
         <TransitionGroup component={Row}>
