@@ -33,7 +33,7 @@ class Nav extends React.PureComponent {
     const navItems = [
       { name: 'about', label: 'About' }
     ];
-
+    //notifications.newNumber = 4;
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <Link name="home" className="navbar-brand">
@@ -51,33 +51,42 @@ class Nav extends React.PureComponent {
           <span className="navbar-toggler-icon" />
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
-          {notifications.newNumber > 0 && (
+          <Badge
+            onClick={this.handleNotificationsClick}
+            className="nav-badge nav-badge-with-number clickable"
+          >
+            <span>Notifications</span>
             <Badge
               title="Notifications"
               className="nav-notifications-badge"
-              onClick={this.handleNotificationsClick}
             >
               <Number value={notifications.newNumber} />
             </Badge>
-          )}
+          </Badge>
           <ul className="navbar-nav">
             {navItems.map(item => (
               <li key={item.name} className="nav-item">
                 <Link name={item.name} className="nav-link">
-                  {item.label}
+                  <Badge className="nav-badge">
+                    {item.label}
+                  </Badge>
                 </Link>
               </li>
             ))}
             {user.isAuthenticated ? (
               <li className="nav-item">
                 <Link name="logout" className="nav-link">
-                  Logout
+                  <Badge className="nav-badge">
+                    Logout
+                  </Badge>
                 </Link>
               </li>
             ) : (
               <li className="nav-item">
                 <Link name="login" className="nav-link">
-                  Login
+                  <Badge className="nav-badge">
+                    Login
+                  </Badge>
                 </Link>
               </li>
             )}

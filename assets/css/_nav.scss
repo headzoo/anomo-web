@@ -5,6 +5,29 @@
   justify-content: flex-end;
 }
 
+.nav-link {
+  padding: 0.25rem 1rem;
+  padding-right: 0 !important;
+}
+
+.nav-badge {
+  padding: 10px;
+  position: relative;
+  background-color: #5e6165;
+
+  &.nav-link {
+    cursor: pointer;
+  }
+}
+
+.nav-badge-with-number {
+  display: flex;
+  align-items: center;
+  padding-right: $gutter-size * 2;
+}
+
 .nav-notifications-badge {
-  cursor: pointer;
+  position: absolute;
+  right: 6px;
+  font-size: 90%;
 }
