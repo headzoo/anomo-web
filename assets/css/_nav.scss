@@ -12,22 +12,20 @@
 
 .nav-badge {
   padding: 10px;
-  position: relative;
   background-color: #5e6165;
 
   &.nav-link {
     cursor: pointer;
   }
+
+  .badge {
+    font-size: 90%;
+    margin-left: 0.5rem;
+  }
 }
 
 .nav-badge-with-number {
   display: flex;
+  padding: 8px 10px;
   align-items: center;
-  padding-right: $gutter-size * 2;
-}
-
-.nav-notifications-badge {
-  position: absolute;
-  right: 6px;
-  font-size: 90%;
 }

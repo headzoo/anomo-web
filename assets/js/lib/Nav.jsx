@@ -19,9 +19,11 @@ class Nav extends React.PureComponent {
    *
    */
   handleNotificationsClick = () => {
-    const { uiNotificationsModalOpen } = this.props;
+    const { notifications, uiNotificationsModalOpen } = this.props;
 
-    uiNotificationsModalOpen(true);
+    if (notifications.newNumber > 0) {
+      uiNotificationsModalOpen(true);
+    }
   };
 
   /**
@@ -33,7 +35,11 @@ class Nav extends React.PureComponent {
     const navItems = [
       { name: 'about', label: 'About' }
     ];
-    //notifications.newNumber = 4;
+
+    if (notifications.newNumber > 99) {
+      notifications.newNumber = '99+';
+    }
+
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <Link name="home" className="navbar-brand">
@@ -60,7 +66,7 @@ class Nav extends React.PureComponent {
               title="Notifications"
               className="nav-notifications-badge"
             >
-              <Number value={notifications.newNumber} />
+              {notifications.newNumber}
             </Badge>
           </Badge>
           <ul className="navbar-nav">
