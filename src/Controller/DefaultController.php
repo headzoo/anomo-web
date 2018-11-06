@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,23 +35,53 @@ class DefaultController extends AbstractController
      */
     public function proxyAction(Request $request)
     {
-        $content = json_decode($request->getContent(), true);
-
         $params = [];
-        if ($content['method'] === 'POST') {
-            $params['form_params'] = $content['body'];
+
+        /** @var UploadedFile $photo */
+        $photo = $request->files->get('Photo');
+        if ($photo) {
+            $post = $request->request->all();
+            $content = [
+                'url'    => $post['url'],
+                'method' => $post['method']
+            ];
+            unset($post['url']);
+            unset($post['method']);
+
+            $params['multipart'] = [
+                [
+                    'name'     => 'Photo',
+                    'filename' => $photo->getClientOriginalName(),
+                    'contents' => fopen($photo->getPathname(), 'r'),
+                    'headers'  => [
+                        'Content-Type' => $photo->getClientMimeType()
+                    ]
+                ]
+            ];
+            foreach($post as $name => $contents) {
+                $params['multipart'][] = [
+                    'name'     => $name,
+                    'contents' => $contents
+                ];
+            }
+        } else {
+            $content = json_decode($request->getContent(), true);
+            if ($content['method'] === 'POST') {
+                $params['form_params'] = $content['body'];
+            }
         }
-        $client = new GuzzleHttp\Client();
-        $res = $client->request($content['method'], $content['url'], $params);
+
+        $client   = new GuzzleHttp\Client();
+        $response = $client->request($content['method'], $content['url'], $params);
 
         $headers = [];
-        foreach($res->getHeaders() as $name => $values) {
+        foreach($response->getHeaders() as $name => $values) {
             $headers[$name] = $values[0];
         }
 
         return new Response(
-            (string)$res->getBody(),
-            $res->getStatusCode(),
+            (string)$response->getBody(),
+            $response->getStatusCode(),
             $headers
         );
     }

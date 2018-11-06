@@ -99,6 +99,7 @@ const commonFormElements = {
 export const defaultForms = {
   post: {
     message: '',
+    photo:   '',
     ...commonFormElements
   },
   contact: {

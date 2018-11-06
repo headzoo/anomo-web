@@ -43,7 +43,7 @@ class FeedPage extends React.PureComponent {
     const { userSubmitStatus } = this.props;
 
     e.preventDefault();
-    userSubmitStatus(values.message);
+    userSubmitStatus(values.message, values.photo);
   };
 
   /**

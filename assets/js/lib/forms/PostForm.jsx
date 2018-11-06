@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'utils';
 import { Card, CardBody, Button } from 'lib/bootstrap';
-import { Form, Textarea } from 'lib/forms';
+import { Form, Input, Textarea } from 'lib/forms';
 import { Icon } from 'lib';
 
 /**
@@ -21,22 +21,49 @@ class PostForm extends React.PureComponent {
   };
 
   /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+    this.photo = React.createRef();
+  }
+
+  /**
    *
    */
   handleUploadClick = () => {
-    alert('Not implemented yet.');
+    this.photo.current.click();
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} values
+   */
+  handleSubmit = (e, values) => {
+    const { onSubmit } = this.props;
+
+    if (values.photo) {
+      const photo = this.photo.current.files()[0];
+      if (photo) {
+        values.photo = photo;
+      } else {
+        values.photo = '';
+      }
+    }
+
+    onSubmit(e, values);
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { post, withUpload, onSubmit } = this.props;
+    const { post, withUpload } = this.props;
 
     return (
       <Card className="card-form-post">
         <CardBody>
-          <Form name="post" onSubmit={onSubmit} disabled={post.isSubmitting} required>
+          <Form name="post" onSubmit={this.handleSubmit} disabled={post.isSubmitting}>
             <div className="card-form-post-inputs">
               {withUpload && (
                 <div className="card-form-post-upload">
@@ -52,6 +79,13 @@ class PostForm extends React.PureComponent {
                   name="message"
                   id="form-post-message"
                   placeholder="Add to conversation"
+                />
+                <Input
+                  name="photo"
+                  type="file"
+                  ref={this.photo}
+                  id="form-post-photo"
+                  style={{ display: 'none' }}
                 />
               </div>
               <div className="card-form-post-btn">

@@ -20,6 +20,15 @@ class Proxy {
    * @returns {Promise<AxiosResponse<any>>}
    */
   post = (url, body) => {
+    if (body instanceof FormData) {
+      body.append('method', 'POST');
+      body.append('url', url);
+      return axios.post('/proxy', body)
+        .then((resp) => {
+          return resp.data;
+        });
+    }
+
     return axios.post('/proxy', {
       method: 'POST',
       url,

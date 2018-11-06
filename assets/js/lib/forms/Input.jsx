@@ -81,6 +81,20 @@ class Input extends React.PureComponent {
   };
 
   /**
+   * Clicks the input element.
+   */
+  click = () => {
+    this.input.current.click();
+  };
+
+  /**
+   * @returns {FileList}
+   */
+  files = () => {
+    return this.input.current.files;
+  };
+
+  /**
    * @param {Event} e
    * @param {*} context
    */

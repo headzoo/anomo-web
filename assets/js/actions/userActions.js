@@ -113,31 +113,52 @@ export function userRefresh() {
 
 /**
  * @param {string} message
+ * @param {*} photo
  * @returns {function(*, *, {endpoints: *})}
  */
-export function userSubmitStatus(message) {
+export function userSubmitStatus(message, photo = '') {
   return (dispatch, getState, { user, proxy, endpoints }) => {
     const formName = 'post';
 
     dispatch(userIsStatusSending(true));
     dispatch(formSubmitting(formName, true));
 
-    const url = endpoints.create('userStatus', {
-      token: user.getToken()
-    });
-    proxy.post(url, {
-      'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
-      'IsAnonymous':   0,
-      'TopicID':       1
-    }).then((resp) => {
-      if (resp.code === 'OK') {
-        dispatch(formReset(formName));
-      } else {
+    let url  = '';
+    let body = {};
+    if (photo) {
+      url = endpoints.create('userPicture', {
+        token: user.getToken()
+      });
+      body = new FormData();
+      body.append('PictureCaption', JSON.stringify({ message, message_tags: [] }));
+      body.append('Photo', photo);
+    } else {
+      if (message === '') {
         dispatch(formError(formName, 'There was an error.'));
+        return;
       }
-    }).finally(() => {
-      dispatch(userIsStatusSending(false));
-      dispatch(formSubmitting(formName, false));
-    });
+
+      url = endpoints.create('userStatus', {
+        token: user.getToken()
+      });
+      body = {
+        'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
+        'IsAnonymous':   0,
+        'TopicID':       1
+      };
+    }
+
+    proxy.post(url, body)
+      .then((resp) => {
+        if (resp.code === 'OK') {
+          dispatch(formReset(formName));
+          dispatch(activityFetch(true));
+        } else {
+          dispatch(formError(formName, 'There was an error.'));
+        }
+      }).finally(() => {
+        dispatch(userIsStatusSending(false));
+        dispatch(formSubmitting(formName, false));
+      });
   };
 }
