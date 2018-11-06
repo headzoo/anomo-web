@@ -103,7 +103,7 @@ class ActivityPage extends React.PureComponent {
       );
     }
 
-    return activity.ListComment.reverse().map(comment => (
+    return activity.ListComment.map(comment => (
       <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
         <CommentCard comment={comment} />
       </Column>

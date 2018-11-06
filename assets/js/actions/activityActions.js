@@ -188,12 +188,12 @@ export function activitySubmitComment(message, refID, actionType, topicID, isAno
       refID
     });
     proxy.post(url, {
-      'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
-      'IsAnonymous':   isAnonymous,
-      'TopicID':       topicID
+      'Content':     message,
+      'IsAnonymous': isAnonymous
     }).then((resp) => {
       if (resp.code === 'OK') {
         dispatch(formReset(formName));
+        dispatch(activityIsCommentsLoading(true));
         dispatch(activityGet(refID, actionType));
       } else {
         dispatch(formError(formName, 'There was an error.'));

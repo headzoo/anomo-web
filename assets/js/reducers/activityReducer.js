@@ -51,7 +51,7 @@ function sanitizeActivity(activity) {
     a.ListComment = a.ListComment.map((comment) => {
       comment.Content = escapeUnicode(comment.Content);
       return comment;
-    });
+    }).reverse();
   }
 
   return a;
