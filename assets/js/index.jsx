@@ -9,7 +9,7 @@ import 'moment-timezone';
 import App from 'App';
 
 Moment.globalParse    = 'YYYY-MM-DD HH:mm:ss';
-Moment.globalTimezone = 'America/Los_Angeles';
+Moment.globalTimezone = 'GMT';
 setConfig(window.initialConfig);
 
 ReactDOM.render(

@@ -16,7 +16,11 @@ function escapeString(str) {
  * @returns {string}
  */
 function escapeUnicode(message) {
-  return JSON.parse(`"${escapeString(message)}"`);
+  try {
+    return JSON.parse(`"${escapeString(message)}"`);
+  } catch (error) {
+    return message;
+  }
 }
 
 /**
