@@ -21,12 +21,14 @@ export function activityIsLoading(isLoading) {
 
 /**
  * @param {boolean} isLoading
+ * @param {number} refID
  * @returns {{type: string, isLoading: *}}
  */
-export function activityIsLikeLoading(isLoading) {
+export function activityIsLikeLoading(isLoading, refID) {
   return {
     type: ACTIVITY_LIKE_LOADING,
-    isLoading
+    isLoading,
+    refID
   };
 }
 
@@ -138,7 +140,7 @@ export function activityGet(refID, actionType) {
  */
 export function activityLike(refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
-    dispatch(activityIsLikeLoading(true));
+    dispatch(activityIsLikeLoading(true, refID));
 
     const url = endpoints.create('activityLike', {
       token: user.getToken(),
@@ -152,7 +154,7 @@ export function activityLike(refID, actionType) {
         }
       })
       .finally(() => {
-        dispatch(activityIsLikeLoading(false));
+        dispatch(activityIsLikeLoading(false, refID));
       });
   };
 }

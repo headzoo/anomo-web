@@ -24,8 +24,17 @@ function likeLoading(state, action) {
     LikeIsLoading: action.isLoading
   });
 
+  const activities = objects.clone(state.activities);
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].RefID === action.refID) {
+      activities[i].LikeIsLoading = action.isLoading;
+      break;
+    }
+  }
+
   return {
     ...state,
+    activities,
     activity
   };
 }
@@ -90,10 +99,19 @@ function fetch(state, action) {
  * @returns {*}
  */
 function set(state, action) {
+  const activities = objects.clone(state.activities);
   const activity = anomo.activities.sanitizeActivity(action.activity);
+
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].ActivityID === activity.ActivityID) {
+      activities[i] = objects.clone(activity);
+      break;
+    }
+  }
 
   return {
     ...state,
+    activities,
     activity
   };
 }
