@@ -84,7 +84,7 @@ class ActivityCard extends React.PureComponent {
           </div>
         </div>
         <div className="card-activity-date">
-          <Moment fromNow ago>
+          <Moment fromNow>
             {activity.CreatedDate}
           </Moment>
         </div>
