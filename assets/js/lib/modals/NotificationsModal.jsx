@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Modal } from 'lib/bootstrap';
-import { Avatar } from 'lib';
+import { Avatar, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
+import * as notificationActions from 'actions/notificationsActions';
 
 /**
  *
@@ -11,6 +13,8 @@ import * as uiActions from 'actions/uiActions';
 class NotificationsModal extends React.PureComponent {
   static propTypes = {
     notifications:            PropTypes.object.isRequired,
+    history:                  PropTypes.object.isRequired,
+    notificationsRead:        PropTypes.func.isRequired,
     uiNotificationsModalOpen: PropTypes.func.isRequired
   };
 
@@ -30,7 +34,14 @@ class NotificationsModal extends React.PureComponent {
    * @param {*} notification
    */
   handleNotificationClick = (e, notification) => {
-    console.log(notification);
+    const { history, notificationsRead, uiNotificationsModalOpen } = this.props;
+
+    notificationsRead(notification.ID);
+    uiNotificationsModalOpen(false);
+    history.push(routes.route('activity', {
+      refID:      notification.ContentID,
+      actionType: notification.ContentType
+    }));
   };
 
   /**
@@ -48,7 +59,11 @@ class NotificationsModal extends React.PureComponent {
               message = `${n.UserName} liked your post`;
               break;
             case '14':
-              message = `${n.UserName} commented on ${n.PostOwnerName}'s post`;
+              if (n.UserName === n.PostOwnerName) {
+                message = `${n.UserName} commented on their post`;
+              } else {
+                message = `${n.UserName} commented on ${n.PostOwnerName}'s post`;
+              }
               break;
             case '17':
               message = `${n.UserName} liked ${n.PostOwnerName}'s post`;
@@ -78,12 +93,20 @@ class NotificationsModal extends React.PureComponent {
    * @returns {*}
    */
   render() {
+    const props = objects.propsFilter(
+      this.props,
+      NotificationsModal.propTypes,
+      uiActions,
+      ['dispatch', 'routerParams', 'routerQuery', 'staticContext']
+    );
+
     return (
       <Modal
         title="Notifications"
         className="modal-notifications"
         onClosed={this.handleClose}
-        {...objects.propsFilter(this.props, NotificationsModal.propTypes, uiActions, 'dispatch')}
+        {...props}
+        lg
       >
         {this.renderNotifications()}
       </Modal>
@@ -93,5 +116,5 @@ class NotificationsModal extends React.PureComponent {
 
 export default connect(
   mapStateToProps('notifications'),
-  mapActionsToProps(uiActions)
-)(NotificationsModal);
+  mapActionsToProps(uiActions, notificationActions)
+)(withRouter(NotificationsModal));

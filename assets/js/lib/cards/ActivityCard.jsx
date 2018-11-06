@@ -167,7 +167,7 @@ class ActivityCard extends React.PureComponent {
 
     if (!clickable) {
       return (
-        <Card className={classNames('card-activity', className)}>
+        <Card key={activity.RefID} className={classNames('card-activity', className)}>
           {this.renderHeader()}
           {this.renderBody()}
           {this.renderFooter()}
@@ -176,7 +176,7 @@ class ActivityCard extends React.PureComponent {
     }
 
     return (
-      <Card className={`${classNames('card-activity', className)} card-activity-clickable`}>
+      <Card key={activity.RefID} className={`${classNames('card-activity', className)} card-activity-clickable`}>
         <Link
           name="activity"
           params={{ refID: activity.RefID, actionType: activity.ActionType }}

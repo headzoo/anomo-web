@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { objects } from 'utils';
+import { objects, browser } from 'utils';
 import { Icon } from 'lib';
 
 /**
@@ -79,9 +79,14 @@ class Modal extends React.PureComponent {
    * Called before the component unmounts
    */
   componentWillUnmount() {
+    browser.showScrollbars();
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+
     this.modalDOM.off('shown.bs.modal', this.handleModalShown);
     this.modalDOM.off('hidden.bs.modal', this.handleModalHidden);
-    this.modalDOM.modal('dispose');
   }
 
   /**

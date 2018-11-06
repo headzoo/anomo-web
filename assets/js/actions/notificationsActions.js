@@ -27,6 +27,23 @@ export function notificationsFetch() {
 }
 
 /**
+ * @param {number} notificationID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function notificationsRead(notificationID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('notificationsRead', {
+      token: user.getToken(),
+      notificationID
+    });
+    proxy.get(url)
+      .then(() => {
+        dispatch(notificationsFetch());
+      });
+  };
+}
+
+/**
  * @returns {function(*)}
  */
 export function notificationsIntervalStart() {

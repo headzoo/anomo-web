@@ -56,7 +56,13 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
+    const { match, activityGet } = this.props;
     const { activity } = this.state;
+
+    if (match.params.refID !== prevProps.match.params.refID) {
+      activityGet(match.params.refID, match.params.actionType);
+      return;
+    }
 
     if (!objects.isEmpty(this.props.activity.activity)
       && !objects.isEqual(this.props.activity.activity, activity)
