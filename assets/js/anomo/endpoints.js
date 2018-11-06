@@ -8,7 +8,7 @@ const urls = {
   userLogout:      `${base}/user/logout/{token}`,
   userInfo:        `${base}/user/get_user_info/{token}/{UserID}`,
   userStatus:      `${base}/user/post_status/{token}`,
-  activityGetAll:  `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
+  activityFetch:   `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
   activityGet:     `${base}/activity/detail/{token}/{refID}/{actionType}`,
   activityLike:    `${base}/activity/like/{token}/{refID}/{actionType}/false`,
   activityComment: `${base}/activity/comment/{token}/{refID}/{actionType}`

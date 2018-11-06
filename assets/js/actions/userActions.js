@@ -1,5 +1,6 @@
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
+import { activityFetch } from 'actions/activityActions';
 
 export const USER_ERROR          = 'USER_ERROR';
 export const USER_SENDING        = 'USER_SENDING';
@@ -59,6 +60,7 @@ export function userLogin(username, password) {
             type: USER_LOGIN,
             user: u
           });
+          dispatch(activityFetch());
         }
       })
       .finally(() => {
@@ -96,6 +98,7 @@ export function userRefresh() {
               type: USER_LOGIN,
               user: data.results
             });
+            dispatch(activityFetch());
           }
         })
         .finally(() => {

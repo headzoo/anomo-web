@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
@@ -15,58 +15,18 @@ import * as activityActions from 'actions/activityActions';
  */
 class FeedPage extends React.PureComponent {
   static propTypes = {
-    activity:         PropTypes.object.isRequired,
-    activityGetAll:   PropTypes.func.isRequired,
+    activities:       PropTypes.array.isRequired,
+    activityFetch:    PropTypes.func.isRequired,
     userSubmitStatus: PropTypes.func.isRequired
-  };
-
-  /**
-   * @param {*} props
-   */
-  constructor(props) {
-    super(props);
-    this.state = {
-      activities: []
-    };
-    this.lastActivityID = 0;
-  }
-
-  /**
-   *
-   */
-  componentDidMount = () => {
-    const { activityGetAll } = this.props;
-
-    activityGetAll();
-  };
-
-  /**
-   * @param {*} prevProps
-   * @param {*} prevState
-   */
-  componentDidUpdate = (prevProps, prevState) => {
-    const { activity } = this.props;
-    let { activities } = this.state;
-
-    if (!objects.isEqual(activity.activities, prevProps.activity.activities)
-      && objects.isEqual(activities, prevState.activities)) {
-      activities = activities.concat(activity.activities);
-      this.setState({ activities }, () => {
-        const lastActivity = activities[activities.length - 1];
-        if (lastActivity) {
-          this.lastActivityID = lastActivity.ActivityID;
-        }
-      });
-    }
   };
 
   /**
    *
    */
   handleNext = () => {
-    const { activityGetAll } = this.props;
+    const { activityFetch } = this.props;
 
-    activityGetAll(this.lastActivityID);
+    activityFetch();
   };
 
   /**
@@ -84,7 +44,7 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   renderFeed = () => {
-    const { activities } = this.state;
+    const { activities } = this.props;
 
     return (
       <InfiniteScroll
@@ -117,7 +77,10 @@ class FeedPage extends React.PureComponent {
       <Page title="Anomo">
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            <PostForm onSubmit={this.handlePostSubmit} withUpload />
+            <PostForm
+              onSubmit={this.handlePostSubmit}
+              withUpload
+            />
           </Column>
         </Row>
         <Row>
@@ -130,7 +93,13 @@ class FeedPage extends React.PureComponent {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    activities: state.activity.activities
+  };
+};
+
 export default connect(
-  mapStateToProps('activity'),
+  mapStateToProps,
   mapActionsToProps(activityActions, userActions)
 )(withRouter(FeedPage));

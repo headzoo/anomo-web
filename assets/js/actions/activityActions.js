@@ -4,7 +4,7 @@ export const ACTIVITY_LOADING          = 'ACTIVITY_LOADING';
 export const ACTIVITY_LIKE_LOADING     = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_COMMENTS_LOADING = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING  = 'ACTIVITY_COMMENT_SENDING';
-export const ACTIVITY_GET              = 'ACTIVITY_GET';
+export const ACTIVITY_FETCH            = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET              = 'ACTIVITY_SET';
 export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
 
@@ -62,38 +62,23 @@ export function activityReset() {
 }
 
 /**
- * @param {number} lastActivityID
  * @returns {function(*, *, {anomo: *})}
  */
-export function activityGetAll(lastActivityID = 0) {
+export function activityFetch() {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
 
-/*    const feed = JSON.parse(localStorage.getItem('feed'));
-    dispatch({
-      type:       ACTIVITY_GET,
-      activities: feed.Activities,
-      page:       parseInt(feed.Page, 10),
-      totalPages: parseInt(feed.TotalPage, 10),
-      radius:     parseFloat(feed.Radius)
-    });
-    dispatch(activityIsLoading(false));
-    return;*/
-
-    const url = endpoints.create('activityGetAll', {
+    const { lastActivityID } = getState().activity;
+    const url = endpoints.create('activityFetch', {
       token: user.getToken(),
       lastActivityID
     });
     proxy.get(url)
       .then((data) => {
-        // localStorage.setItem('feed', JSON.stringify(data));
         if (data.code === 'OK') {
           dispatch({
-            type:       ACTIVITY_GET,
-            activities: data.Activities,
-            page:       parseInt(data.Page, 10),
-            totalPages: parseInt(data.TotalPage, 10),
-            radius:     parseFloat(data.Radius)
+            type:       ACTIVITY_FETCH,
+            activities: data.Activities
           });
         }
       })

@@ -56,9 +56,7 @@ export const defaultUser = {
 export const defaultActivity = {
   activities:        [],
   activity:          {},
-  page:              0,
-  totalPages:        0,
-  radius:            0,
+  lastActivityID:    0,
   isLoading:         false,
   isCommentsLoading: false,
   isCommentSending:  false

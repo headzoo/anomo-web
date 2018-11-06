@@ -59,17 +59,22 @@ function commentSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function get(state, action) {
-  const activities = action.activities.slice(0).map((a) => {
+function fetch(state, action) {
+  const newActivities = action.activities.slice(0).map((a) => {
     return anomo.activities.sanitizeActivity(a);
   });
+  const activities = objects.clone(state.activities).concat(newActivities);
+
+  let lastActivityID = 0;
+  const lastActivity = activities[activities.length - 1];
+  if (lastActivity) {
+    lastActivityID = lastActivity.ActivityID;
+  }
 
   return {
     ...state,
     activities,
-    page:       action.page,
-    totalPages: action.totalPages,
-    radius:     action.radius
+    lastActivityID
   };
 }
 
@@ -113,8 +118,8 @@ export default function activityReducer(state = {}, action = {}) {
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
-    case types.ACTIVITY_GET:
-      return get(state, action);
+    case types.ACTIVITY_FETCH:
+      return fetch(state, action);
     case types.ACTIVITY_SET:
       return set(state, action);
     case types.ACTIVITY_RESET:
