@@ -4,7 +4,7 @@
 .page {
   .container,
   .container-fluid {
-    padding-top: $gutter-size;
+    padding-top: ($header-height + $gutter-size);
   }
 }
 

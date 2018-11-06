@@ -35,7 +35,7 @@ class Nav extends React.PureComponent {
     ];
 
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <Link name="home" className="navbar-brand">
           Anomo
         </Link>
