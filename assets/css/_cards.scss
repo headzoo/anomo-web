@@ -64,7 +64,6 @@
  */
 .card-activity,
 .card-comment {
-  cursor: pointer;
   margin-bottom: $gutter-size;
 
   .card-header {
@@ -115,6 +114,10 @@
       text-decoration: none;
     }
   }
+}
+
+.card-activity-clickable {
+  cursor: pointer;
 }
 
 .card-activity-user,

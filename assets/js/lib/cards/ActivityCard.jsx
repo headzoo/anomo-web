@@ -19,11 +19,13 @@ class ActivityCard extends React.PureComponent {
     className:      PropTypes.string,
     history:        PropTypes.object.isRequired,
     activityLike:   PropTypes.func.isRequired,
+    clickable:      PropTypes.bool,
     clickableImage: PropTypes.bool
   };
 
   static defaultProps = {
     className:      '',
+    clickable:      true,
     clickableImage: false
   };
 
@@ -153,10 +155,20 @@ class ActivityCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, className } = this.props;
+    const { activity, clickable, className } = this.props;
+
+    if (!clickable) {
+      return (
+        <Card className={classNames('card-activity', className)}>
+          {this.renderHeader()}
+          {this.renderBody()}
+          {this.renderFooter()}
+        </Card>
+      );
+    }
 
     return (
-      <Card className={classNames('card-activity', className)}>
+      <Card className={`${classNames('card-activity', className)} card-activity-clickable`}>
         <Link
           name="activity"
           params={{ refID: activity.RefID, actionType: activity.ActionType }}

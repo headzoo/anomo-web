@@ -1,6 +1,10 @@
 @import "vars";
 @import "mixins";
 
+.icon-like {
+  cursor: pointer;
+}
+
 .icon-like-loading {
   display: inline-block;
 
