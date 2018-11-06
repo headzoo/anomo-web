@@ -1,3 +1,4 @@
+import history from 'store/history';
 import User from './User';
 import Proxy from './Proxy';
 import endpoints from './endpoints';
@@ -13,6 +14,7 @@ class Client {
     this.user      = new User();
     this.proxy     = new Proxy();
     this.endpoints = endpoints;
+    this.history   = history;
   }
 }
 

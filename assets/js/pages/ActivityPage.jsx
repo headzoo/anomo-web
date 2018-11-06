@@ -120,8 +120,13 @@ class ActivityPage extends React.PureComponent {
       return null;
     }
 
+    if (activity.IsAnonymous === '1') {
+      activity.FromUserName = 'Anonymous';
+      activity.Avatar = '/images/anonymous-avatar-sm.jpg';
+    }
+
     return (
-      <Page title="Activity">
+      <Page title={activity.FromUserName}>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
             <ActivityCard activity={activity} clickableImage />

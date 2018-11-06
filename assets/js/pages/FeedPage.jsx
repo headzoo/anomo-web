@@ -103,9 +103,11 @@ class FeedPage extends React.PureComponent {
       >
         <Row>
           {activities.map(a => (
-            <Column key={a.ActivityID}>
-              <ActivityCard activity={a} />
-            </Column>
+            a.ActionType !== '28' ? (
+              <Column key={a.ActivityID}>
+                <ActivityCard activity={a} />
+              </Column>
+            ) : null
           ))}
         </Row>
       </InfiniteScroll>
