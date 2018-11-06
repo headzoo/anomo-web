@@ -105,6 +105,7 @@
   .avatar {
     height: 44px;
     width: 44px;
+    cursor: pointer;
     margin-right: $gutter-size;
   }
 
@@ -123,6 +124,7 @@
 
 .card-activity-user,
 .card-comment-user {
+  cursor: pointer;
   flex-grow: 2;
 }
 
@@ -200,6 +202,7 @@
 .card-profile {
   border: 0;
   border-radius: 0;
+  margin-bottom: $gutter-size;
 
   .card-body {
     padding: 0;

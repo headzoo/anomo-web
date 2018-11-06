@@ -62,8 +62,11 @@ export const defaultUser = {
  */
 export const defaultProfile = {
   ...commonUserElements,
-  isSending:    false,
-  errorMessage: ''
+  isSending:      false,
+  isPostsLoading: false,
+  activities:     [],
+  lastActivityID: 0,
+  errorMessage:   ''
 };
 
 /**

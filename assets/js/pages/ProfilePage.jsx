@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge } from 'lib/bootstrap';
-import { Page, Loading, Avatar, withRouter } from 'lib';
+import { Page, Feed, Loading, Avatar, withRouter } from 'lib';
 import * as profileActions from 'actions/profileActions';
 
 /**
@@ -10,18 +10,48 @@ import * as profileActions from 'actions/profileActions';
  */
 class ProfilePage extends React.PureComponent {
   static propTypes = {
-    match:        PropTypes.object.isRequired,
-    profile:      PropTypes.object.isRequired,
-    profileFetch: PropTypes.func.isRequired
+    match:             PropTypes.object.isRequired,
+    profile:           PropTypes.object.isRequired,
+    profileFetch:      PropTypes.func.isRequired,
+    profilePosts:      PropTypes.func.isRequired,
+    profilePostsReset: PropTypes.func.isRequired
   };
 
   /**
    *
    */
   componentDidMount = () => {
-    const { profileFetch, match } = this.props;
+    const { profileFetch, profilePosts, match } = this.props;
 
     profileFetch(match.params.id);
+    profilePosts(match.params.id);
+  };
+
+  /**
+   *
+   */
+  componentWillUnmount = () => {
+    const { profilePostsReset } = this.props;
+
+    profilePostsReset();
+  };
+
+  /**
+   *
+   */
+  handleNext = () => {
+    const { profilePosts, match } = this.props;
+
+    profilePosts(match.params.id);
+  };
+
+  /**
+   *
+   */
+  handleRefresh = () => {
+    const { profilePosts, match } = this.props;
+
+    profilePosts(match.params.id, true);
   };
 
   /**
@@ -99,6 +129,15 @@ class ProfilePage extends React.PureComponent {
                 {this.renderBody()}
               </CardBody>
             </Card>
+          </Column>
+        </Row>
+        <Row>
+          <Column md={4} offsetMd={4} xs={12}>
+            <Feed
+              onNext={this.handleNext}
+              onRefresh={this.handleRefresh}
+              activities={profile.activities}
+            />
           </Column>
         </Row>
       </Page>

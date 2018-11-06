@@ -21,3 +21,4 @@ export { default as Pluralize } from './Pluralize';
 export { default as Mask } from './Mask';
 export { default as PrivateRoute } from './PrivateRoute';
 export { default as ScrollToTop } from './ScrollToTop';
+export { default as Feed } from './Feed';
