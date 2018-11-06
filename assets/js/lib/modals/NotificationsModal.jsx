@@ -97,6 +97,7 @@ class NotificationsModal extends React.PureComponent {
       this.props,
       NotificationsModal.propTypes,
       uiActions,
+      notificationActions,
       ['dispatch', 'routerParams', 'routerQuery', 'staticContext']
     );
 

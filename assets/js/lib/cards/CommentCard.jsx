@@ -30,7 +30,7 @@ class CommentCard extends React.PureComponent {
     const { comment, history } = this.props;
 
     e.preventDefault();
-    history.push(routes.route('profile', { userName: comment.UserName }));
+    history.push(routes.route('profile', { id: comment.UserID }));
   };
 
   /**
