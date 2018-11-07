@@ -11,13 +11,13 @@ import { Nav, Footer } from 'lib';
  */
 class Page extends React.PureComponent {
   static propTypes = {
-    title:                    PropTypes.string.isRequired,
-    withNav:                  PropTypes.bool,
-    withFooter:               PropTypes.bool,
-    fullHeight:               PropTypes.bool,
-    className:                PropTypes.string,
-    children:                 PropTypes.node,
-    isNotificationsModalOpen: PropTypes.bool.isRequired
+    title:         PropTypes.string.isRequired,
+    withNav:       PropTypes.bool,
+    withFooter:    PropTypes.bool,
+    fullHeight:    PropTypes.bool,
+    className:     PropTypes.string,
+    children:      PropTypes.node,
+    visibleModals: PropTypes.object.isRequired
   };
 
   static defaultProps = {
@@ -49,7 +49,7 @@ class Page extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { withNav, withFooter, fullHeight, className, children, isNotificationsModalOpen, ...props } = this.props;
+    const { withNav, withFooter, fullHeight, className, children, visibleModals, ...props } = this.props;
 
     const classes = classNames('page', {
       'page-full-height': fullHeight
@@ -62,7 +62,7 @@ class Page extends React.PureComponent {
           {children}
         </Container>
         {withFooter && <Footer />}
-        <NotificationsModal open={isNotificationsModalOpen} />
+        <NotificationsModal open={visibleModals.notifications} />
       </div>
     );
   }
@@ -70,7 +70,7 @@ class Page extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    isNotificationsModalOpen: state.ui.isNotificationsModalOpen
+    visibleModals: state.ui.visibleModals
   };
 };
 

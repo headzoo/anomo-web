@@ -1,7 +1,7 @@
-export const UI_LOADING                  = 'UI_LOADING';
-export const UI_WINDOW_RESIZE            = 'UI_WINDOW_RESIZE';
-export const UI_ERROR_MESSAGE            = 'UI_ERROR_MESSAGE';
-export const UI_NOTIFICATIONS_MODAL_OPEN = 'UI_NOTIFICATIONS_MODAL_OPEN';
+export const UI_LOADING       = 'UI_LOADING';
+export const UI_WINDOW_RESIZE = 'UI_WINDOW_RESIZE';
+export const UI_ERROR_MESSAGE = 'UI_ERROR_MESSAGE';
+export const UI_VISIBLE_MODAL = 'UI_VISIBLE_MODAL';
 
 /**
  * @param {boolean} isLoading
@@ -39,12 +39,14 @@ export function windowResize(width) {
 }
 
 /**
- * @param {boolean} isNotificationsModalOpen
- * @returns {{type: string, modalNotificationsOpen: *}}
+ * @param {string} modalName
+ * @param {boolean} isVisible
+ * @returns {{type: string, modalName: *, isOpen: *}}
  */
-export function uiNotificationsModalOpen(isNotificationsModalOpen) {
+export function uiVisibleModal(modalName, isVisible) {
   return {
-    type: UI_NOTIFICATIONS_MODAL_OPEN,
-    isNotificationsModalOpen
+    type: UI_VISIBLE_MODAL,
+    modalName,
+    isVisible
   };
 }

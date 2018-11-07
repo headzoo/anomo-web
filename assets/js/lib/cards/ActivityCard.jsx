@@ -7,7 +7,7 @@ import { Twemoji } from 'react-emoji-render';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Image, Avatar, Number, Pluralize, Link, withRouter } from 'lib';
+import { Image, Avatar, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
@@ -89,6 +89,9 @@ class ActivityCard extends React.PureComponent {
           </div>
         </div>
         <div className="card-activity-date">
+          <div className="card-activity-ellipsis">
+            <Icon name="ellipsis-h" />
+          </div>
           <Moment fromNow>
             {activity.CreatedDate}
           </Moment>

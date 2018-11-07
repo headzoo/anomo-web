@@ -4,11 +4,13 @@ import { objects } from 'utils';
  *
  */
 export const defaultUi = {
-  deviceSize:               'xs',
-  isLoading:                true,
-  errorMessage:             '',
-  errorInfo:                {},
-  isNotificationsModalOpen: false
+  deviceSize:    'xs',
+  isLoading:     true,
+  errorMessage:  '',
+  errorInfo:     {},
+  visibleModals: {
+    notifications: false
+  }
 };
 
 /**

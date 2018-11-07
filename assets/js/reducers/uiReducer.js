@@ -1,5 +1,6 @@
 import * as types from 'actions/uiActions';
 import objects from 'utils/objects';
+import { UI_VISIBLE_MODAL } from '../actions/uiActions';
 
 const BREAK_SM = 576;
 const BREAK_MD = 768;
@@ -61,11 +62,12 @@ function windowResize(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function notificationsModalOpen(state, action) {
-  return {
-    ...state,
-    isNotificationsModalOpen: action.isNotificationsModalOpen
-  };
+function visibleModal(state, action) {
+  const newState = objects.clone(state);
+
+  newState.visibleModals[action.modalName] = action.isVisible;
+
+  return newState;
 }
 
 /**
@@ -81,8 +83,8 @@ export default function uiReducer(state = {}, action = {}) {
       return errorMessage(state, action);
     case types.UI_WINDOW_RESIZE:
       return windowResize(state, action);
-    case types.UI_NOTIFICATIONS_MODAL_OPEN:
-      return notificationsModalOpen(state, action);
+    case types.UI_VISIBLE_MODAL:
+      return visibleModal(state, action);
     default: return state;
   }
 }

@@ -12,10 +12,10 @@ import * as notificationActions from 'actions/notificationsActions';
  */
 class NotificationsModal extends React.PureComponent {
   static propTypes = {
-    notifications:            PropTypes.object.isRequired,
-    history:                  PropTypes.object.isRequired,
-    notificationsRead:        PropTypes.func.isRequired,
-    uiNotificationsModalOpen: PropTypes.func.isRequired
+    notifications:     PropTypes.object.isRequired,
+    history:           PropTypes.object.isRequired,
+    notificationsRead: PropTypes.func.isRequired,
+    uiVisibleModal:    PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -24,9 +24,9 @@ class NotificationsModal extends React.PureComponent {
    *
    */
   handleClose = () => {
-    const { uiNotificationsModalOpen } = this.props;
+    const { uiVisibleModal } = this.props;
 
-    uiNotificationsModalOpen(false);
+    uiVisibleModal('notifications', false);
   };
 
   /**
@@ -34,10 +34,10 @@ class NotificationsModal extends React.PureComponent {
    * @param {*} notification
    */
   handleNotificationClick = (e, notification) => {
-    const { history, notificationsRead, uiNotificationsModalOpen } = this.props;
+    const { history, notificationsRead, uiVisibleModal } = this.props;
 
     notificationsRead(notification.ID);
-    uiNotificationsModalOpen(false);
+    uiVisibleModal('notifications', false);
     history.push(routes.route('activity', {
       refID:      notification.ContentID,
       actionType: notification.ContentType

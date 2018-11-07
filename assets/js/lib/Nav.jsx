@@ -12,22 +12,22 @@ import * as activityActions from 'actions/activityActions';
  */
 class Nav extends React.PureComponent {
   static propTypes = {
-    user:                     PropTypes.object.isRequired,
-    history:                  PropTypes.object.isRequired,
-    activity:                 PropTypes.object.isRequired,
-    notifications:            PropTypes.object.isRequired,
-    activityFetch:            PropTypes.func.isRequired,
-    uiNotificationsModalOpen: PropTypes.func.isRequired
+    user:           PropTypes.object.isRequired,
+    history:        PropTypes.object.isRequired,
+    activity:       PropTypes.object.isRequired,
+    notifications:  PropTypes.object.isRequired,
+    activityFetch:  PropTypes.func.isRequired,
+    uiVisibleModal: PropTypes.func.isRequired
   };
 
   /**
    *
    */
   handleNotificationsClick = () => {
-    const { notifications, uiNotificationsModalOpen } = this.props;
+    const { notifications, uiVisibleModal } = this.props;
 
     if (notifications.newNumber > 0) {
-      uiNotificationsModalOpen(true);
+      uiVisibleModal('notifications', true);
     }
   };
 

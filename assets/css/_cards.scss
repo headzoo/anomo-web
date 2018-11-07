@@ -24,13 +24,26 @@
   padding: $gutter-size 0;
   color: rgba(0, 0, 0, 0.4);
 
-  .icon {
+/*  .icon {
     left: 0;
     right: 0;
     top: -22px;
     font-size: 7rem;
     position: absolute;
     color: rgba(0, 0, 0, 0.06);
+  }*/
+
+  .card-activity-ellipsis {
+    cursor: pointer;
+    text-align: right;
+
+    &:hover {
+      color: #AAA;
+    }
+
+    .icon {
+      font-size: 1.5rem;
+    }
   }
 }
 
