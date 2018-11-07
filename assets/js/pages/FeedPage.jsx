@@ -39,15 +39,6 @@ class FeedPage extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleRefresh = () => {
-    const { activityFetch } = this.props;
-
-    activityFetch(true);
-  };
-
-  /**
    * @param {Event} e
    * @param {*} values
    */
@@ -82,7 +73,6 @@ class FeedPage extends React.PureComponent {
             <Feed
               activities={activities}
               onNext={this.handleNext}
-              onRefresh={this.handleRefresh}
             />
           </Column>
         </Row>

@@ -13,30 +13,25 @@ import { Loading } from 'lib';
 class Feed extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.array.isRequired,
-    onNext:     PropTypes.func,
-    onRefresh:  PropTypes.func
+    onNext:     PropTypes.func
   };
 
   static defaultProps = {
-    onNext:    () => {},
-    onRefresh: () => {}
+    onNext: () => {}
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { activities, onNext, onRefresh } = this.props;
+    const { activities, onNext } = this.props;
 
     return (
       <InfiniteScroll
         next={onNext}
-        refreshFunction={onRefresh}
         dataLength={activities.length}
         style={{ overflow: 'hidden' }}
         loader={<Loading className="text-center" />}
-        releaseToRefreshContent={<Loading className="text-center" />}
-        pullDownToRefresh
         hasMore
       >
         <TransitionGroup component={Row}>
