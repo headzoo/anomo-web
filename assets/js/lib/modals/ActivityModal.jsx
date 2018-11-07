@@ -11,6 +11,8 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityModal extends React.PureComponent {
   static propTypes = {
+    following:      PropTypes.array.isRequired,
+    blocked:        PropTypes.array.isRequired,
     visibleModals:  PropTypes.object.isRequired,
     uiVisibleModal: PropTypes.func.isRequired,
     userFollow:     PropTypes.func.isRequired,
@@ -20,6 +22,42 @@ class ActivityModal extends React.PureComponent {
   };
 
   static defaultProps = {};
+
+  /**
+   * @returns {boolean}
+   */
+  isFollowing = () => {
+    const { following, visibleModals } = this.props;
+    const { FromUserID } = visibleModals.activity;
+
+    let found = false;
+    for (let i = 0; i < following.length; i++) {
+      if (following[i].UserID === FromUserID) {
+        found = true;
+        break;
+      }
+    }
+
+    return found;
+  };
+
+  /**
+   * @returns {boolean}
+   */
+  isBlocked = () => {
+    const { blocked, visibleModals } = this.props;
+    const { FromUserID } = visibleModals.activity;
+
+    let found = false;
+    for (let i = 0; i < blocked.length; i++) {
+      if (blocked[i].UserID === FromUserID) {
+        found = true;
+        break;
+      }
+    }
+
+    return found;
+  };
 
   /**
    *
@@ -83,16 +121,46 @@ class ActivityModal extends React.PureComponent {
         {...rest}
       >
         <ul className="list-group list-group-flush">
-          <li className="list-group-item list-group-item-action clickable" onClick={e => this.handleClick(e, 'share')}>
+          <li
+            onClick={e => this.handleClick(e, 'share')}
+            className="list-group-item list-group-item-action clickable"
+          >
             Share Post
           </li>
-          <li className="list-group-item list-group-item-action clickable" onClick={e => this.handleClick(e, 'follow')}>
-            Follow User
-          </li>
-          <li className="list-group-item list-group-item-action clickable" onClick={e => this.handleClick(e, 'block')}>
-            Block User
-          </li>
-          <li className="list-group-item list-group-item-action clickable" onClick={e => this.handleClick(e, 'report')}>
+          {this.isFollowing() ? (
+            <li
+              onClick={e => this.handleClick(e, 'follow')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Unfollow User
+            </li>
+          ) : (
+            <li
+              onClick={e => this.handleClick(e, 'follow')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Follow User
+            </li>
+          )}
+          {this.isBlocked() ? (
+            <li
+              onClick={e => this.handleClick(e, 'block')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Unblock User
+            </li>
+          ) : (
+            <li
+              onClick={e => this.handleClick(e, 'block')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Block User
+            </li>
+          )}
+          <li
+            onClick={e => this.handleClick(e, 'report')}
+            className="list-group-item list-group-item-action clickable"
+          >
             Report Post
           </li>
         </ul>
@@ -103,6 +171,8 @@ class ActivityModal extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
+    following:     state.user.following,
+    blocked:       state.user.blocked,
     visibleModals: state.ui.visibleModals
   };
 };

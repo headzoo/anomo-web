@@ -8,6 +8,9 @@ export const USER_SENDING        = 'USER_SENDING';
 export const USER_STATUS_SENDING = 'USER_STATUS_SENDING';
 export const USER_LOGIN          = 'USER_LOGIN';
 export const USER_LOGOUT         = 'USER_LOGOUT';
+export const USER_FOLLOWERS      = 'USER_FOLLOWERS';
+export const USER_FOLLOWING      = 'USER_FOLLOWING';
+export const USER_BLOCKED        = 'USER_BLOCKED';
 
 /**
  * @param {string} errorMessage
@@ -43,6 +46,106 @@ export function userIsStatusSending(isStatusSending) {
 }
 
 /**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userFollowers(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userFollowers', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type:      USER_FOLLOWERS,
+            followers: data.ListFollower
+          });
+        }
+      });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userFollowing(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userFollowing', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type:      USER_FOLLOWING,
+            following: data.ListFollowing
+          });
+        }
+      });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userFollow(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userFollow', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url)
+      .then(() => {
+        dispatch(userFollowing(user.getID()));
+      });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userBlocked(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userBlocked', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type:    USER_BLOCKED,
+            blocked: data.results
+          });
+        }
+      });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userBlock(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userBlock', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url)
+      .then(() => {
+        dispatch(userBlocked(user.getID()));
+      });
+  };
+}
+
+/**
  * @param {string} username
  * @param {string} password
  * @returns {function(*, *, {anomo: *})}
@@ -61,6 +164,9 @@ export function userLogin(username, password) {
             type: USER_LOGIN,
             user: u
           });
+          dispatch(userBlocked(u.UserID));
+          dispatch(userFollowing(u.UserID));
+          dispatch(userFollowers(u.UserID));
           dispatch(activityFetch());
         }
       })
@@ -99,6 +205,9 @@ export function userRefresh() {
               type: USER_LOGIN,
               user: data.results
             });
+            dispatch(userBlocked(id));
+            dispatch(userFollowing(id));
+            dispatch(userFollowers(id));
             dispatch(activityFetch());
             dispatch(notificationsFetch());
           }
@@ -110,34 +219,6 @@ export function userRefresh() {
     } else {
       dispatch(uiIsLoading(false));
     }
-  };
-}
-
-/**
- * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
- */
-export function userFollow(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    const url = endpoints.create('userFollow', {
-      token: user.getToken(),
-      userID
-    });
-    proxy.get(url);
-  };
-}
-
-/**
- * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
- */
-export function userBlock(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    const url = endpoints.create('userBlock', {
-      token: user.getToken(),
-      userID
-    });
-    proxy.get(url);
   };
 }
 

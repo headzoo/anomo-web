@@ -56,6 +56,9 @@ const commonUserElements = {
  */
 export const defaultUser = {
   ...commonUserElements,
+  followers:       [],
+  following:       [],
+  blocked:         [],
   isAuthenticated: false,
   isSending:       false,
   isStatusSending: false,

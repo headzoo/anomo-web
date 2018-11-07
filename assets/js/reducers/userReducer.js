@@ -1,6 +1,7 @@
 import * as types from 'actions/userActions';
 import * as defaultState from 'store/defaultState';
 import { objects } from 'utils';
+import { USER_FOLLOWERS, USER_FOLLOWING } from '../actions/userActions';
 
 /**
  * @param {*} state
@@ -61,6 +62,42 @@ function logout() {
  * @param {*} action
  * @returns {*}
  */
+function followers(state, action) {
+  return {
+    ...state,
+    followers: action.followers.slice(0)
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function following(state, action) {
+  return {
+    ...state,
+    following: action.following.slice(0)
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function blocked(state, action) {
+  return {
+    ...state,
+    blocked: action.blocked.slice(0)
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function userReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.USER_ERROR:
@@ -73,6 +110,12 @@ export default function userReducer(state = {}, action = {}) {
       return login(state, action);
     case types.USER_LOGOUT:
       return logout();
+    case types.USER_FOLLOWERS:
+      return followers(state, action);
+    case types.USER_FOLLOWING:
+      return following(state, action);
+    case types.USER_BLOCKED:
+      return blocked(state, action);
     default: return state;
   }
 }
