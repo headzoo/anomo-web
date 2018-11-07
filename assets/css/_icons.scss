@@ -6,12 +6,7 @@
 }
 
 .icon-like-loading {
-  display: inline-block;
-
-  .loader {
-    height: 18px;
-    width: 18px;
-    margin-top: -2px;
-    margin-left: -2px;
-  }
+  animation: pulsate 1s ease-out;
+  animation-iteration-count: infinite;
+  opacity: 1;
 }

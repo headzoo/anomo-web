@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Icon, Loading } from 'lib';
+import { Icon } from 'lib';
 
 /**
  *
@@ -25,16 +25,9 @@ class LikeIcon extends React.PureComponent {
   render() {
     const { liked, loading, className, ...props } = this.props;
 
-    if (loading) {
-      return (
-        <div className="icon-like-loading">
-          <Loading size={18} />
-        </div>
-      );
-    }
-
     const classes = classNames('icon-like', {
-      'icon-like-liked': liked
+      'icon-like-liked':   liked,
+      'icon-like-loading': loading
     }, className);
 
     return (
