@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
 import { Badge } from 'lib/bootstrap';
-import { Link, Number } from 'lib';
+import { Link, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
+import * as activityActions from 'actions/activityActions';
 
 /**
  *
@@ -11,7 +13,10 @@ import * as uiActions from 'actions/uiActions';
 class Nav extends React.PureComponent {
   static propTypes = {
     user:                     PropTypes.object.isRequired,
+    history:                  PropTypes.object.isRequired,
+    activity:                 PropTypes.object.isRequired,
     notifications:            PropTypes.object.isRequired,
+    activityFetch:            PropTypes.func.isRequired,
     uiNotificationsModalOpen: PropTypes.func.isRequired
   };
 
@@ -27,15 +32,28 @@ class Nav extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleFeedClick = () => {
+    const { history, activityFetch } = this.props;
+
+    activityFetch(true);
+    history.push(routes.route('home'));
+  };
+
+  /**
    * @returns {*}
    */
   render() {
-    const { user, notifications } = this.props;
+    const { user, activity, notifications } = this.props;
 
     const navItems = [
       { name: 'about', label: 'About' }
     ];
 
+    if (activity.newNumber > 99) {
+      activity.newNumber = '99+';
+    }
     if (notifications.newNumber > 99) {
       notifications.newNumber = '99+';
     }
@@ -58,14 +76,20 @@ class Nav extends React.PureComponent {
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
           <Badge
+            onClick={this.handleFeedClick}
+            className="nav-badge nav-badge-with-number clickable"
+          >
+            <span>Feed</span>
+            <Badge className="nav-notifications-badge">
+              {activity.newNumber}
+            </Badge>
+          </Badge>
+          <Badge
             onClick={this.handleNotificationsClick}
             className="nav-badge nav-badge-with-number clickable"
           >
             <span>Notifications</span>
-            <Badge
-              title="Notifications"
-              className="nav-notifications-badge"
-            >
+            <Badge className="nav-notifications-badge">
               {notifications.newNumber}
             </Badge>
           </Badge>
@@ -104,6 +128,6 @@ class Nav extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('user', 'notifications'),
-  mapActionsToProps(uiActions)
-)(Nav);
+  mapStateToProps('user', 'activity', 'notifications'),
+  mapActionsToProps(uiActions, activityActions)
+)(withRouter(Nav));

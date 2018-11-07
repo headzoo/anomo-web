@@ -3,13 +3,14 @@ import axios from 'axios';
 class Proxy {
   /**
    * @param {string} url
+   * @param {*} config
    * @returns {Promise<AxiosResponse<any>>}
    */
-  get = (url) => {
+  get = (url, config = {}) => {
     return axios.post('/proxy', {
       method: 'GET',
       url
-    }).then((resp) => {
+    }, config).then((resp) => {
       return resp.data;
     });
   };
@@ -17,9 +18,10 @@ class Proxy {
   /**
    * @param {string} url
    * @param {*} body
+   * @param {*} config
    * @returns {Promise<AxiosResponse<any>>}
    */
-  post = (url, body) => {
+  post = (url, body, config = {}) => {
     if (body instanceof FormData) {
       body.append('method', 'POST');
       body.append('url', url);
@@ -33,7 +35,7 @@ class Proxy {
       method: 'POST',
       url,
       body
-    }).then((resp) => {
+    }, config).then((resp) => {
       return resp.data;
     });
   };

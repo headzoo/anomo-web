@@ -19,6 +19,18 @@ function loading(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function refreshing(state, action) {
+  return {
+    ...state,
+    isRefreshing: action.isRefreshing
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function likeLoading(state, action) {
   const activity = objects.merge(state.activity, {
     LikeIsLoading: action.isLoading
@@ -68,6 +80,18 @@ function commentSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function newNumber(state, action) {
+  return {
+    ...state,
+    newNumber: action.newNumber
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function fetch(state, action) {
   const newActivities = action.activities.slice(0).map((a) => {
     return anomo.activities.sanitizeActivity(a);
@@ -86,10 +110,18 @@ function fetch(state, action) {
     lastActivityID = lastActivity.ActivityID;
   }
 
+  let firstActivityID = 0;
+  const firstActivity = activities[0];
+  if (firstActivity) {
+    firstActivityID = firstActivity.ActivityID;
+  }
+
   return {
     ...state,
+    newNumber: 0,
     activities,
-    lastActivityID
+    lastActivityID,
+    firstActivityID
   };
 }
 
@@ -136,12 +168,16 @@ export default function activityReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.ACTIVITY_LOADING:
       return loading(state, action);
+    case types.ACTIVITY_REFRESHING:
+      return refreshing(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
     case types.ACTIVITY_COMMENTS_LOADING:
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
+    case types.ACTIVITY_NEW_NUMBER:
+      return newNumber(state, action);
     case types.ACTIVITY_FETCH:
       return fetch(state, action);
     case types.ACTIVITY_SET:

@@ -63,11 +63,12 @@ export const defaultUser = {
  */
 export const defaultProfile = {
   ...commonUserElements,
-  isSending:      false,
-  isPostsLoading: false,
-  activities:     [],
-  lastActivityID: 0,
-  errorMessage:   ''
+  isSending:       false,
+  isPostsLoading:  false,
+  activities:      [],
+  lastActivityID:  0,
+  firstActivityID: 0,
+  errorMessage:    ''
 };
 
 /**
@@ -77,7 +78,10 @@ export const defaultActivity = {
   activities:        [],
   activity:          {},
   lastActivityID:    0,
+  firstActivityID:   0,
+  newNumber:         0,
   isLoading:         false,
+  isRefreshing:      false,
   isCommentsLoading: false,
   isCommentSending:  false
 };

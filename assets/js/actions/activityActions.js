@@ -1,12 +1,17 @@
+import axios from 'axios';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 
 export const ACTIVITY_LOADING          = 'ACTIVITY_LOADING';
+export const ACTIVITY_REFRESHING       = 'ACTIVITY_REFRESHING';
 export const ACTIVITY_LIKE_LOADING     = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_COMMENTS_LOADING = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING  = 'ACTIVITY_COMMENT_SENDING';
+export const ACTIVITY_NEW_NUMBER       = 'ACTIVITY_NEW_NUMBER';
 export const ACTIVITY_FETCH            = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET              = 'ACTIVITY_SET';
 export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
+
+const { CancelToken } = axios;
 
 /**
  * @param {boolean} isLoading
@@ -16,6 +21,17 @@ export function activityIsLoading(isLoading) {
   return {
     type: ACTIVITY_LOADING,
     isLoading
+  };
+}
+
+/**
+ * @param {boolean} isRefreshing
+ * @returns {{type, isLoading: *}}
+ */
+export function activityIsRefreshing(isRefreshing) {
+  return {
+    type: ACTIVITY_REFRESHING,
+    isRefreshing
   };
 }
 
@@ -63,6 +79,9 @@ export function activityReset() {
   };
 }
 
+
+let activityFetchSource = null;
+
 /**
  * @param {boolean} refresh
  * @returns {function(*, *, {anomo: *})}
@@ -70,6 +89,14 @@ export function activityReset() {
 export function activityFetch(refresh = false) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLoading(true));
+    if (refresh) {
+      dispatch(activityIsRefreshing(true));
+    }
+
+    if (activityFetchSource) {
+      activityFetchSource.cancel();
+    }
+    activityFetchSource = CancelToken.source();
 
     let lastActivityID = 0;
     if (!refresh) {
@@ -79,7 +106,10 @@ export function activityFetch(refresh = false) {
       token: user.getToken(),
       lastActivityID
     });
-    proxy.get(url)
+    const config = {
+      cancelToken: activityFetchSource.token
+    };
+    proxy.get(url, config)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch({
@@ -87,10 +117,73 @@ export function activityFetch(refresh = false) {
             activities: data.Activities,
             refresh
           });
+          dispatch({
+            type:      ACTIVITY_NEW_NUMBER,
+            newNumber: 0
+          });
         }
       })
       .finally(() => {
+        activityFetchSource = null;
         dispatch(activityIsLoading(false));
+        if (refresh) {
+          dispatch(activityIsRefreshing(false));
+        }
+      });
+  };
+}
+
+let activityNewNumberSource = null;
+
+/**
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityNewNumber() {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const { firstActivityID } = getState().activity;
+
+    if (firstActivityID === 0) {
+      dispatch({
+        type:      ACTIVITY_NEW_NUMBER,
+        newNumber: 0
+      });
+      return;
+    }
+
+    if (activityNewNumberSource) {
+      activityNewNumberSource.cancel();
+    }
+    activityNewNumberSource = CancelToken.source();
+
+    const url = endpoints.create('activityFetch', {
+      token:          user.getToken(),
+      lastActivityID: 0
+    });
+    const config = {
+      cancelToken: activityNewNumberSource.token
+    };
+    proxy.get(url, config)
+      .then((data) => {
+        if (data.code === 'OK') {
+          let newNumber = 0;
+          for (let i = 0; i < data.Activities.length; i++) {
+            if (data.Activities[i].ActivityID > firstActivityID) {
+              newNumber += 1;
+            }
+          }
+          dispatch({
+            type: ACTIVITY_NEW_NUMBER,
+            newNumber
+          });
+        }
+      })
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          throw err;
+        }
+      })
+      .finally(() => {
+        activityNewNumberSource = null;
       });
   };
 }
@@ -156,6 +249,18 @@ export function activityLike(refID, actionType) {
       .finally(() => {
         dispatch(activityIsLikeLoading(false, refID));
       });
+  };
+}
+
+/**
+ * @returns {function(*)}
+ */
+export function activityIntervalStart() {
+  return (dispatch) => {
+    dispatch(activityNewNumber());
+    setInterval(() => {
+      dispatch(activityNewNumber());
+    }, 30000);
   };
 }
 
