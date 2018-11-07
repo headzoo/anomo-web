@@ -53,7 +53,7 @@ class Activities {
       a.ListComment = a.ListComment.map((comment) => {
         comment.Content = this.unescapeUnicode(comment.Content);
         return comment;
-      }).reverse();
+      });
     }
 
     return a;
