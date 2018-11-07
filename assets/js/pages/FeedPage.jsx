@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapActionsToProps } from 'utils';
+import { browser, connect, mapActionsToProps } from 'utils';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, withRouter } from 'lib';
@@ -16,6 +16,17 @@ class FeedPage extends React.PureComponent {
     isRefreshing:     PropTypes.bool.isRequired,
     activityFetch:    PropTypes.func.isRequired,
     userSubmitStatus: PropTypes.func.isRequired
+  };
+
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { isRefreshing } = this.props;
+
+    if (isRefreshing && !prevProps.isRefreshing) {
+      browser.scrollTop();
+    }
   };
 
   /**
