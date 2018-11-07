@@ -9,6 +9,8 @@ export const defaultUi = {
   errorMessage:  '',
   errorInfo:     {},
   visibleModals: {
+    user:          false,
+    activity:      false,
     notifications: false
   }
 };

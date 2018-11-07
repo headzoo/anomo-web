@@ -10,6 +10,7 @@ import { LikeIcon } from 'lib/icons';
 import { Image, Avatar, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
+import * as uiActions from 'actions/uiActions';
 
 /**
  *
@@ -21,7 +22,8 @@ class ActivityCard extends React.PureComponent {
     history:        PropTypes.object.isRequired,
     activityLike:   PropTypes.func.isRequired,
     clickable:      PropTypes.bool,
-    clickableImage: PropTypes.bool
+    clickableImage: PropTypes.bool,
+    uiVisibleModal: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -65,6 +67,15 @@ class ActivityCard extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleMenuClick = () => {
+    const { activity, uiVisibleModal } = this.props;
+
+    uiVisibleModal('activity', activity);
+  };
+
+  /**
    * @returns {*}
    */
   renderHeader = () => {
@@ -89,7 +100,7 @@ class ActivityCard extends React.PureComponent {
           </div>
         </div>
         <div className="card-activity-date">
-          <div className="card-activity-ellipsis">
+          <div className="card-activity-ellipsis" onClick={this.handleMenuClick}>
             <Icon name="ellipsis-h" />
           </div>
           <Moment fromNow>
@@ -196,5 +207,5 @@ class ActivityCard extends React.PureComponent {
 
 export default connect(
   mapStateToProps(),
-  mapActionsToProps(activityActions)
+  mapActionsToProps(activityActions, uiActions)
 )(withRouter(ActivityCard));

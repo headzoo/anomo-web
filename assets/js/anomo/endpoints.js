@@ -7,6 +7,8 @@ const urls = {
   userLogin:            `${base}/user/login`,
   userLogout:           `${base}/user/logout/{token}`,
   userInfo:             `${base}/user/get_user_info/{token}/{userID}`,
+  userBlock:            `${base}/user/block_user/{token}/{userID}`,
+  userFollow:           `${base}/user/follow/{token}/{userID}`,
   userStatus:           `${base}/user/post_status/{token}`,
   userPicture:          `${base}/user/post_picture_activity/{token}`,
   profilePosts:         `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,

@@ -114,6 +114,34 @@ export function userRefresh() {
 }
 
 /**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userFollow(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userFollow', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url);
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function userBlock(userID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const url = endpoints.create('userBlock', {
+      token: user.getToken(),
+      userID
+    });
+    proxy.get(url);
+  };
+}
+
+/**
  * @param {string} message
  * @param {*} photo
  * @returns {function(*, *, {endpoints: *})}

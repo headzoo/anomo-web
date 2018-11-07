@@ -40,7 +40,7 @@ export function windowResize(width) {
 
 /**
  * @param {string} modalName
- * @param {boolean} isVisible
+ * @param {boolean|object} isVisible
  * @returns {{type: string, modalName: *, isOpen: *}}
  */
 export function uiVisibleModal(modalName, isVisible) {

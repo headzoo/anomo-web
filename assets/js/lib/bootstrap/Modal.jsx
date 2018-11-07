@@ -9,35 +9,37 @@ import { Icon } from 'lib';
  */
 class Modal extends React.PureComponent {
   static propTypes = {
-    sm:        PropTypes.bool,
-    lg:        PropTypes.bool,
-    open:      PropTypes.bool,
-    fade:      PropTypes.bool,
-    centered:  PropTypes.bool,
-    backdrop:  PropTypes.bool,
-    icon:      PropTypes.string,
-    title:     PropTypes.string,
-    footer:    PropTypes.node,
-    className: PropTypes.string,
-    children:  PropTypes.node,
-    onOpened:  PropTypes.func,
-    onClosed:  PropTypes.func
+    sm:         PropTypes.bool,
+    lg:         PropTypes.bool,
+    open:       PropTypes.bool,
+    fade:       PropTypes.bool,
+    centered:   PropTypes.bool,
+    backdrop:   PropTypes.bool,
+    icon:       PropTypes.string,
+    title:      PropTypes.string,
+    footer:     PropTypes.node,
+    withHeader: PropTypes.bool,
+    className:  PropTypes.string,
+    children:   PropTypes.node,
+    onOpened:   PropTypes.func,
+    onClosed:   PropTypes.func
   };
 
   static defaultProps = {
-    sm:        false,
-    lg:        false,
-    open:      false,
-    fade:      false,
-    centered:  true,
-    backdrop:  true,
-    footer:    '',
-    icon:      '',
-    title:     '',
-    className: '',
-    children:  '',
-    onOpened:  () => {},
-    onClosed:  () => {}
+    sm:         false,
+    lg:         false,
+    open:       false,
+    fade:       false,
+    centered:   true,
+    backdrop:   true,
+    withHeader: true,
+    footer:     '',
+    icon:       '',
+    title:      '',
+    className:  '',
+    children:   '',
+    onOpened:   () => {},
+    onClosed:   () => {}
   };
 
   /**
@@ -141,7 +143,20 @@ class Modal extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { sm, lg, centered, backdrop, icon, title, fade, footer, className, children, ...props } = this.props;
+    const {
+      sm,
+      lg,
+      centered,
+      backdrop,
+      icon,
+      title,
+      fade,
+      withHeader,
+      footer,
+      className,
+      children,
+      ...props
+    } = this.props;
 
     const modalClasses = classNames('modal', className, {
       'fade': fade
@@ -163,15 +178,17 @@ class Modal extends React.PureComponent {
       >
         <div className={dialogClasses} role="document">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">
-                {icon && <Icon name={icon} />}
-                {title}
-              </h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
+            {withHeader && (
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {icon && <Icon name={icon} />}
+                  {title}
+                </h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            )}
             <div className="modal-body">
               {children}
             </div>

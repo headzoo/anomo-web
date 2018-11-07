@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { browser, objects, connect } from 'utils';
 import { Container } from 'lib/bootstrap';
-import { NotificationsModal } from 'lib/modals';
+import { NotificationsModal, ActivityModal, UserModal } from 'lib/modals';
 import { Nav, Footer } from 'lib';
 
 /**
@@ -62,7 +62,9 @@ class Page extends React.PureComponent {
           {children}
         </Container>
         {withFooter && <Footer />}
-        <NotificationsModal open={visibleModals.notifications} />
+        <NotificationsModal open={visibleModals.notifications !== false} />
+        <ActivityModal open={visibleModals.activity !== false} />
+        <UserModal open={visibleModals.user !== false} />
       </div>
     );
   }

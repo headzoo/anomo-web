@@ -11,6 +11,8 @@ export const ACTIVITY_NEW_NUMBER       = 'ACTIVITY_NEW_NUMBER';
 export const ACTIVITY_FETCH            = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET              = 'ACTIVITY_SET';
 export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
+export const ACTIVITY_SHARE            = 'ACTIVITY_SHARE';
+export const ACTIVITY_REPORT           = 'ACTIVITY_REPORT';
 
 const { CancelToken } = axios;
 const favicon = new Favico({
@@ -255,6 +257,18 @@ export function activityLike(refID, actionType) {
       .finally(() => {
         dispatch(activityIsLikeLoading(false, refID));
       });
+  };
+}
+
+export function activityShare(refID, actionType) {
+  return (dispatch, getState) => {
+
+  };
+}
+
+export function activityReport(refID, actionType) {
+  return (dispatch, getState) => {
+
   };
 }
 
