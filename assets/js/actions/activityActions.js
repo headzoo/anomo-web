@@ -8,10 +8,12 @@ export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
+export const ACTIVITY_DELETE_SENDING       = 'ACTIVITY_DELETE_SENDING';
 export const ACTIVITY_NEW_NUMBER           = 'ACTIVITY_NEW_NUMBER';
 export const ACTIVITY_FETCH                = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
+export const ACTIVITY_DELETE               = 'ACTIVITY_DELETE';
 export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
 export const ACTIVITY_REPORT               = 'ACTIVITY_REPORT';
 
@@ -244,6 +246,46 @@ export function activityGet(refID, actionType) {
       .finally(() => {
         dispatch(activityIsLoading(false));
         dispatch(activityIsCommentsLoading(false));
+      });
+  };
+}
+
+/**
+ * @param {boolean} isSending
+ * @param {number} activityID
+ * @returns {{type: string, isSending: *}}
+ */
+export function activityIsDeleteSending(isSending, activityID) {
+  return {
+    type: ACTIVITY_DELETE_SENDING,
+    activityID,
+    isSending
+  };
+}
+
+/**
+ * @param {number} activityID
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityDelete(activityID) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(activityIsDeleteSending(true, activityID));
+
+    const url = endpoints.create('activityDelete', {
+      token: user.getToken(),
+      activityID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type: ACTIVITY_DELETE,
+            activityID
+          });
+        }
+      })
+      .finally(() => {
+        dispatch(activityIsDeleteSending(false, activityID));
       });
   };
 }

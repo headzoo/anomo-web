@@ -17,6 +17,7 @@ const urls = {
   profilePosts:         `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,
   activityFetch:        `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
   activityGet:          `${base}/activity/detail/{token}/{refID}/{actionType}`,
+  activityDelete:       `${base}/user/delete_activity/{token}/{activityID}`,
   activityLike:         `${base}/activity/like/{token}/{refID}/{actionType}/false`,
   activityComment:      `${base}/activity/comment/{token}/{refID}/{actionType}`,
   activityCommentLike:  `${base}/comment/like/{token}/{commentID}/1`,

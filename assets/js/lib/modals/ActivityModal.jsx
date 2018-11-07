@@ -11,6 +11,7 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityModal extends React.PureComponent {
   static propTypes = {
+    userID:         PropTypes.string.isRequired,
     following:      PropTypes.array.isRequired,
     blocked:        PropTypes.array.isRequired,
     visibleModals:  PropTypes.object.isRequired,
@@ -18,7 +19,8 @@ class ActivityModal extends React.PureComponent {
     userFollow:     PropTypes.func.isRequired,
     userBlock:      PropTypes.func.isRequired,
     activityShare:  PropTypes.func.isRequired,
-    activityReport: PropTypes.func.isRequired
+    activityReport: PropTypes.func.isRequired,
+    activityDelete: PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -73,10 +75,21 @@ class ActivityModal extends React.PureComponent {
    * @param {string} item
    */
   handleClick = (e, item) => {
-    const { visibleModals, uiVisibleModal, userFollow, userBlock, activityShare, activityReport } = this.props;
+    const {
+      visibleModals,
+      uiVisibleModal,
+      userFollow,
+      userBlock,
+      activityDelete,
+      activityShare,
+      activityReport
+    } = this.props;
     const { activity } = visibleModals;
 
     switch (item) {
+      case 'delete':
+        activityDelete(activity.ActivityID);
+        break;
       case 'share':
         activityShare(activity.RefID, activity.ActionType);
         break;
@@ -98,9 +111,10 @@ class ActivityModal extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { visibleModals, ...props } = this.props;
+    const { userID, visibleModals, ...props } = this.props;
+    const { activity } = visibleModals;
 
-    if (visibleModals.activity === false) {
+    if (activity === false) {
       return null;
     }
 
@@ -163,6 +177,14 @@ class ActivityModal extends React.PureComponent {
           >
             Report Post
           </li>
+          {activity.FromUserID === userID && (
+            <li
+              onClick={e => this.handleClick(e, 'delete')}
+              className="list-group-item list-group-item-action list-group-item-danger clickable"
+            >
+              Delete Post
+            </li>
+          )}
         </ul>
       </Modal>
     );
@@ -171,6 +193,7 @@ class ActivityModal extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
+    userID:        state.user.UserID,
     following:     state.user.following,
     blocked:       state.user.blocked,
     visibleModals: state.ui.visibleModals

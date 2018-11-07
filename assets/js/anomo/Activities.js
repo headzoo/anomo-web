@@ -45,14 +45,18 @@ class Activities {
   sanitizeActivity = (activity) => {
     const a = objects.clone(activity);
 
-    a.LikeIsLoading = false;
+    a.IsDeleted       = false;
+    a.DeleteIsSending = false;
+    a.LikeIsLoading   = false;
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
     if (a.ListComment) {
       a.ListComment = a.ListComment.map((comment) => {
-        comment.Content = this.unescapeUnicode(comment.Content);
-        comment.LikeIsLoading = false;
+        comment.Content         = this.unescapeUnicode(comment.Content);
+        comment.IsDeleted       = false;
+        comment.DeleteIsSending = false;
+        comment.LikeIsLoading   = false;
         return comment;
       });
     }

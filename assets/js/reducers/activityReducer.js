@@ -186,6 +186,58 @@ function reset(state) {
  * @param {*} action
  * @returns {*}
  */
+function deleteActivity(state, action) {
+  const activities = objects.clone(state.activities);
+  const activity   = objects.clone(state.activity);
+
+  if (activity && activity.ActivityID === action.activityID) {
+    activity.IsDeleted = true;
+  }
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].ActivityID === action.activityID) {
+      activities[i].IsDeleted = true;
+      break;
+    }
+  }
+
+  return {
+    ...state,
+    activities,
+    activity
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function deleteIsSending(state, action) {
+  const activities = objects.clone(state.activities);
+  const activity   = objects.clone(state.activity);
+
+  if (activity && activity.ActivityID === action.activityID) {
+    activity.DeleteIsSending = action.isSending;
+  }
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].ActivityID === action.activityID) {
+      activities[i].DeleteIsSending = action.isSending;
+      break;
+    }
+  }
+
+  return {
+    ...state,
+    activities,
+    activity
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function activityReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.ACTIVITY_LOADING:
@@ -208,6 +260,10 @@ export default function activityReducer(state = {}, action = {}) {
       return set(state, action);
     case types.ACTIVITY_RESET:
       return reset(state);
+    case types.ACTIVITY_DELETE:
+      return deleteActivity(state, action);
+    case types.ACTIVITY_DELETE_SENDING:
+      return deleteIsSending(state, action);
     default: return state;
   }
 }

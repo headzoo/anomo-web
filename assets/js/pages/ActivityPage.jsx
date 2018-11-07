@@ -6,6 +6,7 @@ import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Loading, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
 /**
@@ -15,6 +16,7 @@ class ActivityPage extends React.PureComponent {
   static propTypes = {
     activity:                  PropTypes.object.isRequired,
     match:                     PropTypes.object.isRequired,
+    history:                   PropTypes.object.isRequired,
     location:                  PropTypes.object.isRequired,
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
@@ -56,11 +58,16 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { match, activityGet } = this.props;
+    const { match, history, activityGet } = this.props;
     const { activity } = this.state;
 
     if (match.params.refID !== prevProps.match.params.refID) {
       activityGet(match.params.refID, match.params.actionType);
+      return;
+    }
+
+    if (this.props.activity.activity.IsDeleted) {
+      history.push(routes.route('home'));
       return;
     }
 
