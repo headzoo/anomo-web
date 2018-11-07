@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Favico from 'favico.js';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 
 export const ACTIVITY_LOADING          = 'ACTIVITY_LOADING';
@@ -12,6 +13,9 @@ export const ACTIVITY_SET              = 'ACTIVITY_SET';
 export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
 
 const { CancelToken } = axios;
+const favicon = new Favico({
+  animation: 'popFade'
+});
 
 /**
  * @param {boolean} isLoading
@@ -121,6 +125,7 @@ export function activityFetch(refresh = false) {
             type:      ACTIVITY_NEW_NUMBER,
             newNumber: 0
           });
+          favicon.badge(0);
         }
       })
       .finally(() => {
@@ -175,6 +180,7 @@ export function activityNewNumber() {
             type: ACTIVITY_NEW_NUMBER,
             newNumber
           });
+          favicon.badge(newNumber);
         }
       })
       .catch((err) => {
