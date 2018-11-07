@@ -70,7 +70,7 @@ class NotificationsModal extends React.PureComponent {
         {notifications.notifications.map((n) => {
           let message = '';
           switch (n.Type) {
-            case constants.NOTIFICATION_LIKE:
+            case constants.NOTIFICATION_LIKE_POST:
               message = `${n.UserName} liked your post`;
               break;
             case constants.NOTIFICATION_COMMENT:
@@ -83,8 +83,8 @@ class NotificationsModal extends React.PureComponent {
             case constants.NOTIFICATION_FOLLOW:
               message = `${n.UserName} followed you on Anomo`;
               break;
-            case '17':
-              message = `${n.UserName} liked ${n.PostOwnerName}'s post`;
+            case constants.NOTIFICATION_LIKE_COMMENT:
+              message = `${n.UserName} liked your comment`;
               break;
             default:
               return null;

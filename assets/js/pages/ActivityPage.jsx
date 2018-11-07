@@ -58,10 +58,11 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { match, history, activityGet } = this.props;
+    const { match, history, activityGet, activityReset } = this.props;
     const { activity } = this.state;
 
     if (match.params.refID !== prevProps.match.params.refID) {
+      activityReset();
       activityGet(match.params.refID, match.params.actionType);
       return;
     }
