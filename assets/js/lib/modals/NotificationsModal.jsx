@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { Modal } from 'lib/bootstrap';
+import { Modal, ModalFooter, Button } from 'lib/bootstrap';
 import { Avatar, withRouter } from 'lib';
 import routes from 'store/routes';
+import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
 import * as notificationActions from 'actions/notificationsActions';
 
@@ -38,10 +39,24 @@ class NotificationsModal extends React.PureComponent {
 
     notificationsRead(notification.ID);
     uiVisibleModal('notifications', false);
-    history.push(routes.route('activity', {
-      refID:      notification.ContentID,
-      actionType: notification.ContentType
-    }));
+    if (notification.ContentID) {
+      history.push(routes.route('activity', {
+        refID:      notification.ContentID,
+        actionType: notification.ContentType
+      }));
+    }
+  };
+
+  /**
+   *
+   */
+  handleClearClick = () => {
+    const { notifications, notificationsRead, uiVisibleModal } = this.props;
+
+    notifications.notifications.forEach((n) => {
+      notificationsRead(n.ID);
+    });
+    uiVisibleModal('notifications', false);
   };
 
   /**
@@ -55,15 +70,18 @@ class NotificationsModal extends React.PureComponent {
         {notifications.notifications.map((n) => {
           let message = '';
           switch (n.Type) {
-            case '13':
+            case constants.NOTIFICATION_LIKE:
               message = `${n.UserName} liked your post`;
               break;
-            case '14':
+            case constants.NOTIFICATION_COMMENT:
               if (n.UserName === n.PostOwnerName) {
                 message = `${n.UserName} commented on their post`;
               } else {
                 message = `${n.UserName} commented on ${n.PostOwnerName}'s post`;
               }
+              break;
+            case constants.NOTIFICATION_FOLLOW:
+              message = `${n.UserName} followed you on Anomo`;
               break;
             case '17':
               message = `${n.UserName} liked ${n.PostOwnerName}'s post`;
@@ -92,6 +110,19 @@ class NotificationsModal extends React.PureComponent {
   /**
    * @returns {*}
    */
+  renderFooter = () => {
+    return (
+      <ModalFooter>
+        <Button onClick={this.handleClearClick}>
+          Clear All
+        </Button>
+      </ModalFooter>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
   render() {
     const props = objects.propsFilter(
       this.props,
@@ -104,8 +135,9 @@ class NotificationsModal extends React.PureComponent {
     return (
       <Modal
         title="Notifications"
-        className="modal-notifications"
+        footer={this.renderFooter()}
         onClosed={this.handleClose}
+        className="modal-notifications"
         {...props}
         lg
       >

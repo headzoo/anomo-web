@@ -11,7 +11,7 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityModal extends React.PureComponent {
   static propTypes = {
-    userID:         PropTypes.string.isRequired,
+    userID:         PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     following:      PropTypes.array.isRequired,
     blocked:        PropTypes.array.isRequired,
     visibleModals:  PropTypes.object.isRequired,
