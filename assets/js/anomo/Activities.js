@@ -52,6 +52,7 @@ class Activities {
     if (a.ListComment) {
       a.ListComment = a.ListComment.map((comment) => {
         comment.Content = this.unescapeUnicode(comment.Content);
+        comment.LikeIsLoading = false;
         return comment;
       });
     }

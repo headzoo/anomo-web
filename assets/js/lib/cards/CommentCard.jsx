@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
 import { Twemoji } from 'react-emoji-render';
-import { dates } from 'utils';
+import { dates, connect } from 'utils';
+import { activityLikeComment } from 'actions/activityActions';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
-import { Text, Image, Avatar, Pluralize, Link, withRouter } from 'lib';
+import { Image, Avatar, Pluralize, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
-import routes from '../../store/routes';
+import routes from 'store/routes';
 
 /**
  *
@@ -15,8 +16,10 @@ import routes from '../../store/routes';
 class CommentCard extends React.PureComponent {
   static propTypes = {
     comment:   PropTypes.object.isRequired,
+    activity:  PropTypes.object.isRequired,
     className: PropTypes.string,
-    history:   PropTypes.object.isRequired
+    history:   PropTypes.object.isRequired,
+    dispatch:  PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -47,10 +50,10 @@ class CommentCard extends React.PureComponent {
    * @param {Event} e
    */
   handleHeartClick = (e) => {
-    const { comment, activityLike } = this.props;
+    const { comment, activity, dispatch } = this.props;
 
     e.preventDefault();
-    // activityLike(comment.RefID, comment.ActionType);
+    dispatch(activityLikeComment(comment.ID, activity.RefID, activity.ActionType));
   };
 
   /**
@@ -110,7 +113,7 @@ class CommentCard extends React.PureComponent {
   renderFooter = () => {
     const { comment } = this.props;
 
-    const likes   = parseInt(comment.Like || 0, 10);
+    const likes   = parseInt(comment.NumberOfLike || 0, 10);
     const isLiked = (comment.IsLike && comment.IsLike === '1');
 
     return (
@@ -144,4 +147,4 @@ class CommentCard extends React.PureComponent {
   }
 }
 
-export default withRouter(CommentCard);
+export default connect()(withRouter(CommentCard));

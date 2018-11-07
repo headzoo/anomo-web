@@ -115,7 +115,7 @@ class ActivityPage extends React.PureComponent {
     return activity.ListComment.map(comment => (
       <FadeAndSlideTransition key={comment.ID} duration={150}>
         <Column md={4} offsetMd={4} xs={12}>
-          <CommentCard comment={comment} />
+          <CommentCard comment={comment} activity={activity} />
         </Column>
       </FadeAndSlideTransition>
     ));

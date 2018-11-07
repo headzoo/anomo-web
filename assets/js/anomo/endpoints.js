@@ -19,6 +19,7 @@ const urls = {
   activityGet:          `${base}/activity/detail/{token}/{refID}/{actionType}`,
   activityLike:         `${base}/activity/like/{token}/{refID}/{actionType}/false`,
   activityComment:      `${base}/activity/comment/{token}/{refID}/{actionType}`,
+  activityCommentLike:  `${base}/comment/like/{token}/{commentID}/1`,
   notificationsHistory: `${base}/push_notification/get_notification_history/{token}/1/1`,
   notificationsRead:    `${base}/push_notification/read/{token}/{notificationID}/46/33`
 };

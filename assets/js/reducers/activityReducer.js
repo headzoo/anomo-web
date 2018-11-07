@@ -1,6 +1,7 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 import anomo from 'anomo';
+import { ACTIVITY_LIKE_COMMENT_LOADING } from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -47,6 +48,27 @@ function likeLoading(state, action) {
   return {
     ...state,
     activities,
+    activity
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeCommentLoading(state, action) {
+  const activity = objects.clone(state.activity);
+
+  for (let i = 0; i < activity.ListComment.length; i++) {
+    if (activity.ListComment[i].ID === action.commentID) {
+      activity.ListComment[i].LikeIsLoading = action.isLoading;
+      break;
+    }
+  }
+
+  return {
+    ...state,
     activity
   };
 }
@@ -172,6 +194,8 @@ export default function activityReducer(state = {}, action = {}) {
       return refreshing(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
+    case types.ACTIVITY_LIKE_COMMENT_LOADING:
+      return likeCommentLoading(state, action);
     case types.ACTIVITY_COMMENTS_LOADING:
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:

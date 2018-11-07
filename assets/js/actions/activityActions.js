@@ -2,17 +2,18 @@ import axios from 'axios';
 import Favico from 'favico.js';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 
-export const ACTIVITY_LOADING          = 'ACTIVITY_LOADING';
-export const ACTIVITY_REFRESHING       = 'ACTIVITY_REFRESHING';
-export const ACTIVITY_LIKE_LOADING     = 'ACTIVITY_LIKE_LOADING';
-export const ACTIVITY_COMMENTS_LOADING = 'ACTIVITY_COMMENTS_LOADING';
-export const ACTIVITY_COMMENT_SENDING  = 'ACTIVITY_COMMENT_SENDING';
-export const ACTIVITY_NEW_NUMBER       = 'ACTIVITY_NEW_NUMBER';
-export const ACTIVITY_FETCH            = 'ACTIVITY_FETCH';
-export const ACTIVITY_SET              = 'ACTIVITY_SET';
-export const ACTIVITY_RESET            = 'ACTIVITY_RESET';
-export const ACTIVITY_SHARE            = 'ACTIVITY_SHARE';
-export const ACTIVITY_REPORT           = 'ACTIVITY_REPORT';
+export const ACTIVITY_LOADING              = 'ACTIVITY_LOADING';
+export const ACTIVITY_REFRESHING           = 'ACTIVITY_REFRESHING';
+export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
+export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
+export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
+export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
+export const ACTIVITY_NEW_NUMBER           = 'ACTIVITY_NEW_NUMBER';
+export const ACTIVITY_FETCH                = 'ACTIVITY_FETCH';
+export const ACTIVITY_SET                  = 'ACTIVITY_SET';
+export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
+export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
+export const ACTIVITY_REPORT               = 'ACTIVITY_REPORT';
 
 const { CancelToken } = axios;
 const favicon = new Favico({
@@ -51,6 +52,19 @@ export function activityIsLikeLoading(isLoading, refID) {
     type: ACTIVITY_LIKE_LOADING,
     isLoading,
     refID
+  };
+}
+
+/**
+ * @param {boolean} isLoading
+ * @param {number} commentID
+ * @returns {{type: string, isLoading: *}}
+ */
+export function activityIsLikeCommentLoading(isLoading, commentID) {
+  return {
+    type: ACTIVITY_LIKE_COMMENT_LOADING,
+    isLoading,
+    commentID
   };
 }
 
@@ -256,6 +270,32 @@ export function activityLike(refID, actionType) {
       })
       .finally(() => {
         dispatch(activityIsLikeLoading(false, refID));
+      });
+  };
+}
+
+/**
+ * @param {number} commentID
+ * @param {number} refID
+ * @param {number} actionType
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityLikeComment(commentID, refID, actionType) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(activityIsLikeCommentLoading(true, commentID));
+
+    const url = endpoints.create('activityCommentLike', {
+      token: user.getToken(),
+      commentID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch(activityGet(refID, actionType));
+        }
+      })
+      .finally(() => {
+        dispatch(activityIsLikeCommentLoading(false, commentID));
       });
   };
 }
