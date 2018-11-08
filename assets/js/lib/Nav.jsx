@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
 import { Badge } from 'lib/bootstrap';
-import { Link, withRouter } from 'lib';
+import { NavBadge, Link, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -46,13 +46,51 @@ class Nav extends React.PureComponent {
   /**
    * @returns {*}
    */
-  render() {
-    const { user, activity, location, notifications } = this.props;
-    const { feeds } = activity;
+  renderNavItems = () => {
+    const { user } = this.props;
 
     const navItems = [
       { name: 'about', label: 'About' }
     ];
+
+    return (
+      <ul className="navbar-nav">
+        {navItems.map(item => (
+          <li key={item.name} className="nav-item">
+            <Link name={item.name} className="nav-link">
+              <Badge className="nav-badge">
+                {item.label}
+              </Badge>
+            </Link>
+          </li>
+        ))}
+        {user.isAuthenticated ? (
+          <li className="nav-item">
+            <Link name="logout" className="nav-link">
+              <Badge className="nav-badge">
+                Logout
+              </Badge>
+            </Link>
+          </li>
+        ) : (
+          <li className="nav-item">
+            <Link name="login" className="nav-link">
+              <Badge className="nav-badge">
+                Login
+              </Badge>
+            </Link>
+          </li>
+        )}
+      </ul>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  render() {
+    const { activity, location, notifications } = this.props;
+    const { feeds } = activity;
 
     if (notifications.newNumber > 99) {
       notifications.newNumber = '99+';
@@ -88,75 +126,34 @@ class Nav extends React.PureComponent {
           <span className="navbar-toggler-icon" />
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
-          {/* Feeds Start */}
-          <Badge
-            onClick={e => this.handleFeedClick(e, 'recent')}
-            theme={activeFeed === 'recent' ? 'info' : 'dark'}
-            className="nav-badge nav-badge-with-number clickable"
-          >
-            <span>Recent</span>
-            <Badge className="nav-notifications-badge">
-              {feeds.recent.newNumber}
-            </Badge>
-          </Badge>
-          <Badge
-            onClick={e => this.handleFeedClick(e, 'following')}
-            theme={activeFeed === 'following' ? 'info' : 'dark'}
-            className="nav-badge nav-badge-with-number clickable"
-          >
-            <span>Following</span>
-            <Badge className="nav-notifications-badge">
-              {feeds.following.newNumber}
-            </Badge>
-          </Badge>
-          <Badge
-            onClick={e => this.handleFeedClick(e, 'popular')}
-            theme={activeFeed === 'popular' ? 'info' : 'dark'}
-            className="nav-badge nav-badge-with-number clickable"
-          >
-            <span>Popular</span>
-            <Badge className="nav-notifications-badge">
-              {feeds.popular.newNumber}
-            </Badge>
-          </Badge>
-          {/* Feeds End */}
-          <Badge
+          <NavBadge
+            number={notifications.newNumber}
             onClick={this.handleNotificationsClick}
-            className="nav-badge nav-badge-with-number clickable"
           >
-            <span>Notifications</span>
-            <Badge className="nav-notifications-badge">
-              {notifications.newNumber}
-            </Badge>
-          </Badge>
-          <ul className="navbar-nav">
-            {navItems.map(item => (
-              <li key={item.name} className="nav-item">
-                <Link name={item.name} className="nav-link">
-                  <Badge className="nav-badge">
-                    {item.label}
-                  </Badge>
-                </Link>
-              </li>
-            ))}
-            {user.isAuthenticated ? (
-              <li className="nav-item">
-                <Link name="logout" className="nav-link">
-                  <Badge className="nav-badge">
-                    Logout
-                  </Badge>
-                </Link>
-              </li>
-            ) : (
-              <li className="nav-item">
-                <Link name="login" className="nav-link">
-                  <Badge className="nav-badge">
-                    Login
-                  </Badge>
-                </Link>
-              </li>
-            )}
-          </ul>
+            Notifications
+          </NavBadge>
+          <NavBadge
+            number={feeds.recent.newNumber}
+            active={activeFeed === 'recent'}
+            onClick={e => this.handleFeedClick(e, 'recent')}
+          >
+            Recent
+          </NavBadge>
+          <NavBadge
+            number={feeds.following.newNumber}
+            active={activeFeed === 'following'}
+            onClick={e => this.handleFeedClick(e, 'following')}
+          >
+            Following
+          </NavBadge>
+          <NavBadge
+            number={feeds.popular.newNumber}
+            active={activeFeed === 'popular'}
+            onClick={e => this.handleFeedClick(e, 'popular')}
+          >
+            Popular
+          </NavBadge>
+          {this.renderNavItems()}
         </div>
       </nav>
     );
