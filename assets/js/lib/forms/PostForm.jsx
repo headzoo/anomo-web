@@ -55,6 +55,7 @@ class PostForm extends React.PureComponent {
     }
 
     onSubmit(e, values);
+    this.setState({ photoFilename: '' });
   };
 
   /**

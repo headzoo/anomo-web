@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { Modal, ModalFooter, Button } from 'lib/bootstrap';
-import { Avatar, withRouter } from 'lib';
+import Drawer from 'rc-drawer';
+import { connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { Button } from 'lib/bootstrap';
+import { Avatar, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
@@ -11,23 +12,20 @@ import * as notificationActions from 'actions/notificationsActions';
 /**
  *
  */
-class NotificationsModal extends React.PureComponent {
+class NotificationsDrawer extends React.PureComponent {
   static propTypes = {
+    ui:                PropTypes.object.isRequired,
+    user:              PropTypes.object.isRequired,
+    open:              PropTypes.bool,
     notifications:     PropTypes.object.isRequired,
     history:           PropTypes.object.isRequired,
     notificationsRead: PropTypes.func.isRequired,
-    uiVisibleModal:    PropTypes.func.isRequired
+    uiVisibleModal:    PropTypes.func.isRequired,
+    uiVisibleDrawer:   PropTypes.func.isRequired
   };
 
-  static defaultProps = {};
-
-  /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('notifications', false);
+  static defaultProps = {
+    open: false
   };
 
   /**
@@ -35,10 +33,10 @@ class NotificationsModal extends React.PureComponent {
    * @param {*} notification
    */
   handleNotificationClick = (e, notification) => {
-    const { history, notificationsRead, uiVisibleModal } = this.props;
+    const { history, notificationsRead, uiVisibleDrawer } = this.props;
 
     notificationsRead(notification.ID);
-    uiVisibleModal('notifications', false);
+    uiVisibleDrawer('notifications', false);
     if (notification.ContentID) {
       history.push(routes.route('activity', {
         refID:      notification.ContentID,
@@ -50,13 +48,48 @@ class NotificationsModal extends React.PureComponent {
   /**
    *
    */
-  handleClearClick = () => {
-    const { notifications, notificationsRead, uiVisibleModal } = this.props;
+  handleClearAllClick = () => {
+    const { notifications, notificationsRead, uiVisibleDrawer } = this.props;
 
     notifications.notifications.forEach((n) => {
       notificationsRead(n.ID);
     });
-    uiVisibleModal('notifications', false);
+    uiVisibleDrawer('notifications', false);
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} notification
+   */
+  handleClearClick = (e, notification) => {
+    const { notificationsRead } = this.props;
+
+    e.preventDefault();
+    e.stopPropagation();
+    notificationsRead(notification.ID);
+  };
+
+  /**
+   *
+   */
+  handleMaskClick = () => {
+    const { uiVisibleDrawer } = this.props;
+
+    uiVisibleDrawer('notifications', false);
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderHeader = () => {
+    const { user } = this.props;
+
+    return (
+      <div className="drawer-header">
+        <Avatar src={user.Avatar} />
+        <h3>{user.UserName}</h3>
+      </div>
+    );
   };
 
   /**
@@ -64,6 +97,14 @@ class NotificationsModal extends React.PureComponent {
    */
   renderNotifications = () => {
     const { notifications } = this.props;
+
+    if (notifications.notifications.length === 0) {
+      return (
+        <div className="gutter">
+          No notifications.
+        </div>
+      );
+    }
 
     return (
       <ul className="list-group">
@@ -96,9 +137,10 @@ class NotificationsModal extends React.PureComponent {
               className="list-group-item"
               onClick={e => this.handleNotificationClick(e, n)}
             >
-              <div>
-                <Avatar src={n.Avatar} />
-                {message}
+              <Avatar src={n.Avatar} />
+              <div>{message}</div>
+              <div className="gutter-left">
+                <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
               </div>
             </li>
           );
@@ -110,44 +152,32 @@ class NotificationsModal extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderFooter = () => {
-    return (
-      <ModalFooter>
-        <Button onClick={this.handleClearClick}>
-          Clear All
-        </Button>
-      </ModalFooter>
-    );
-  };
-
-  /**
-   * @returns {*}
-   */
   render() {
-    const props = objects.propsFilter(
-      this.props,
-      NotificationsModal.propTypes,
-      uiActions,
-      notificationActions,
-      ['dispatch', 'routerParams', 'routerQuery', 'staticContext']
-    );
+    const { ui, open, ...props } = this.props;
 
     return (
-      <Modal
-        title="Notifications"
-        footer={this.renderFooter()}
-        onClosed={this.handleClose}
-        className="modal-notifications"
+      <Drawer
+        open={open}
+        level={null}
+        handler={false}
+        className="drawer-notifications"
+        onMaskClick={this.handleMaskClick}
+        width={ui.deviceSize === 'xs' ? '75vw' : '15vw'}
         {...props}
-        lg
       >
+        {this.renderHeader()}
         {this.renderNotifications()}
-      </Modal>
+        <div className="gutter-sides gutter-top">
+          <Button onClick={this.handleClearAllClick} block>
+            Clear
+          </Button>
+        </div>
+      </Drawer>
     );
   }
 }
 
 export default connect(
-  mapStateToProps('notifications'),
+  mapStateToProps('ui', 'user', 'notifications'),
   mapActionsToProps(uiActions, notificationActions)
-)(withRouter(NotificationsModal));
+)(withRouter(NotificationsDrawer));

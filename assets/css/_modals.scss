@@ -1,22 +1,6 @@
 @import "vars";
 @import "mixins";
 
-.modal-notifications {
-  .modal-body {
-    padding: 0;
-  }
-
-  .avatar {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-  }
-
-  .list-group-item {
-    cursor: pointer;
-  }
-}
-
 .modal-list {
   .modal-body {
     padding: 0;

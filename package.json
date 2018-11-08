@@ -43,6 +43,7 @@
     "nanoevents": "^1.0.5",
     "promise-polyfill": "^8.1.0",
     "query-string": "^6.2.0",
+    "rc-drawer": "^1.7.6",
     "react": "^16.5.2",
     "react-animate-height": "^2.0.6",
     "react-autocomplete": "^1.8.1",

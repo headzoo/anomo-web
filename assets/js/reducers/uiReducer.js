@@ -75,6 +75,19 @@ function visibleModal(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function visibleDrawer(state, action) {
+  const newState = objects.clone(state);
+
+  newState.visibleDrawers[action.drawerName] = action.isVisible;
+
+  return newState;
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function uiReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.UI_LOADING:
@@ -85,6 +98,8 @@ export default function uiReducer(state = {}, action = {}) {
       return windowResize(state, action);
     case types.UI_VISIBLE_MODAL:
       return visibleModal(state, action);
+    case types.UI_VISIBLE_DRAWER:
+      return visibleDrawer(state, action);
     default: return state;
   }
 }

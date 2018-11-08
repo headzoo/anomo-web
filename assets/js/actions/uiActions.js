@@ -1,7 +1,8 @@
-export const UI_LOADING       = 'UI_LOADING';
-export const UI_WINDOW_RESIZE = 'UI_WINDOW_RESIZE';
-export const UI_ERROR_MESSAGE = 'UI_ERROR_MESSAGE';
-export const UI_VISIBLE_MODAL = 'UI_VISIBLE_MODAL';
+export const UI_LOADING        = 'UI_LOADING';
+export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
+export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
+export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
+export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
 
 /**
  * @param {boolean} isLoading
@@ -47,6 +48,20 @@ export function uiVisibleModal(modalName, isVisible) {
   return {
     type: UI_VISIBLE_MODAL,
     modalName,
+    isVisible
+  };
+}
+
+/**
+ *
+ * @param {string} drawerName
+ * @param {boolean|object} isVisible
+ * @returns {{type: string, drawerName: *, isVisible: *}}
+ */
+export function uiVisibleDrawer(drawerName, isVisible) {
+  return {
+    type: UI_VISIBLE_DRAWER,
+    drawerName,
     isVisible
   };
 }

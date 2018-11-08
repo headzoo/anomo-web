@@ -17,6 +17,10 @@
   text-align: justify;
 }
 
+.gutter {
+  padding: $gutter-size;
+}
+
 .gutter-bottom {
   padding-bottom: $gutter-size;
 }
@@ -39,6 +43,19 @@
 
 .gutter-top-sm {
   padding-top: $gutter-size / 2;
+}
+
+.gutter-sides {
+  padding-left: $gutter-size;
+  padding-right: $gutter-size;
+}
+
+.gutter-left {
+  padding-left: $gutter-size;
+}
+
+.gutter-right {
+  padding-right: $gutter-size;
 }
 
 .clickable {

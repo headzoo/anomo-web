@@ -7,6 +7,7 @@ import { activityIntervalStart } from 'actions/activityActions';
 import { notificationsIntervalStart } from 'actions/notificationsActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
+import { NotificationsDrawer } from 'lib/drawers';
 import { PrivateRoute, ScrollToTop, Nav, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
@@ -70,6 +71,7 @@ class App extends React.PureComponent {
    */
   render() {
     const { ui } = this.props;
+    const { visibleDrawers } = ui;
 
     if (ui.errorMessage) {
       return (
@@ -98,6 +100,7 @@ class App extends React.PureComponent {
             <Route exact path={routes.path('logout')} component={LogoutPage} />
             <Route exact path={routes.path('about')} component={AboutPage} />
           </Switch>
+          <NotificationsDrawer open={visibleDrawers.notifications !== false} />
         </ScrollToTop>
       </Router>
     );

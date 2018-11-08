@@ -20,18 +20,16 @@ class Nav extends React.PureComponent {
     activity:          PropTypes.object.isRequired,
     notifications:     PropTypes.object.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
-    uiVisibleModal:    PropTypes.func.isRequired
+    uiVisibleDrawer:   PropTypes.func.isRequired
   };
 
   /**
    *
    */
   handleNotificationsClick = () => {
-    const { notifications, uiVisibleModal } = this.props;
+    const { uiVisibleDrawer } = this.props;
 
-    if (notifications.newNumber > 0) {
-      uiVisibleModal('notifications', true);
-    }
+    uiVisibleDrawer('notifications', true);
   };
 
   /**
