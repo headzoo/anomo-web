@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'utils';
+import { formChange } from 'actions/formActions';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
-import { Icon } from 'lib';
+import { Icon, EmojiPopper } from 'lib';
 
 /**
  *
@@ -12,7 +13,8 @@ class PostForm extends React.PureComponent {
   static propTypes = {
     post:       PropTypes.object.isRequired,
     withUpload: PropTypes.bool,
-    onSubmit:   PropTypes.func
+    onSubmit:   PropTypes.func,
+    dispatch:   PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -26,6 +28,7 @@ class PostForm extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      emojiOpen:     false,
       photoFilename: ''
     };
     this.photo = React.createRef();
@@ -70,11 +73,30 @@ class PostForm extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleEmojiClick = () => {
+    const { emojiOpen } = this.state;
+
+    this.setState({ emojiOpen: !emojiOpen });
+  };
+
+  /**
+   * @param {*} emoji
+   */
+  handleEmojiSelect = (emoji) => {
+    const { post, dispatch } = this.props;
+
+    dispatch(formChange('post', 'message', `${post.message}${emoji.native}`));
+    this.setState({ emojiOpen: false });
+  };
+
+  /**
    * @returns {*}
    */
   render() {
     const { post, withUpload } = this.props;
-    const { photoFilename } = this.state;
+    const { emojiOpen, photoFilename } = this.state;
 
     return (
       <Card className="card-form-post">
@@ -95,6 +117,13 @@ class PostForm extends React.PureComponent {
                   />
                 </div>
               )}
+              <div className="card-form-post-emoji">
+                <EmojiPopper
+                  open={emojiOpen}
+                  onClick={this.handleEmojiClick}
+                  onSelect={this.handleEmojiSelect}
+                />
+              </div>
               <div className="card-form-post-message">
                 <Textarea
                   name="message"

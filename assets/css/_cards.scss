@@ -184,8 +184,10 @@
 
   .card-form-post-inputs {
     display: flex;
+    align-items: center;
 
-    .card-form-post-upload {
+    .card-form-post-upload,
+    .card-form-post-emoji {
       display: flex;
       padding-right: $gutter-size;
       align-items: center;
