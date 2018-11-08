@@ -5,6 +5,10 @@
   justify-content: flex-end;
 }
 
+.nav-item.dropdown {
+  margin-top: 4px;
+}
+
 .nav-link {
   padding: 0.25rem 1rem;
   padding-right: 0 !important;
@@ -25,6 +29,28 @@
   .badge {
     font-size: 90%;
     margin-left: 0.5rem;
+  }
+}
+
+.nav-badge-dropdown {
+  cursor: pointer;
+  margin-left: 0.5rem;
+
+  &::after {
+    margin-left: 0.5rem;
+  }
+}
+
+.nav-badge-dropdown-menu {
+  background-color: #5e6165;
+
+  .dropdown-item {
+    color: #FFF;
+
+    &:hover {
+      color: #FFF;
+      background-color: #5e6165;
+    }
   }
 }
 

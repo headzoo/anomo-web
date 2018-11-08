@@ -65,12 +65,24 @@ class Nav extends React.PureComponent {
           </li>
         ))}
         {user.isAuthenticated ? (
-          <li className="nav-item">
-            <Link name="logout" className="nav-link">
-              <Badge className="nav-badge">
+          <li className="nav-item dropdown">
+            <Badge
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-toggle="dropdown"
+              id="navbarDropdownMenuLink"
+              className="nav-badge nav-badge-dropdown dropdown-toggle"
+            >
+              {user.UserName}
+            </Badge>
+            <div
+              aria-labelledby="navbarDropdownMenuLink"
+              className="dropdown-menu nav-badge-dropdown-menu dropdown-menu-right"
+            >
+              <Link name="logout" className="dropdown-item">
                 Logout
-              </Badge>
-            </Link>
+              </Link>
+            </div>
           </li>
         ) : (
           <li className="nav-item">
