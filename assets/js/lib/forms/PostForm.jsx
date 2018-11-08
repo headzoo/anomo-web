@@ -25,6 +25,9 @@ class PostForm extends React.PureComponent {
    */
   constructor(props) {
     super(props);
+    this.state = {
+      photoFilename: ''
+    };
     this.photo = React.createRef();
   }
 
@@ -55,15 +58,27 @@ class PostForm extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   * @param {string} value
+   * @param {string} name
+   */
+  handleChange = (e, value, name) => {
+    if (name === 'photo') {
+      this.setState({ photoFilename: value });
+    }
+  };
+
+  /**
    * @returns {*}
    */
   render() {
     const { post, withUpload } = this.props;
+    const { photoFilename } = this.state;
 
     return (
       <Card className="card-form-post">
         <CardBody>
-          <Form name="post" onSubmit={this.handleSubmit} disabled={post.isSubmitting}>
+          <Form name="post" onSubmit={this.handleSubmit} onChange={this.handleChange} disabled={post.isSubmitting}>
             <div className="card-form-post-inputs">
               {withUpload && (
                 <div className="card-form-post-upload">
@@ -94,6 +109,11 @@ class PostForm extends React.PureComponent {
                 </Button>
               </div>
             </div>
+            {photoFilename && (
+              <div className="card-form-post-filename">
+                {photoFilename}
+              </div>
+            )}
           </Form>
         </CardBody>
       </Card>
