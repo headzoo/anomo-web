@@ -145,6 +145,10 @@ export const defaultForms = {
     photo:   '',
     ...commonFormElements
   },
+  search: {
+    ...commonFormElements,
+    term: ''
+  },
   contact: {
     name:    '',
     email:   '',

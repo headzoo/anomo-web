@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
-import { Badge } from 'lib/bootstrap';
-import { NavBadge, Link, withRouter } from 'lib';
+import { Badge, Button } from 'lib/bootstrap';
+import { Form, Input } from 'lib/forms';
+import { NavBadge, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -13,6 +14,7 @@ import * as activityActions from 'actions/activityActions';
 class Nav extends React.PureComponent {
   static propTypes = {
     user:              PropTypes.object.isRequired,
+    forms:             PropTypes.object.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     activity:          PropTypes.object.isRequired,
@@ -41,6 +43,19 @@ class Nav extends React.PureComponent {
 
     activityFeedFetch(feedType, true);
     history.push(routes.route(feedType));
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} values
+   */
+  handleSearchSubmit = (e, values) => {
+    const { history } = this.props;
+
+    e.preventDefault();
+    if (values.term) {
+      history.push(routes.route('search', values));
+    }
   };
 
   /**
@@ -100,6 +115,35 @@ class Nav extends React.PureComponent {
   /**
    * @returns {*}
    */
+  renderSearch = () => {
+    const { forms } = this.props;
+    const { search } = forms;
+
+    return (
+      <Form
+        name="search"
+        onSubmit={this.handleSearchSubmit}
+        disabled={search.isSubmitting}
+        className="form-nav-search form-inline my-2 my-lg-0"
+      >
+        <Input
+          type="search"
+          name="term"
+          aria-label="Search"
+          id="form-nav-search-term"
+          placeholder="Search People"
+          className="mr-sm-2"
+        />
+        <Button className="my-2 my-sm-0">
+          <Icon name="search" />
+        </Button>
+      </Form>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
   render() {
     const { activity, location, notifications } = this.props;
     const { feeds } = activity;
@@ -139,12 +183,6 @@ class Nav extends React.PureComponent {
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
           <NavBadge
-            number={notifications.newNumber}
-            onClick={this.handleNotificationsClick}
-          >
-            Notifications
-          </NavBadge>
-          <NavBadge
             number={feeds.recent.newNumber}
             active={activeFeed === 'recent'}
             onClick={e => this.handleFeedClick(e, 'recent')}
@@ -165,14 +203,21 @@ class Nav extends React.PureComponent {
           >
             Popular
           </NavBadge>
+          <NavBadge
+            number={notifications.newNumber}
+            onClick={this.handleNotificationsClick}
+          >
+            Notifications
+          </NavBadge>
           {this.renderNavItems()}
         </div>
+        {this.renderSearch()}
       </nav>
     );
   }
 }
 
 export default connect(
-  mapStateToProps('user', 'activity', 'notifications'),
+  mapStateToProps('user', 'forms', 'activity', 'notifications'),
   mapActionsToProps(uiActions, activityActions)
 )(withRouter(Nav));

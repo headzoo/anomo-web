@@ -336,3 +336,14 @@
 .forms-custom-checkbox-success input[type="radio"]:checked + label::after {
   color: #fff;
 }
+
+/**
+ * Search
+ */
+.form-nav-search {
+
+    input,
+    button {
+      height: 32px !important;
+    }
+}

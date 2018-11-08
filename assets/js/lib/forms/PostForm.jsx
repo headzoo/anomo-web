@@ -78,7 +78,12 @@ class PostForm extends React.PureComponent {
     return (
       <Card className="card-form-post">
         <CardBody>
-          <Form name="post" onSubmit={this.handleSubmit} onChange={this.handleChange} disabled={post.isSubmitting}>
+          <Form
+            name="post"
+            onSubmit={this.handleSubmit}
+            onChange={this.handleChange}
+            disabled={post.isSubmitting}
+          >
             <div className="card-form-post-inputs">
               {withUpload && (
                 <div className="card-form-post-upload">
@@ -96,11 +101,12 @@ class PostForm extends React.PureComponent {
                   placeholder="Add to conversation"
                 />
                 <Input
-                  name="photo"
                   type="file"
+                  name="photo"
                   ref={this.photo}
                   id="form-post-photo"
                   style={{ display: 'none' }}
+                  accept="image/jpg,image/jpeg,image/png,image/gif"
                 />
               </div>
               <div className="card-form-post-btn">

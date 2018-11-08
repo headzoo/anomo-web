@@ -128,6 +128,7 @@ class Modal extends React.PureComponent {
    */
   handleModalShown = () => {
     this.opened = true;
+    browser.hideScrollbars();
     this.props.onOpened();
   };
 
@@ -136,6 +137,7 @@ class Modal extends React.PureComponent {
    */
   handleModalHidden = () => {
     this.opened = false;
+    browser.showScrollbars();
     this.props.onClosed();
   };
 

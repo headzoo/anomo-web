@@ -7,6 +7,7 @@ const pathsAndRoutes = {
   following: '/following',
   activity:  '/activity/:refID/:actionType',
   profile:   '/profile/:id',
+  search:    '/search',
   login:     '/login',
   logout:    '/logout',
   about:     '/about',

@@ -186,11 +186,14 @@
     display: flex;
 
     .card-form-post-upload {
-      width: 45px;
+      display: flex;
+      padding-right: $gutter-size;
+      align-items: center;
+      justify-content: center;
 
       .icon {
         cursor: pointer;
-        font-size: 2.5em;
+        font-size: 1.5em;
         color: #9a9a9a;
 
         &:hover {

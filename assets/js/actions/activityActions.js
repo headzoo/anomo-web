@@ -86,6 +86,19 @@ export function activityIsCommentSending(isCommentSending) {
 }
 
 /**
+ * @param {boolean} isSending
+ * @param {number} activityID
+ * @returns {{type: string, isSending: *}}
+ */
+export function activityIsDeleteSending(isSending, activityID) {
+  return {
+    type: ACTIVITY_DELETE_SENDING,
+    activityID,
+    isSending
+  };
+}
+
+/**
  * @param {string} feedType
  * @param {boolean} isLoading
  * @returns {{type, isLoading: *}}
@@ -319,19 +332,6 @@ export function activityGet(refID, actionType) {
 }
 
 /**
- * @param {boolean} isSending
- * @param {number} activityID
- * @returns {{type: string, isSending: *}}
- */
-export function activityIsDeleteSending(isSending, activityID) {
-  return {
-    type: ACTIVITY_DELETE_SENDING,
-    activityID,
-    isSending
-  };
-}
-
-/**
  * @param {number} activityID
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
@@ -423,17 +423,6 @@ export function activityReport(refID, actionType) {
 }
 
 /**
- * @returns {function(*)}
- */
-export function activityIntervalStart() {
-  return (dispatch) => {
-    setInterval(() => {
-      dispatch(activityFeedFetchAllNewNumbers());
-    }, 30000);
-  };
-}
-
-/**
  * @param {string} message
  * @param {number} refID
  * @param {number} actionType
@@ -468,5 +457,16 @@ export function activitySubmitComment(message, refID, actionType, topicID, isAno
       dispatch(activityIsCommentSending(false));
       dispatch(formSubmitting(formName, false));
     });
+  };
+}
+
+/**
+ * @returns {function(*)}
+ */
+export function activityIntervalStart() {
+  return (dispatch) => {
+    setInterval(() => {
+      dispatch(activityFeedFetchAllNewNumbers());
+    }, 30000);
   };
 }
