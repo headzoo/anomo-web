@@ -153,7 +153,11 @@ export function activityFeedFetch(feedType, refresh = false) {
         break;
     }
 
-    proxy.get(url)
+    const config = {
+      cancelToken: feedFetchSources[feedType].token
+    };
+
+    proxy.get(url, config)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch({
@@ -237,7 +241,11 @@ export function activityFeedFetchNewNumber(feedType) {
         break;
     }
 
-    proxy.get(url)
+    const config = {
+      cancelToken: feedFetchNewNumberSources[feedType].token
+    };
+
+    proxy.get(url, config)
       .then((data) => {
         if (data.code === 'OK') {
           let newNumber = 0;
