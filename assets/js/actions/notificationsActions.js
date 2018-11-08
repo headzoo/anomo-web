@@ -22,11 +22,12 @@ export function notificationsFetch() {
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
-          favicon.badge(data.NewNotificationsNumber);
+          const newNumber = parseInt(data.NewNotificationsNumber, 10);
+          favicon.badge(newNumber);
           dispatch({
             type:          NOTIFICATIONS_FETCH,
             notifications: data.NotificationHistory,
-            newNumber:     parseInt(data.NewNotificationsNumber, 10)
+            newNumber
           });
         }
       });
