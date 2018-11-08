@@ -7,7 +7,7 @@ import { activityIntervalStart } from 'actions/activityActions';
 import { notificationsIntervalStart } from 'actions/notificationsActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
-import { PrivateRoute, ScrollToTop, Mask, Loading } from 'lib';
+import { PrivateRoute, ScrollToTop, Nav, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
@@ -87,6 +87,7 @@ class App extends React.PureComponent {
     return (
       <Router history={history}>
         <ScrollToTop>
+          <Nav />
           <Switch>
             <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />

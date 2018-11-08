@@ -12,7 +12,6 @@ import { Nav, Footer } from 'lib';
 class Page extends React.PureComponent {
   static propTypes = {
     title:         PropTypes.string.isRequired,
-    withNav:       PropTypes.bool,
     withFooter:    PropTypes.bool,
     fullHeight:    PropTypes.bool,
     className:     PropTypes.string,
@@ -21,7 +20,6 @@ class Page extends React.PureComponent {
   };
 
   static defaultProps = {
-    withNav:    true,
     withFooter: true,
     fullHeight: false,
     className:  '',
@@ -49,7 +47,7 @@ class Page extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { withNav, withFooter, fullHeight, className, children, visibleModals, ...props } = this.props;
+    const { withFooter, fullHeight, className, children, visibleModals, ...props } = this.props;
 
     const classes = classNames('page', {
       'page-full-height': fullHeight
@@ -57,7 +55,6 @@ class Page extends React.PureComponent {
 
     return (
       <div className={classes} {...objects.propsFilter(props, Page.propTypes, 'dispatch')}>
-        {withNav && <Nav />}
         <Container fluid>
           {children}
         </Container>
