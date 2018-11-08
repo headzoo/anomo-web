@@ -47,21 +47,28 @@ export function userIsStatusSending(isStatusSending) {
 
 /**
  * @param {number} userID
+ * @param {number} page
+ * @param {boolean} fetchAll
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
-export function userFollowers(userID) {
+export function userFollowers(userID, page = 1, fetchAll = false) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userFollowers', {
       token: user.getToken(),
-      userID
+      userID,
+      page
     });
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch({
             type:      USER_FOLLOWERS,
-            followers: data.ListFollower
+            followers: data.ListFollower,
+            page
           });
+          if (fetchAll && data.CurrentPage < data.TotalPage) {
+            dispatch(userFollowers(userID, page + 1, true));
+          }
         }
       });
   };
@@ -69,21 +76,28 @@ export function userFollowers(userID) {
 
 /**
  * @param {number} userID
+ * @param {number} page
+ * @param {boolean} fetchAll
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
-export function userFollowing(userID) {
+export function userFollowing(userID, page = 1, fetchAll = false) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userFollowing', {
       token: user.getToken(),
-      userID
+      userID,
+      page
     });
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
           dispatch({
             type:      USER_FOLLOWING,
-            following: data.ListFollowing
+            following: data.ListFollowing,
+            page
           });
+          if (fetchAll && data.CurrentPage < data.TotalPage) {
+            dispatch(userFollowing(userID, page + 1, true));
+          }
         }
       });
   };
@@ -101,7 +115,7 @@ export function userFollow(userID) {
     });
     proxy.get(url)
       .then(() => {
-        dispatch(userFollowing(user.getID()));
+        dispatch(userFollowing(user.getID(), 1, true));
       });
   };
 }
@@ -167,8 +181,6 @@ export function userLogin(username, password) {
 
           dispatch(activityFeedFetchAll());
           dispatch(userFollowing(u.UserID));
-          dispatch(userFollowers(u.UserID));
-          dispatch(userBlocked(u.UserID));
         }
       })
       .finally(() => {
@@ -210,8 +222,6 @@ export function userRefresh() {
             dispatch(activityFeedFetchAll());
             dispatch(notificationsFetch());
             dispatch(userFollowing(id));
-            dispatch(userFollowers(id));
-            dispatch(userBlocked(id));
           }
         })
         .finally(() => {

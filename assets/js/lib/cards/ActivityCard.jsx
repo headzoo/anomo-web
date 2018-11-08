@@ -67,11 +67,12 @@ class ActivityCard extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleMenuClick = () => {
+  handleMenuClick = (e) => {
     const { activity, uiVisibleModal } = this.props;
 
+    e.preventDefault();
     uiVisibleModal('activity', activity);
   };
 

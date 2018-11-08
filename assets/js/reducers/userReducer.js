@@ -63,9 +63,16 @@ function logout() {
  * @returns {*}
  */
 function followers(state, action) {
+  let newFollowers = [];
+  if (action.page === 1) {
+    newFollowers = action.followers.slice(0);
+  } else {
+    newFollowers = state.followers.slice(0).concat(action.followers.slice(0));
+  }
+
   return {
     ...state,
-    followers: action.followers.slice(0)
+    followers: newFollowers
   };
 }
 
@@ -75,9 +82,16 @@ function followers(state, action) {
  * @returns {*}
  */
 function following(state, action) {
+  let newFollowing = [];
+  if (action.page === 1) {
+    newFollowing = action.following.slice(0);
+  } else {
+    newFollowing = state.following.slice(0).concat(action.following.slice(0));
+  }
+
   return {
     ...state,
-    following: action.following.slice(0)
+    following: newFollowing
   };
 }
 
