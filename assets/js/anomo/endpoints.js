@@ -4,25 +4,28 @@ const base = 'https://ws.anomo.com/v101/index.php/webservice';
 
 // https://github.com/unofficial-anomo-api/open/wiki/New-Anomo-2.11-Update-API-End-Points
 const urls = {
-  userLogin:            `${base}/user/login`,
-  userLogout:           `${base}/user/logout/{token}`,
-  userInfo:             `${base}/user/get_user_info/{token}/{userID}`,
-  userBlock:            `${base}/user/block_user/{token}/{userID}`,
-  userBlocked:          `${base}/user/get_blocked_users/{token}/{userID}`,
-  userFollow:           `${base}/user/follow/{token}/{userID}`,
-  userFollowers:        `${base}/user/get_list_follower/{token}/{userID}/1`,
-  userFollowing:        `${base}/user/get_list_following/{token}/{userID}/1`,
-  userStatus:           `${base}/user/post_status/{token}`,
-  userPicture:          `${base}/user/post_picture_activity/{token}`,
-  profilePosts:         `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,
-  activityFetch:        `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
-  activityGet:          `${base}/activity/detail/{token}/{refID}/{actionType}`,
-  activityDelete:       `${base}/user/delete_activity/{token}/{activityID}`,
-  activityLike:         `${base}/activity/like/{token}/{refID}/{actionType}/false`,
-  activityComment:      `${base}/activity/comment/{token}/{refID}/{actionType}`,
-  activityCommentLike:  `${base}/comment/like/{token}/{commentID}/1`,
-  notificationsHistory: `${base}/push_notification/get_notification_history/{token}/1/1`,
-  notificationsRead:    `${base}/push_notification/read/{token}/{notificationID}/46/33`
+  userLogin:             `${base}/user/login`,
+  userLogout:            `${base}/user/logout/{token}`,
+  userInfo:              `${base}/user/get_user_info/{token}/{userID}`,
+  userBlock:             `${base}/user/block_user/{token}/{userID}`,
+  userBlocked:           `${base}/user/get_blocked_users/{token}/{userID}`,
+  userFollow:            `${base}/user/follow/{token}/{userID}`,
+  userFollowers:         `${base}/user/get_list_follower/{token}/{userID}/1`,
+  userFollowing:         `${base}/user/get_list_following/{token}/{userID}/1`,
+  userStatus:            `${base}/user/post_status/{token}`,
+  userPicture:           `${base}/user/post_picture_activity/{token}`,
+  profilePosts:          `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,
+  activityFetch:         `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
+  activityFeedRecent:    `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
+  activityFeedPopular:   `${base}/activity/get_activities/{token}/1/2/-1/0/18/100/{lastActivityID}/0`,
+  activityFeedFollowing: `${base}/activity/get_activities/{token}/1/3/-1/0/18/100/{lastActivityID}/0`,
+  activityGet:           `${base}/activity/detail/{token}/{refID}/{actionType}`,
+  activityDelete:        `${base}/user/delete_activity/{token}/{activityID}`,
+  activityLike:          `${base}/activity/like/{token}/{refID}/{actionType}/false`,
+  activityComment:       `${base}/activity/comment/{token}/{refID}/{actionType}`,
+  activityCommentLike:   `${base}/comment/like/{token}/{commentID}/1`,
+  notificationsHistory:  `${base}/push_notification/get_notification_history/{token}/1/1`,
+  notificationsRead:     `${base}/push_notification/read/{token}/{notificationID}/46/33`
 };
 
 /**

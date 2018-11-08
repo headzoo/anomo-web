@@ -1,15 +1,18 @@
 import { strings, objects } from 'utils';
 
 const pathsAndRoutes = {
-  home:     '/',
-  activity: '/activity/:refID/:actionType',
-  profile:  '/profile/:id',
-  login:    '/login',
-  logout:   '/logout',
-  about:    '/about',
-  contact:  '/contact',
-  privacy:  '/privacy',
-  tou:      '/tou'
+  home:      '/',
+  recent:    '/',
+  popular:   '/popular',
+  following: '/following',
+  activity:  '/activity/:refID/:actionType',
+  profile:   '/profile/:id',
+  login:     '/login',
+  logout:    '/logout',
+  about:     '/about',
+  contact:   '/contact',
+  privacy:   '/privacy',
+  tou:       '/tou'
 };
 
 /**

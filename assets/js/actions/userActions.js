@@ -1,6 +1,6 @@
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFetch } from 'actions/activityActions';
+import { activityFetch, activityFeedFetchAll } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR          = 'USER_ERROR';
@@ -205,11 +205,13 @@ export function userRefresh() {
               type: USER_LOGIN,
               user: data.results
             });
-            dispatch(userBlocked(id));
+
+            dispatch(activityFeedFetchAll());
+            dispatch(notificationsFetch());
             dispatch(userFollowing(id));
             dispatch(userFollowers(id));
-            dispatch(activityFetch());
-            dispatch(notificationsFetch());
+            dispatch(userBlocked(id));
+            // dispatch(activityFetch());
           }
         })
         .finally(() => {

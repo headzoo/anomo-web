@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { browser, connect, mapActionsToProps } from 'utils';
+import { browser, strings, connect, mapActionsToProps } from 'utils';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
 
@@ -12,19 +13,50 @@ import * as activityActions from 'actions/activityActions';
  */
 class FeedPage extends React.PureComponent {
   static propTypes = {
-    activities:       PropTypes.array.isRequired,
-    isRefreshing:     PropTypes.bool.isRequired,
-    activityFetch:    PropTypes.func.isRequired,
-    userSubmitStatus: PropTypes.func.isRequired
+    feeds:             PropTypes.object.isRequired,
+    location:          PropTypes.object.isRequired,
+    activityFeedFetch: PropTypes.func.isRequired,
+    userSubmitStatus:  PropTypes.func.isRequired
   };
+
+  /**
+   * @param {*} nextProps
+   * @returns {{feedType: string}}
+   */
+  static getDerivedStateFromProps(nextProps) {
+    let feedType = 'recent';
+    switch (nextProps.location.pathname) {
+      case routes.path('popular'):
+        feedType = 'popular';
+        break;
+      case routes.path('following'):
+        feedType = 'following';
+        break;
+    }
+
+    return {
+      feedType
+    };
+  }
+
+  /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedType: 'recent'
+    };
+  }
 
   /**
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { isRefreshing } = this.props;
+    const { feeds } = this.props;
+    const { feedType } = this.state;
 
-    if (isRefreshing && !prevProps.isRefreshing) {
+    if (feeds[feedType].isRefreshing && !prevProps.feeds[feedType].isRefreshing) {
       browser.scrollTop();
     }
   };
@@ -33,9 +65,10 @@ class FeedPage extends React.PureComponent {
    *
    */
   handleNext = () => {
-    const { activityFetch } = this.props;
+    const { activityFeedFetch } = this.props;
+    const { feedType } = this.state;
 
-    activityFetch();
+    activityFeedFetch(feedType);
   };
 
   /**
@@ -53,10 +86,16 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activities, isRefreshing } = this.props;
+    const { feeds } = this.props;
+    const { feedType } = this.state;
+
+    let title = 'Anomo';
+    if (feedType !== 'recent') {
+      title = strings.ucWords(feedType);
+    }
 
     return (
-      <Page title="Anomo">
+      <Page title={title}>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
             <PostForm
@@ -67,12 +106,12 @@ class FeedPage extends React.PureComponent {
         </Row>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            {isRefreshing && (
+            {feeds[feedType].isRefreshing && (
               <Loading className="text-center gutter-bottom" />
             )}
             <Feed
-              activities={activities}
               onNext={this.handleNext}
+              activities={feeds[feedType].activities}
             />
           </Column>
         </Row>
@@ -83,8 +122,7 @@ class FeedPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    activities:   state.activity.activities,
-    isRefreshing: state.activity.isRefreshing
+    feeds: state.activity.feeds
   };
 };
 

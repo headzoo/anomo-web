@@ -14,6 +14,10 @@
   padding: 10px;
   background-color: #5e6165;
 
+  &.badge-info {
+    background-color: #898989;
+  }
+
   &.nav-link {
     cursor: pointer;
   }

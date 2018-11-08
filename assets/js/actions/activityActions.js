@@ -4,12 +4,15 @@ import { formReset, formError, formSubmitting } from 'actions/formActions';
 
 export const ACTIVITY_LOADING              = 'ACTIVITY_LOADING';
 export const ACTIVITY_REFRESHING           = 'ACTIVITY_REFRESHING';
+export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
+export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
 export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
 export const ACTIVITY_DELETE_SENDING       = 'ACTIVITY_DELETE_SENDING';
 export const ACTIVITY_NEW_NUMBER           = 'ACTIVITY_NEW_NUMBER';
+export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
 export const ACTIVITY_FETCH                = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
@@ -98,6 +101,114 @@ export function activityIsCommentSending(isCommentSending) {
 export function activityReset() {
   return {
     type: ACTIVITY_RESET
+  };
+}
+
+/**
+ * @param {string} feedType
+ * @param {boolean} isLoading
+ * @returns {{type, isLoading: *}}
+ */
+export function activityIsFeedLoading(feedType, isLoading) {
+  return {
+    type: ACTIVITY_FEED_LOADING,
+    isLoading,
+    feedType
+  };
+}
+
+/**
+ * @param {string} feedType
+ * @param {boolean} isRefreshing
+ * @returns {{type, isLoading: *}}
+ */
+export function activityIsFeedRefreshing(feedType, isRefreshing) {
+  return {
+    type: ACTIVITY_FEED_REFRESHING,
+    isRefreshing,
+    feedType
+  };
+}
+
+const feedFetchSources = {
+  recent:    null,
+  popular:   null,
+  following: null
+};
+
+/**
+ * @param {string} feedType
+ * @param {boolean} refresh
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityFeedFetch(feedType, refresh = false) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const { activity } = getState();
+
+    if (feedFetchSources[feedType]) {
+      feedFetchSources[feedType].cancel();
+    }
+    feedFetchSources[feedType] = CancelToken.source();
+
+    dispatch(activityIsFeedLoading(feedType, true));
+    if (refresh) {
+      dispatch(activityIsFeedRefreshing(feedType, true));
+    }
+
+    let url = '';
+    const token = user.getToken();
+    switch (feedType) {
+      case 'recent':
+        url = endpoints.create('activityFeedRecent', {
+          lastActivityID: refresh ? 0 : activity.feeds.recent.lastActivityID,
+          token
+        });
+        break;
+      case 'popular':
+        url = endpoints.create('activityFeedPopular', {
+          lastActivityID: refresh ? 0 : activity.feeds.popular.lastActivityID,
+          token
+        });
+        break;
+      case 'following':
+        url = endpoints.create('activityFeedFollowing', {
+          lastActivityID: refresh ? 0 : activity.feeds.following.lastActivityID,
+          token
+        });
+        break;
+    }
+
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          favicon.badge(0);
+          dispatch({
+            type:       ACTIVITY_FEED_FETCH,
+            activities: data.Activities,
+            feedType,
+            refresh
+          });
+        }
+      })
+      .finally(() => {
+        feedFetchSources[feedType] = null;
+        dispatch(activityIsFeedLoading(feedType, false));
+        if (refresh) {
+          dispatch(activityIsFeedRefreshing(feedType, false));
+        }
+      });
+  };
+}
+
+/**
+ * @param {boolean} refresh
+ * @returns {function(*)}
+ */
+export function activityFeedFetchAll(refresh = false) {
+  return (dispatch) => {
+    dispatch(activityFeedFetch('recent', refresh));
+    dispatch(activityFeedFetch('popular', refresh));
+    dispatch(activityFeedFetch('following', refresh));
   };
 }
 

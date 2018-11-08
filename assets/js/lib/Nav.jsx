@@ -12,12 +12,13 @@ import * as activityActions from 'actions/activityActions';
  */
 class Nav extends React.PureComponent {
   static propTypes = {
-    user:           PropTypes.object.isRequired,
-    history:        PropTypes.object.isRequired,
-    activity:       PropTypes.object.isRequired,
-    notifications:  PropTypes.object.isRequired,
-    activityFetch:  PropTypes.func.isRequired,
-    uiVisibleModal: PropTypes.func.isRequired
+    user:              PropTypes.object.isRequired,
+    history:           PropTypes.object.isRequired,
+    location:          PropTypes.object.isRequired,
+    activity:          PropTypes.object.isRequired,
+    notifications:     PropTypes.object.isRequired,
+    activityFeedFetch: PropTypes.func.isRequired,
+    uiVisibleModal:    PropTypes.func.isRequired
   };
 
   /**
@@ -32,30 +33,42 @@ class Nav extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
+   * @param {string} feedType
    */
-  handleFeedClick = () => {
-    const { history, activityFetch } = this.props;
+  handleFeedClick = (e, feedType) => {
+    const { history, activityFeedFetch } = this.props;
 
-    activityFetch(true);
-    history.push(routes.route('home'));
+    activityFeedFetch(feedType, true);
+    history.push(routes.route(feedType));
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { user, activity, notifications } = this.props;
+    const { user, activity, location, notifications } = this.props;
+    const { feeds } = activity;
 
     const navItems = [
       { name: 'about', label: 'About' }
     ];
 
-    if (activity.newNumber > 99) {
-      activity.newNumber = '99+';
-    }
     if (notifications.newNumber > 99) {
       notifications.newNumber = '99+';
+    }
+
+    let activeFeed = '';
+    switch (location.pathname) {
+      case routes.path('recent'):
+        activeFeed = 'recent';
+        break;
+      case routes.path('popular'):
+        activeFeed = 'popular';
+        break;
+      case routes.path('following'):
+        activeFeed = 'following';
+        break;
     }
 
     return (
@@ -75,15 +88,38 @@ class Nav extends React.PureComponent {
           <span className="navbar-toggler-icon" />
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
+          {/* Feeds Start */}
           <Badge
-            onClick={this.handleFeedClick}
+            onClick={e => this.handleFeedClick(e, 'recent')}
+            theme={activeFeed === 'recent' ? 'info' : 'dark'}
             className="nav-badge nav-badge-with-number clickable"
           >
-            <span>Feed</span>
+            <span>Recent</span>
             <Badge className="nav-notifications-badge">
-              {activity.newNumber}
+              {feeds.recent.newNumber}
             </Badge>
           </Badge>
+          <Badge
+            onClick={e => this.handleFeedClick(e, 'following')}
+            theme={activeFeed === 'following' ? 'info' : 'dark'}
+            className="nav-badge nav-badge-with-number clickable"
+          >
+            <span>Following</span>
+            <Badge className="nav-notifications-badge">
+              {feeds.following.newNumber}
+            </Badge>
+          </Badge>
+          <Badge
+            onClick={e => this.handleFeedClick(e, 'popular')}
+            theme={activeFeed === 'popular' ? 'info' : 'dark'}
+            className="nav-badge nav-badge-with-number clickable"
+          >
+            <span>Popular</span>
+            <Badge className="nav-notifications-badge">
+              {feeds.popular.newNumber}
+            </Badge>
+          </Badge>
+          {/* Feeds End */}
           <Badge
             onClick={this.handleNotificationsClick}
             className="nav-badge nav-badge-with-number clickable"

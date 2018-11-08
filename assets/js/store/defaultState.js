@@ -81,7 +81,30 @@ export const defaultProfile = {
 /**
  *
  */
+const commonFeed = {
+  activities:      [],
+  newNumber:       0,
+  lastActivityID:  0,
+  firstActivityID: 0,
+  isLoading:       false,
+  isRefreshing:    false
+};
+
+/**
+ *
+ */
 export const defaultActivity = {
+  feeds: {
+    recent: {
+      ...commonFeed
+    },
+    popular: {
+      ...commonFeed
+    },
+    following: {
+      ...commonFeed
+    }
+  },
   activities:        [],
   activity:          {},
   lastActivityID:    0,

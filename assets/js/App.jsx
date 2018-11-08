@@ -89,6 +89,8 @@ class App extends React.PureComponent {
         <ScrollToTop>
           <Switch>
             <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
+            <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
+            <PrivateRoute exact path={routes.path('following')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('activity')} component={ActivityPage} />
             <PrivateRoute exact path={routes.path('profile')} component={ProfilePage} />
             <Route exact path={routes.path('login')} component={LoginPage} />

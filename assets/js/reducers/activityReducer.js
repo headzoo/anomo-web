@@ -1,7 +1,7 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 import anomo from 'anomo';
-import { ACTIVITY_LIKE_COMMENT_LOADING } from '../actions/activityActions';
+import { ACTIVITY_FEED_LOADING, ACTIVITY_LIKE_COMMENT_LOADING } from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -24,6 +24,40 @@ function refreshing(state, action) {
   return {
     ...state,
     isRefreshing: action.isRefreshing
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function feedLoading(state, action) {
+  const feeds = objects.clone(state.feeds);
+  const feed  = feeds[action.feedType];
+
+  feed.isLoading = action.isLoading;
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function feedRefreshing(state, action) {
+  const feeds = objects.clone(state.feeds);
+  const feed  = feeds[action.feedType];
+
+  feed.isRefreshing = action.isRefreshing;
+
+  return {
+    ...state,
+    feeds
   };
 }
 
@@ -152,6 +186,43 @@ function fetch(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function feedFetch(state, action) {
+  const feeds = objects.clone(state.feeds);
+  const feed  = feeds[action.feedType];
+
+  const newActivities = action.activities.slice(0).map((a) => {
+    return anomo.activities.sanitizeActivity(a);
+  });
+
+  if (action.refresh) {
+    feed.activities = newActivities;
+  } else {
+    feed.activities = objects.clone(feed.activities).concat(newActivities);
+  }
+
+  const lastActivity = feed.activities[feed.activities.length - 1];
+  if (lastActivity) {
+    feed.lastActivityID = lastActivity.ActivityID;
+  }
+
+  const firstActivity = feed.activities[0];
+  if (firstActivity) {
+    feed.firstActivityID = firstActivity.ActivityID;
+  }
+
+  feed.newNumber = 0;
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function set(state, action) {
   const activities = objects.clone(state.activities);
   const activity = anomo.activities.sanitizeActivity(action.activity);
@@ -244,6 +315,10 @@ export default function activityReducer(state = {}, action = {}) {
       return loading(state, action);
     case types.ACTIVITY_REFRESHING:
       return refreshing(state, action);
+    case types.ACTIVITY_FEED_LOADING:
+      return feedLoading(state, action);
+    case types.ACTIVITY_FEED_REFRESHING:
+      return feedRefreshing(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
     case types.ACTIVITY_LIKE_COMMENT_LOADING:
@@ -256,6 +331,8 @@ export default function activityReducer(state = {}, action = {}) {
       return newNumber(state, action);
     case types.ACTIVITY_FETCH:
       return fetch(state, action);
+    case types.ACTIVITY_FEED_FETCH:
+      return feedFetch(state, action);
     case types.ACTIVITY_SET:
       return set(state, action);
     case types.ACTIVITY_RESET:
