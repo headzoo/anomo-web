@@ -1,6 +1,6 @@
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFetch, activityFeedFetchAll } from 'actions/activityActions';
+import { activityFeedFetchAll } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR          = 'USER_ERROR';
@@ -164,10 +164,11 @@ export function userLogin(username, password) {
             type: USER_LOGIN,
             user: u
           });
-          dispatch(userBlocked(u.UserID));
+
+          dispatch(activityFeedFetchAll());
           dispatch(userFollowing(u.UserID));
           dispatch(userFollowers(u.UserID));
-          dispatch(activityFetch());
+          dispatch(userBlocked(u.UserID));
         }
       })
       .finally(() => {
@@ -211,7 +212,6 @@ export function userRefresh() {
             dispatch(userFollowing(id));
             dispatch(userFollowers(id));
             dispatch(userBlocked(id));
-            // dispatch(activityFetch());
           }
         })
         .finally(() => {
@@ -265,7 +265,7 @@ export function userSubmitStatus(message, photo = '') {
       .then((resp) => {
         if (resp.code === 'OK') {
           dispatch(formReset(formName));
-          dispatch(activityFetch(true));
+          dispatch(activityFeedFetchAll(true));
         } else {
           dispatch(formError(formName, 'There was an error.'));
         }

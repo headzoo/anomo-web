@@ -1,34 +1,6 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 import anomo from 'anomo';
-import {
-  ACTIVITY_FEED_LOADING, ACTIVITY_FEED_NEW_NUMBER,
-  ACTIVITY_LIKE_COMMENT_LOADING
-} from '../actions/activityActions';
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function loading(state, action) {
-  return {
-    ...state,
-    isLoading: action.isLoading
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function refreshing(state, action) {
-  return {
-    ...state,
-    isRefreshing: action.isRefreshing
-  };
-}
 
 /**
  * @param {*} state
@@ -143,18 +115,6 @@ function commentSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function newNumber(state, action) {
-  return {
-    ...state,
-    newNumber: action.newNumber
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
 function feedNewNumber(state, action) {
   const feeds = objects.clone(state.feeds);
   const feed  = feeds[action.feedType];
@@ -164,44 +124,6 @@ function feedNewNumber(state, action) {
   return {
     ...state,
     feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function fetch(state, action) {
-  const newActivities = action.activities.slice(0).map((a) => {
-    return anomo.activities.sanitizeActivity(a);
-  });
-
-  let activities = [];
-  if (action.refresh) {
-    activities = newActivities;
-  } else {
-    activities = objects.clone(state.activities).concat(newActivities);
-  }
-
-  let lastActivityID = 0;
-  const lastActivity = activities[activities.length - 1];
-  if (lastActivity) {
-    lastActivityID = lastActivity.ActivityID;
-  }
-
-  let firstActivityID = 0;
-  const firstActivity = activities[0];
-  if (firstActivity) {
-    firstActivityID = firstActivity.ActivityID;
-  }
-
-  return {
-    ...state,
-    newNumber: 0,
-    activities,
-    lastActivityID,
-    firstActivityID
   };
 }
 
@@ -343,10 +265,10 @@ function deleteIsSending(state, action) {
  */
 export default function activityReducer(state = {}, action = {}) {
   switch (action.type) {
-    case types.ACTIVITY_LOADING:
-      return loading(state, action);
-    case types.ACTIVITY_REFRESHING:
-      return refreshing(state, action);
+    case types.ACTIVITY_RESET:
+      return reset(state);
+    case types.ACTIVITY_SET:
+      return set(state, action);
     case types.ACTIVITY_FEED_LOADING:
       return feedLoading(state, action);
     case types.ACTIVITY_FEED_REFRESHING:
@@ -359,18 +281,10 @@ export default function activityReducer(state = {}, action = {}) {
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
-    case types.ACTIVITY_NEW_NUMBER:
-      return newNumber(state, action);
     case types.ACTIVITY_FEED_NEW_NUMBER:
       return feedNewNumber(state, action);
-    case types.ACTIVITY_FETCH:
-      return fetch(state, action);
     case types.ACTIVITY_FEED_FETCH:
       return feedFetch(state, action);
-    case types.ACTIVITY_SET:
-      return set(state, action);
-    case types.ACTIVITY_RESET:
-      return reset(state);
     case types.ACTIVITY_DELETE:
       return deleteActivity(state, action);
     case types.ACTIVITY_DELETE_SENDING:
