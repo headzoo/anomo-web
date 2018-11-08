@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Favico from 'favico.js';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 
 export const ACTIVITY_LOADING              = 'ACTIVITY_LOADING';
@@ -12,6 +11,7 @@ export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
 export const ACTIVITY_DELETE_SENDING       = 'ACTIVITY_DELETE_SENDING';
 export const ACTIVITY_NEW_NUMBER           = 'ACTIVITY_NEW_NUMBER';
+export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
 export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
 export const ACTIVITY_FETCH                = 'ACTIVITY_FETCH';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
@@ -21,9 +21,6 @@ export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
 export const ACTIVITY_REPORT               = 'ACTIVITY_REPORT';
 
 const { CancelToken } = axios;
-const favicon = new Favico({
-  animation: 'popFade'
-});
 
 /**
  * @param {boolean} isLoading
@@ -181,13 +178,17 @@ export function activityFeedFetch(feedType, refresh = false) {
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
-          favicon.badge(0);
           dispatch({
             type:       ACTIVITY_FEED_FETCH,
             activities: data.Activities,
             feedType,
             refresh
           });
+        }
+      })
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          throw err;
         }
       })
       .finally(() => {
@@ -212,6 +213,95 @@ export function activityFeedFetchAll(refresh = false) {
   };
 }
 
+const feedFetchNewNumberSources = {
+  recent:    null,
+  popular:   null,
+  following: null
+};
+
+/**
+ * @param {string} feedType
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityFeedFetchNewNumber(feedType) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    const { activity } = getState();
+    const { firstActivityID } = activity.feeds[feedType];
+
+    if (firstActivityID === 0) {
+      dispatch({
+        type:      ACTIVITY_FEED_NEW_NUMBER,
+        newNumber: 0,
+        feedType
+      });
+      return;
+    }
+
+    if (feedFetchNewNumberSources[feedType]) {
+      feedFetchNewNumberSources[feedType].cancel();
+    }
+    feedFetchNewNumberSources[feedType] = CancelToken.source();
+
+    let url = '';
+    const token = user.getToken();
+    switch (feedType) {
+      case 'recent':
+        url = endpoints.create('activityFeedRecent', {
+          lastActivityID: 0,
+          token
+        });
+        break;
+      case 'popular':
+        url = endpoints.create('activityFeedPopular', {
+          lastActivityID: 0,
+          token
+        });
+        break;
+      case 'following':
+        url = endpoints.create('activityFeedFollowing', {
+          lastActivityID: 0,
+          token
+        });
+        break;
+    }
+
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          let newNumber = 0;
+          for (let i = 0; i < data.Activities.length; i++) {
+            if (data.Activities[i].ActivityID > firstActivityID) {
+              newNumber += 1;
+            }
+          }
+          dispatch({
+            type: ACTIVITY_FEED_NEW_NUMBER,
+            newNumber,
+            feedType
+          });
+        }
+      })
+      .catch((err) => {
+        if (!axios.isCancel(err)) {
+          throw err;
+        }
+      })
+      .finally(() => {
+        feedFetchNewNumberSources[feedType] = null;
+      });
+  };
+}
+
+/**
+ * @returns {function(*)}
+ */
+export function activityFeedFetchAllNewNumbers() {
+  return (dispatch) => {
+    dispatch(activityFeedFetchNewNumber('recent'));
+    dispatch(activityFeedFetchNewNumber('popular'));
+    dispatch(activityFeedFetchNewNumber('following'));
+  };
+}
 
 let activityFetchSource = null;
 
@@ -254,7 +344,6 @@ export function activityFetch(refresh = false) {
             type:      ACTIVITY_NEW_NUMBER,
             newNumber: 0
           });
-          favicon.badge(0);
         }
       })
       .finally(() => {
@@ -470,9 +559,8 @@ export function activityReport(refID, actionType) {
  */
 export function activityIntervalStart() {
   return (dispatch) => {
-    dispatch(activityNewNumber());
     setInterval(() => {
-      dispatch(activityNewNumber());
+      dispatch(activityFeedFetchAllNewNumbers());
     }, 30000);
   };
 }

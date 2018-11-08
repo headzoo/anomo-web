@@ -1,7 +1,10 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 import anomo from 'anomo';
-import { ACTIVITY_FEED_LOADING, ACTIVITY_LIKE_COMMENT_LOADING } from '../actions/activityActions';
+import {
+  ACTIVITY_FEED_LOADING, ACTIVITY_FEED_NEW_NUMBER,
+  ACTIVITY_LIKE_COMMENT_LOADING
+} from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -67,22 +70,26 @@ function feedRefreshing(state, action) {
  * @returns {*}
  */
 function likeLoading(state, action) {
-  const activity = objects.merge(state.activity, {
-    LikeIsLoading: action.isLoading
-  });
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
 
-  const activities = objects.clone(state.activities);
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].RefID === action.refID) {
-      activities[i].LikeIsLoading = action.isLoading;
-      break;
-    }
+  if (activity && activity.RefID === action.refID) {
+    activity.LikeIsLoading = action.isLoading;
   }
+
+  objects.forEach(feeds, (feed) => {
+    for (let i = 0; i < feed.activities.length; i++) {
+      if (feed.activities[i].RefID === action.refID) {
+        feed.activities[i].LikeIsLoading = action.isLoading;
+        break;
+      }
+    }
+  });
 
   return {
     ...state,
-    activities,
-    activity
+    activity,
+    feeds
   };
 }
 
@@ -140,6 +147,23 @@ function newNumber(state, action) {
   return {
     ...state,
     newNumber: action.newNumber
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function feedNewNumber(state, action) {
+  const feeds = objects.clone(state.feeds);
+  const feed  = feeds[action.feedType];
+
+  feed.newNumber = action.newNumber;
+
+  return {
+    ...state,
+    feeds
   };
 }
 
@@ -224,20 +248,22 @@ function feedFetch(state, action) {
  * @returns {*}
  */
 function set(state, action) {
-  const activities = objects.clone(state.activities);
+  const feeds    = objects.clone(state.feeds);
   const activity = anomo.activities.sanitizeActivity(action.activity);
 
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].ActivityID === activity.ActivityID) {
-      activities[i] = objects.clone(activity);
-      break;
+  objects.forEach(feeds, (feed) => {
+    for (let i = 0; i < feed.activities.length; i++) {
+      if (feed.activities[i].ActivityID === activity.ActivityID) {
+        feed.activities[i] = objects.clone(activity);
+        break;
+      }
     }
-  }
+  });
 
   return {
     ...state,
-    activities,
-    activity
+    activity,
+    feeds
   };
 }
 
@@ -258,23 +284,26 @@ function reset(state) {
  * @returns {*}
  */
 function deleteActivity(state, action) {
-  const activities = objects.clone(state.activities);
-  const activity   = objects.clone(state.activity);
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
 
   if (activity && activity.ActivityID === action.activityID) {
     activity.IsDeleted = true;
   }
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].ActivityID === action.activityID) {
-      activities[i].IsDeleted = true;
-      break;
+
+  objects.forEach(feeds, (feed) => {
+    for (let i = 0; i < feed.activities.length; i++) {
+      if (feed.activities[i].ActivityID === action.activityID) {
+        feed.activities[i].IsDeleted = true;
+        break;
+      }
     }
-  }
+  });
 
   return {
     ...state,
-    activities,
-    activity
+    activity,
+    feeds
   };
 }
 
@@ -284,23 +313,26 @@ function deleteActivity(state, action) {
  * @returns {*}
  */
 function deleteIsSending(state, action) {
-  const activities = objects.clone(state.activities);
-  const activity   = objects.clone(state.activity);
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
 
   if (activity && activity.ActivityID === action.activityID) {
     activity.DeleteIsSending = action.isSending;
   }
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].ActivityID === action.activityID) {
-      activities[i].DeleteIsSending = action.isSending;
-      break;
+
+  objects.forEach(feeds, (feed) => {
+    for (let i = 0; i < feed.activities.length; i++) {
+      if (feed.activities[i].ActivityID === action.activityID) {
+        feed.activities[i].DeleteIsSending = action.isSending;
+        break;
+      }
     }
-  }
+  });
 
   return {
     ...state,
-    activities,
-    activity
+    activity,
+    feeds
   };
 }
 
@@ -329,6 +361,8 @@ export default function activityReducer(state = {}, action = {}) {
       return commentSending(state, action);
     case types.ACTIVITY_NEW_NUMBER:
       return newNumber(state, action);
+    case types.ACTIVITY_FEED_NEW_NUMBER:
+      return feedNewNumber(state, action);
     case types.ACTIVITY_FETCH:
       return fetch(state, action);
     case types.ACTIVITY_FEED_FETCH:

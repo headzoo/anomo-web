@@ -6,6 +6,7 @@ import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { Row, Column } from 'lib/bootstrap';
 import { ActivityCard } from 'lib/cards';
 import { Loading } from 'lib';
+import * as constants from 'anomo/constants';
 
 /**
  *
@@ -36,7 +37,7 @@ class Feed extends React.PureComponent {
       >
         <TransitionGroup component={Row}>
           {activities.map(a => (
-            (!a.IsDeleted && a.ActionType !== '28') ? (
+            (!a.IsDeleted && a.ActionType !== constants.ACTION_TYPE_JOIN) ? (
               <FadeAndSlideTransition key={a.ActivityID} duration={150}>
                 <Column>
                   <ActivityCard activity={a} />

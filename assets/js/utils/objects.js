@@ -91,12 +91,11 @@ export function objectPropsFilter(obj1, obj2, ...rest) {
  * @return {object}
  */
 export function objectForEach(obj, cb) {
-  const newObj = Object.assign({}, obj);
-  for (const key of Object.keys(newObj)) { // eslint-disable-line
-    cb(newObj[key], key);
+  for (const key of Object.keys(obj)) { // eslint-disable-line
+    cb(obj[key], key);
   }
 
-  return newObj;
+  return obj;
 }
 
 /**

@@ -1,4 +1,10 @@
+import Favico from 'favico.js';
+
 export const NOTIFICATIONS_FETCH = 'NOTIFICATIONS_FETCH';
+
+const favicon = new Favico({
+  animation: 'popFade'
+});
 
 /**
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
@@ -16,6 +22,7 @@ export function notificationsFetch() {
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
+          favicon.badge(data.NewNotificationsNumber);
           dispatch({
             type:          NOTIFICATIONS_FETCH,
             notifications: data.NotificationHistory,
