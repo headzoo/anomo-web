@@ -311,6 +311,9 @@ export function activityGet(refID, actionType) {
         if (data.code === 'OK') {
           dispatch(activitySet(data.Activity));
         }
+      })
+      .finally(() => {
+        dispatch(activityIsCommentsLoading(false));
       });
   };
 }
