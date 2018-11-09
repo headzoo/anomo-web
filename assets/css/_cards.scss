@@ -168,6 +168,16 @@
   color: $color-liked;
 }
 
+.card-comment-highlighted {
+  border: 1px solid #000000;
+  margin: 0 (-$gutter-size) $gutter-size (-$gutter-size);
+  box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.5);
+
+  @include media-xs {
+    margin: 0 ((-$gutter-size) + 5px) $gutter-size ((-$gutter-size) + 5px);
+  }
+}
+
 .card-form-post {
   margin-bottom: $gutter-size;
 

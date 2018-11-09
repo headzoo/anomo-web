@@ -29,18 +29,35 @@ class NotificationsDrawer extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  close = () => {
+    const { uiVisibleDrawer } = this.props;
+
+    uiVisibleDrawer('notifications', false);
+  };
+
+  /**
    * @param {Event} e
    * @param {*} notification
    */
   handleNotificationClick = (e, notification) => {
-    const { history, notificationsRead, uiVisibleDrawer } = this.props;
+    const { history, notificationsRead } = this.props;
+    const { ID, Type, ContentID, ContentType, RefID } = notification;
 
-    notificationsRead(notification.ID);
-    uiVisibleDrawer('notifications', false);
-    if (notification.ContentID) {
+    this.close();
+    notificationsRead(ID);
+
+    if (Type === constants.NOTIFICATION_COMMENT || Type === constants.NOTIFICATION_LIKE_COMMENT) {
+      history.push(routes.route('comment', {
+        refID:      ContentID,
+        actionType: ContentType,
+        commentID:  RefID
+      }));
+    } else if (ContentID) {
       history.push(routes.route('activity', {
-        refID:      notification.ContentID,
-        actionType: notification.ContentType
+        refID:      ContentID,
+        actionType: ContentType
       }));
     }
   };
@@ -49,12 +66,12 @@ class NotificationsDrawer extends React.PureComponent {
    *
    */
   handleClearAllClick = () => {
-    const { notifications, notificationsRead, uiVisibleDrawer } = this.props;
+    const { notifications, notificationsRead } = this.props;
 
+    this.close();
     notifications.notifications.forEach((n) => {
       notificationsRead(n.ID);
     });
-    uiVisibleDrawer('notifications', false);
   };
 
   /**
@@ -72,28 +89,10 @@ class NotificationsDrawer extends React.PureComponent {
   /**
    *
    */
-  handleLogoutClick = () => {
-    const { uiVisibleDrawer } = this.props;
-
-    uiVisibleDrawer('notifications', false);
-  };
-
-  /**
-   *
-   */
-  handleMaskClick = () => {
-    const { uiVisibleDrawer } = this.props;
-
-    uiVisibleDrawer('notifications', false);
-  };
-
-  /**
-   *
-   */
   handleSettingsClick = () => {
-    const { history, uiVisibleDrawer } = this.props;
+    const { history } = this.props;
 
-    uiVisibleDrawer('notifications', false);
+    this.close();
     history.push(routes.route('settings'));
   };
 
@@ -180,8 +179,8 @@ class NotificationsDrawer extends React.PureComponent {
         open={open}
         level={null}
         handler={false}
+        onMaskClick={this.close}
         className="drawer-notifications"
-        onMaskClick={this.handleMaskClick}
         width={ui.deviceSize === 'xs' ? '75vw' : '15vw'}
         {...props}
       >
@@ -191,7 +190,7 @@ class NotificationsDrawer extends React.PureComponent {
           <Button onClick={this.handleClearAllClick} block>
             Clear Notifications
           </Button>
-          <LinkButton onClick={this.handleLogoutClick} name="logout" block>
+          <LinkButton onClick={this.close} name="logout" block>
             Logout <Icon name="sign-out-alt" />
           </LinkButton>
         </div>

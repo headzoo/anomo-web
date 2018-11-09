@@ -15,15 +15,17 @@ import routes from 'store/routes';
  */
 class CommentCard extends React.PureComponent {
   static propTypes = {
-    comment:   PropTypes.object.isRequired,
-    activity:  PropTypes.object.isRequired,
-    className: PropTypes.string,
-    history:   PropTypes.object.isRequired,
-    dispatch:  PropTypes.func.isRequired
+    comment:     PropTypes.object.isRequired,
+    activity:    PropTypes.object.isRequired,
+    highlighted: PropTypes.bool,
+    className:   PropTypes.string,
+    history:     PropTypes.object.isRequired,
+    dispatch:    PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    className: ''
+    highlighted: false,
+    className:   ''
   };
 
   /**
@@ -135,10 +137,14 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { className } = this.props;
+    const { comment, highlighted, className } = this.props;
+
+    const classes = classNames('card-comment', className, {
+      'card-comment-highlighted': highlighted
+    });
 
     return (
-      <Card className={classNames('card-comment', className)}>
+      <Card id={`comment-${comment.ID}`} className={classes}>
         {this.renderHeader()}
         {this.renderBody()}
         {this.renderFooter()}

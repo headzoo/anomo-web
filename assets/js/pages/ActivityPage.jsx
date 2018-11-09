@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
+import { objects, browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
@@ -32,7 +31,8 @@ class ActivityPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      activity: {}
+      activity:           {},
+      highlightedComment: 0
     };
   }
 
@@ -58,8 +58,8 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { match, history, activityGet, activityReset } = this.props;
-    const { activity } = this.state;
+    const { match, location, history, activityGet, activityReset } = this.props;
+    const { activity, highlightedComment } = this.state;
 
     if (match.params.refID !== prevProps.match.params.refID) {
       activityReset();
@@ -70,6 +70,22 @@ class ActivityPage extends React.PureComponent {
     if (this.props.activity.activity.IsDeleted) {
       history.push(routes.route('home'));
       return;
+    }
+
+    if (!this.props.activity.isCommentsLoading && prevProps.activity.isCommentsLoading) {
+      const parsed = browser.parseHash(location);
+      if (parsed.c) {
+        this.setState({ highlightedComment: parsed.c });
+      }
+    }
+    if (prevState.highlightedComment !== highlightedComment) {
+      const comment = document.getElementById(`comment-${highlightedComment}`);
+      if (comment) {
+        comment.scrollIntoView({
+          block:    'center',
+          behavior: 'smooth'
+        });
+      }
     }
 
     if (!objects.isEmpty(this.props.activity.activity)
@@ -104,7 +120,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderComments = () => {
-    const { activity } = this.state;
+    const { activity, highlightedComment } = this.state;
 
     if (!activity.ListComment) {
       activity.ListComment = [];
@@ -112,20 +128,20 @@ class ActivityPage extends React.PureComponent {
 
     if (this.props.activity.isCommentsLoading) {
       return (
-        <FadeAndSlideTransition key={0} duration={150}>
-          <Column className="text-center" md={4} offsetMd={4} xs={12}>
-            <Loading />
-          </Column>
-        </FadeAndSlideTransition>
+        <Column key={0} className="text-center" md={4} offsetMd={4} xs={12}>
+          <Loading />
+        </Column>
       );
     }
 
     return activity.ListComment.map(comment => (
-      <FadeAndSlideTransition key={comment.ID} duration={150}>
-        <Column md={4} offsetMd={4} xs={12}>
-          <CommentCard comment={comment} activity={activity} />
-        </Column>
-      </FadeAndSlideTransition>
+      <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
+        <CommentCard
+          comment={comment}
+          activity={activity}
+          highlighted={comment.ID === highlightedComment}
+        />
+      </Column>
     ));
   };
 
@@ -151,9 +167,9 @@ class ActivityPage extends React.PureComponent {
             <PostForm onSubmit={this.handleCommentSubmit} />
           </Column>
         </Row>
-        <TransitionGroup component={Row}>
+        <Row>
           {this.renderComments()}
-        </TransitionGroup>
+        </Row>
       </Page>
     );
   }
