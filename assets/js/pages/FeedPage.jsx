@@ -57,7 +57,7 @@ class FeedPage extends React.PureComponent {
     const { feedType } = this.state;
 
     if (feeds[feedType].isRefreshing && !prevProps.feeds[feedType].isRefreshing) {
-      browser.scrollTop();
+      browser.scroll(0, 'auto');
     }
   };
 

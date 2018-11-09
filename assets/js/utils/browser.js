@@ -9,10 +9,24 @@ export function browserTitle(title) {
 }
 
 /**
- *
+ * @param {number|HTMLElement} top
+ * @param {string|number} behavior
+ * @param {string} rest
  */
-export function browserScrollToTop() {
-  document.body.scrollTop = document.documentElement.scrollTop = 0; // eslint-disable-line
+export function browserScroll(top = 0, behavior = 'smooth', rest = 'smooth') {
+  if (typeof top !== 'number' && typeof top !== 'string') {
+    top.scroll({
+      left:     0,
+      top:      behavior,
+      behavior: rest
+    });
+  } else {
+    window.scroll({
+      left: 0,
+      top,
+      behavior
+    });
+  }
 }
 
 /**
@@ -160,27 +174,6 @@ export function browserTrigger(event, rest =  null) {
 }
 
 /**
- * @param {number|HTMLElement} top
- * @param {string|number} behavior
- * @param {string} rest
- */
-export function browserScroll(top = 0, behavior = 'smooth', rest = 'smooth') {
-  if (typeof top !== 'number' && typeof top !== 'string') {
-    top.scroll({
-      left:     0,
-      top:      behavior,
-      behavior: rest
-    });
-  } else {
-    window.scroll({
-      left: 0,
-      top,
-      behavior
-    });
-  }
-}
-
-/**
  *
  */
 export function browserHideScrollbars() {
@@ -206,7 +199,6 @@ export default {
   trigger:        browserTrigger,
   title:          browserTitle,
   scroll:         browserScroll,
-  scrollTop:      browserScrollToTop,
   hideScrollbars: browserHideScrollbars,
   showScrollbars: browserShowScrollbars,
   parseHash:      browserParseHash,
