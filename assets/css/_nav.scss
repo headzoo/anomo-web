@@ -10,6 +10,13 @@
   padding-right: 0 !important;
 }
 
+.nav-badges {
+  display: flex;
+  flex-basis: auto;
+  flex-grow: 1;
+  align-items: center;
+}
+
 .nav-badge {
   padding: 10px;
   background-color: #5e6165;
@@ -25,6 +32,14 @@
   .badge {
     font-size: 90%;
     margin-left: 0.5rem;
+  }
+}
+
+.navbar-toggler-icon {
+  margin-right: 6px;
+
+  &:hover {
+    color: #FFF;
   }
 }
 

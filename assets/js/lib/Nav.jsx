@@ -13,6 +13,7 @@ import * as activityActions from 'actions/activityActions';
  */
 class Nav extends React.PureComponent {
   static propTypes = {
+    ui:                PropTypes.object.isRequired,
     user:              PropTypes.object.isRequired,
     forms:             PropTypes.object.isRequired,
     history:           PropTypes.object.isRequired,
@@ -123,9 +124,10 @@ class Nav extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, activity, location, notifications } = this.props;
+    const { ui, user, activity, location, notifications } = this.props;
     const { feeds } = activity;
 
+    const isXs = ui.deviceSize === 'xs';
     if (notifications.newNumber > 99) {
       notifications.newNumber = '99+';
     }
@@ -145,21 +147,14 @@ class Nav extends React.PureComponent {
 
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <Link name="home" className="navbar-brand">
-          Anomo
-        </Link>
-        <button
-          type="button"
-          className="navbar-toggler"
-          data-toggle="collapse"
-          data-target="#navbar-nav"
-          aria-controls="navbar-nav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbar-nav">
+        {isXs ? (
+          <span className="navbar-toggler-icon" onClick={this.handleNotificationsClick} />
+        ) : (
+          <Link name="home" className="navbar-brand">
+            Anomo
+          </Link>
+        )}
+        <div className="nav-badges">
           <NavBadge
             number={notifications.newNumber}
             onClick={this.handleNotificationsClick}
@@ -180,22 +175,24 @@ class Nav extends React.PureComponent {
           >
             Following
           </NavBadge>
-          <NavBadge
-            number={feeds.popular.newNumber}
-            active={activeFeed === 'popular'}
-            onClick={e => this.handleFeedClick(e, 'popular')}
-          >
-            Popular
-          </NavBadge>
-          {this.renderNavItems()}
+          {!isXs && (
+            <NavBadge
+              number={feeds.popular.newNumber}
+              active={activeFeed === 'popular'}
+              onClick={e => this.handleFeedClick(e, 'popular')}
+            >
+              Popular
+            </NavBadge>
+          )}
+          {!isXs && this.renderNavItems()}
         </div>
-        {this.renderSearch()}
+        {!isXs && this.renderSearch()}
       </nav>
     );
   }
 }
 
 export default connect(
-  mapStateToProps('user', 'forms', 'activity', 'notifications'),
+  mapStateToProps('ui', 'user', 'forms', 'activity', 'notifications'),
   mapActionsToProps(uiActions, activityActions)
 )(withRouter(Nav));
