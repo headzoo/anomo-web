@@ -345,4 +345,14 @@
   button {
     height: 32px !important;
   }
+
+  input {
+    font-size: 0.9rem !important;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
