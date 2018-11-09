@@ -151,7 +151,7 @@ class Nav extends React.PureComponent {
           <span className="navbar-toggler-icon" onClick={this.handleNotificationsClick} />
         ) : (
           <Link name="home" className="navbar-brand">
-            Anomo
+            anomo
           </Link>
         )}
         <div className="nav-badges">

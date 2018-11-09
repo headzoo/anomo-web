@@ -89,7 +89,7 @@ class FeedPage extends React.PureComponent {
     const { feeds } = this.props;
     const { feedType } = this.state;
 
-    let title = 'Anomo';
+    let title = 'anomo';
     if (feedType !== 'recent') {
       title = strings.ucWords(feedType);
     }
