@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Drawer from 'rc-drawer';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
-import { Avatar, Icon, withRouter } from 'lib';
+import { Avatar, Icon, LinkButton, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
@@ -72,10 +72,29 @@ class NotificationsDrawer extends React.PureComponent {
   /**
    *
    */
+  handleLogoutClick = () => {
+    const { uiVisibleDrawer } = this.props;
+
+    uiVisibleDrawer('notifications', false);
+  };
+
+  /**
+   *
+   */
   handleMaskClick = () => {
     const { uiVisibleDrawer } = this.props;
 
     uiVisibleDrawer('notifications', false);
+  };
+
+  /**
+   *
+   */
+  handleSettingsClick = () => {
+    const { history, uiVisibleDrawer } = this.props;
+
+    uiVisibleDrawer('notifications', false);
+    history.push(routes.route('settings'));
   };
 
   /**
@@ -88,6 +107,7 @@ class NotificationsDrawer extends React.PureComponent {
       <div className="drawer-header">
         <Avatar src={user.Avatar} />
         <h3>{user.UserName}</h3>
+        <Icon name="cog" onClick={this.handleSettingsClick} />
       </div>
     );
   };
@@ -167,10 +187,13 @@ class NotificationsDrawer extends React.PureComponent {
       >
         {this.renderHeader()}
         {this.renderNotifications()}
-        <div className="gutter-sides gutter-top">
+        <div className="drawer-footer gutter-sides gutter-top">
           <Button onClick={this.handleClearAllClick} block>
-            Clear
+            Clear Notifications
           </Button>
+          <LinkButton onClick={this.handleLogoutClick} name="logout" block>
+            Logout <Icon name="sign-out-alt" />
+          </LinkButton>
         </div>
       </Drawer>
     );

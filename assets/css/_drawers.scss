@@ -15,6 +15,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.125);
 
   h3 {
+    flex-grow: 2;
     font-size: 1rem;
     margin-bottom: 0;
   }
@@ -25,6 +26,19 @@
     margin-right: $gutter-size;
     border: 1px solid rgba(255, 255, 255, 0.35);
   }
+
+  .icon {
+    cursor: pointer;
+    color: $color-dim;
+
+    &:hover {
+      color: #FFF;
+    }
+  }
+}
+
+.drawer-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.125);
 }
 
 /**

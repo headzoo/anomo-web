@@ -17,6 +17,7 @@ import ProfilePage from 'pages/ProfilePage';
 import LoginPage from 'pages/LoginPage';
 import LogoutPage from 'pages/LogoutPage';
 import AboutPage from 'pages/AboutPage';
+import NotFoundPage from 'pages/NotFoundPage';
 
 /**
  *
@@ -99,6 +100,7 @@ class App extends React.PureComponent {
             <Route exact path={routes.path('login')} component={LoginPage} />
             <Route exact path={routes.path('logout')} component={LogoutPage} />
             <Route exact path={routes.path('about')} component={AboutPage} />
+            <Route exact path="*" component={NotFoundPage} />
           </Switch>
           <NotificationsDrawer open={visibleDrawers.notifications !== false} />
         </ScrollToTop>

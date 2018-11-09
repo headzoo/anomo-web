@@ -77,27 +77,7 @@ class Nav extends React.PureComponent {
             </Link>
           </li>
         ))}
-        {user.isAuthenticated ? (
-          <li className="nav-item dropdown">
-            <Badge
-              aria-haspopup="true"
-              aria-expanded="false"
-              data-toggle="dropdown"
-              id="navbarDropdownMenuLink"
-              className="nav-badge nav-badge-dropdown dropdown-toggle"
-            >
-              {user.UserName}
-            </Badge>
-            <div
-              aria-labelledby="navbarDropdownMenuLink"
-              className="dropdown-menu nav-badge-dropdown-menu dropdown-menu-right"
-            >
-              <Link name="logout" className="dropdown-item">
-                Logout
-              </Link>
-            </div>
-          </li>
-        ) : (
+        {!user.isAuthenticated && (
           <li className="nav-item">
             <Link name="login" className="nav-link">
               <Badge className="nav-badge">
@@ -143,7 +123,7 @@ class Nav extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, location, notifications } = this.props;
+    const { user, activity, location, notifications } = this.props;
     const { feeds } = activity;
 
     if (notifications.newNumber > 99) {
@@ -181,6 +161,12 @@ class Nav extends React.PureComponent {
         </button>
         <div className="collapse navbar-collapse" id="navbar-nav">
           <NavBadge
+            number={notifications.newNumber}
+            onClick={this.handleNotificationsClick}
+          >
+            {user.UserName}
+          </NavBadge>
+          <NavBadge
             number={feeds.recent.newNumber}
             active={activeFeed === 'recent'}
             onClick={e => this.handleFeedClick(e, 'recent')}
@@ -200,12 +186,6 @@ class Nav extends React.PureComponent {
             onClick={e => this.handleFeedClick(e, 'popular')}
           >
             Popular
-          </NavBadge>
-          <NavBadge
-            number={notifications.newNumber}
-            onClick={this.handleNotificationsClick}
-          >
-            Notifications
           </NavBadge>
           {this.renderNavItems()}
         </div>

@@ -35,3 +35,11 @@
 .page-full-height {
   min-height: calc(100vh - #{$header-height});
 }
+
+.page-not-found-404 {
+  color: #DDD;
+  line-height: 1;
+  font-size: 216px;
+  font-weight: 600;
+  letter-spacing: 4px;
+}

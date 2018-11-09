@@ -10,6 +10,7 @@ const pathsAndRoutes = {
   search:    '/search',
   login:     '/login',
   logout:    '/logout',
+  settings:  '/settings',
   about:     '/about',
   contact:   '/contact',
   privacy:   '/privacy',
