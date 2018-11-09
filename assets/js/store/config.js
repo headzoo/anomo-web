@@ -1,10 +1,11 @@
 import deepmerge from 'deepmerge';
 
 let config = {
-  debug:  false,
-  lang:   'en',
-  https:  true,
-  styles: {
+  debug:      false,
+  lang:       'en',
+  https:      true,
+  imageTypes: 'image/jpg,image/jpeg,image/png',
+  styles:     {
     primaryColor:     '#00d2d9',
     placeholderImage: ''
   }

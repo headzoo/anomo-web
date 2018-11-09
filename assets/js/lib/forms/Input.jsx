@@ -126,7 +126,7 @@ class Input extends React.PureComponent {
     const inputName = name || id;
     const inputValue = parse(this.getValue());
 
-    context.onChange(e, inputValue, inputName);
+    if (context.onChange) context.onChange(e, inputValue, inputName);
     onChange(e, inputValue, inputName);
   };
 

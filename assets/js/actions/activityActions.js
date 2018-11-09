@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
+import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
@@ -263,7 +264,8 @@ export function activityFeedFetchNewNumber(feedType) {
         if (data.code === 'OK') {
           let newNumber = 0;
           for (let i = 0; i < data.Activities.length; i++) {
-            if (data.Activities[i].ActivityID > firstActivityID) {
+            if (data.Activities[i].ActionType !== constants.ACTION_TYPE_JOIN
+              && data.Activities[i].ActivityID > firstActivityID) {
               newNumber += 1;
             }
           }

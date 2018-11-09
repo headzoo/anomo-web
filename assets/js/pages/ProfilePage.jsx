@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge } from 'lib/bootstrap';
-import { Page, Feed, Loading, Avatar, withRouter } from 'lib';
+import { Page, Feed, Loading, Avatar, LinkButton, withRouter } from 'lib';
 import * as profileActions from 'actions/profileActions';
 
 /**
@@ -58,7 +58,7 @@ class ProfilePage extends React.PureComponent {
    * @returns {*}
    */
   renderBody = () => {
-    const { profile } = this.props;
+    const { user, profile } = this.props;
 
     const coverStyles = {
       backgroundImage: `url(${profile.CoverPicture})`
@@ -77,6 +77,13 @@ class ProfilePage extends React.PureComponent {
           <div className="card-profile-cover-mask" />
         </div>
         <div className="card-profile-container">
+          {profile.UserID === user.UserID && (
+            <div className="card-profile-edit-btn">
+              <LinkButton name="editProfile">
+                Edit
+              </LinkButton>
+            </div>
+          )}
           {profile.AboutMe && (
             <div className="card-profile-about">
               <h3>About</h3>
@@ -146,6 +153,6 @@ class ProfilePage extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('profile'),
+  mapStateToProps('user', 'profile'),
   mapActionsToProps(profileActions)
 )(withRouter(ProfilePage));

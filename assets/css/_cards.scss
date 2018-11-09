@@ -269,7 +269,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1150;
+  z-index: 100;
   position: absolute;
 }
 
@@ -280,7 +280,7 @@
   bottom: 0;
   outline: 0;
   opacity: 0.5;
-  z-index: 1050;
+  z-index: 99;
   position: absolute;
   background-color: #000;
 }
@@ -288,6 +288,15 @@
 .card-profile-location {
   color: #FFF;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.card-profile-cover-btn {
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  font-size: 1.5rem;
+  color: #FFF;
+  opacity: 0.8;
 }
 
 .card-profile-container {
@@ -303,6 +312,25 @@
     font-size: 1rem;
     color: $color-dim;
   }
+}
+
+.card-profile-tags-add-btn {
+  float: right;
+  cursor: pointer;
+  color: #007bff;
+  font-size: 0.9rem;
+
+  &:hover {
+    color: lighten(#007bff, 10%);
+  }
+
+  .icon {
+    font-size: 0.8rem;
+  }
+}
+
+.card-profile-edit-btn {
+  float: right;
 }
 
 .card-profile-badge {

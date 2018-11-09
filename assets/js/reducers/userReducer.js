@@ -44,6 +44,27 @@ function statusSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function settingsSending(state, action) {
+  return {
+    ...state,
+    isSettingSending: action.isSettingSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function set(state, action) {
+  return objects.merge(state, action.user);
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function login(state, action) {
   return objects.merge(state, action.user, {
     isAuthenticated: true
@@ -120,10 +141,14 @@ export default function userReducer(state = {}, action = {}) {
       return sending(state, action);
     case types.USER_STATUS_SENDING:
       return statusSending(state, action);
+    case types.USER_SETTINGS_SENDING:
+      return settingsSending(state, action);
     case types.USER_LOGIN:
       return login(state, action);
     case types.USER_LOGOUT:
       return logout();
+    case types.USER_SET:
+      return set(state, action);
     case types.USER_FOLLOWERS:
       return followers(state, action);
     case types.USER_FOLLOWING:

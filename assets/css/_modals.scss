@@ -5,4 +5,21 @@
   .modal-body {
     padding: 0;
   }
+
+  ul {
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+  }
+}
+
+.modal-tags-create-container {
+  display: flex;
+  align-items: center;
+  padding: $gutter-size;
+  border-bottom: 1px solid #e9ecef;
+
+  .form-group {
+    flex-grow: 2;
+    margin-bottom: 0;
+  }
 }

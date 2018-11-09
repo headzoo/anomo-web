@@ -217,6 +217,7 @@ export default {
     remove:    browserStorageRemove,
     KEY_USER:  'user',
     KEY_ID:    'UserID',
-    KEY_TOKEN: 'token'
+    KEY_TOKEN: 'token',
+    KEY_TAGS:  'tags'
   }
 };

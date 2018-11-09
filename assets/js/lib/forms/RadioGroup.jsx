@@ -52,7 +52,7 @@ class RadioGroup extends React.PureComponent {
     const inputName = name || id;
     const inputValue = item.value;
 
-    context.onChange(e, inputValue, inputName);
+    if (context.onChange) context.onChange(e, inputValue, inputName);
     onChange(e, inputValue, inputName);
   };
 

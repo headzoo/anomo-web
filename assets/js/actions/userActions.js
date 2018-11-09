@@ -3,14 +3,16 @@ import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
-export const USER_ERROR          = 'USER_ERROR';
-export const USER_SENDING        = 'USER_SENDING';
-export const USER_STATUS_SENDING = 'USER_STATUS_SENDING';
-export const USER_LOGIN          = 'USER_LOGIN';
-export const USER_LOGOUT         = 'USER_LOGOUT';
-export const USER_FOLLOWERS      = 'USER_FOLLOWERS';
-export const USER_FOLLOWING      = 'USER_FOLLOWING';
-export const USER_BLOCKED        = 'USER_BLOCKED';
+export const USER_ERROR            = 'USER_ERROR';
+export const USER_SENDING          = 'USER_SENDING';
+export const USER_STATUS_SENDING   = 'USER_STATUS_SENDING';
+export const USER_SETTINGS_SENDING = 'USER_SETTINGS_SENDING';
+export const USER_LOGIN            = 'USER_LOGIN';
+export const USER_LOGOUT           = 'USER_LOGOUT';
+export const USER_SET              = 'USER_SET';
+export const USER_FOLLOWERS        = 'USER_FOLLOWERS';
+export const USER_FOLLOWING        = 'USER_FOLLOWING';
+export const USER_BLOCKED          = 'USER_BLOCKED';
 
 /**
  * @param {string} errorMessage
@@ -42,6 +44,17 @@ export function userIsStatusSending(isStatusSending) {
   return {
     type: USER_STATUS_SENDING,
     isStatusSending
+  };
+}
+
+/**
+ * @param {boolean} isSettingSending
+ * @returns {{type: string, isSettingSending: *}}
+ */
+export function userIsSettingsSending(isSettingSending) {
+  return {
+    type: USER_SETTINGS_SENDING,
+    isSettingSending
   };
 }
 
@@ -231,6 +244,40 @@ export function userRefresh() {
     } else {
       dispatch(uiIsLoading(false));
     }
+  };
+}
+
+/**
+ * @param {*} user
+ * @returns {{type: string, user: *}}
+ */
+export function userSet(user) {
+  return {
+    type: USER_SET,
+    user
+  };
+}
+
+/**
+ * @param {*} values
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function userUpdateSettings(values) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch(userIsSettingsSending(true));
+
+    const url = endpoints.create('userUpdate', {
+      token: user.getToken()
+    });
+    proxy.post(url, values)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch(userSet(data));
+        }
+      })
+      .finally(() => {
+        dispatch(userIsSettingsSending(false));
+      });
   };
 }
 

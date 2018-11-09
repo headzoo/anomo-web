@@ -4,7 +4,7 @@ import { connect } from 'utils';
 import { formChange } from 'actions/formActions';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
-import { Icon, EmojiPopper } from 'lib';
+import { Icon, EmojiPopper, withConfig } from 'lib';
 
 /**
  *
@@ -12,6 +12,7 @@ import { Icon, EmojiPopper } from 'lib';
 class PostForm extends React.PureComponent {
   static propTypes = {
     post:       PropTypes.object.isRequired,
+    config:     PropTypes.object.isRequired,
     withUpload: PropTypes.bool,
     onSubmit:   PropTypes.func,
     dispatch:   PropTypes.func.isRequired
@@ -95,7 +96,7 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { post, withUpload } = this.props;
+    const { post, config, withUpload } = this.props;
     const { emojiOpen, photoFilename } = this.state;
 
     return (
@@ -136,7 +137,7 @@ class PostForm extends React.PureComponent {
                   ref={this.photo}
                   id="form-post-photo"
                   style={{ display: 'none' }}
-                  accept="image/jpg,image/jpeg,image/png,image/gif"
+                  accept={config.imageTypes}
                 />
               </div>
               <div className="card-form-post-btn">
@@ -163,4 +164,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(PostForm);
+export default connect(mapStateToProps)(withConfig(PostForm));

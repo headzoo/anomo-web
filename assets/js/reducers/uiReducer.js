@@ -1,6 +1,5 @@
 import * as types from 'actions/uiActions';
 import objects from 'utils/objects';
-import { UI_VISIBLE_MODAL } from '../actions/uiActions';
 
 const BREAK_SM = 576;
 const BREAK_MD = 768;

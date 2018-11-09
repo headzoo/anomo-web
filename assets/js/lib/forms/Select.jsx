@@ -54,7 +54,7 @@ class Select extends React.PureComponent {
     const inputName = name || id;
     const inputValue = parse(e.currentTarget.value);
 
-    context.onChange(e, inputValue, inputName);
+    if (context.onChange) context.onChange(e, inputValue, inputName);
     onChange(e, inputValue, inputName);
   };
 

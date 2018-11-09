@@ -14,6 +14,7 @@ import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
 import ActivityPage from 'pages/ActivityPage';
 import ProfilePage from 'pages/ProfilePage';
+import EditProfilePage from 'pages/EditProfilePage';
 import LoginPage from 'pages/LoginPage';
 import LogoutPage from 'pages/LogoutPage';
 import AboutPage from 'pages/AboutPage';
@@ -96,6 +97,7 @@ class App extends React.PureComponent {
             <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('following')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('activity')} component={ActivityPage} />
+            <PrivateRoute exact path={routes.path('editProfile')} component={EditProfilePage} />
             <PrivateRoute exact path={routes.path('profile')} component={ProfilePage} />
             <Route exact path={routes.path('login')} component={LoginPage} />
             <Route exact path={routes.path('logout')} component={LogoutPage} />

@@ -1,4 +1,15 @@
 import { objects } from 'utils';
+import * as constants from 'anomo/constants';
+
+/**
+ *
+ */
+export const defaultAnomo = {
+  tags:             [],
+  intents:          [],
+  isTagsLoading:    false,
+  isIntentsLoading: false
+};
 
 /**
  *
@@ -10,6 +21,7 @@ export const defaultUi = {
   errorInfo:     {},
   visibleModals: {
     user:     false,
+    tags:     false,
     activity: false
   },
   visibleDrawers: {
@@ -58,13 +70,14 @@ const commonUserElements = {
  */
 export const defaultUser = {
   ...commonUserElements,
-  followers:       [],
-  following:       [],
-  blocked:         [],
-  isAuthenticated: false,
-  isSending:       false,
-  isStatusSending: false,
-  errorMessage:    ''
+  followers:         [],
+  following:         [],
+  blocked:           [],
+  isAuthenticated:   false,
+  isSending:         false,
+  isStatusSending:   false,
+  isSettingsSending: false,
+  errorMessage:      ''
 };
 
 /**
@@ -148,8 +161,12 @@ export const defaultForms = {
     ...commonFormElements
   },
   search: {
-    ...commonFormElements,
-    term: ''
+    term: '',
+    ...commonFormElements
+  },
+  profile: {
+    [constants.SETTING_ABOUT_ME]: '',
+    ...commonFormElements
   },
   contact: {
     name:    '',
@@ -168,6 +185,7 @@ export default {
   ui:            objects.clone(defaultUi),
   user:          objects.clone(defaultUser),
   forms:         objects.clone(defaultForms),
+  anomo:         objects.clone(defaultAnomo),
   profile:       objects.clone(defaultProfile),
   activity:      objects.clone(defaultActivity),
   notifications: objects.clone(defaultNotifications)

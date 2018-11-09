@@ -18,6 +18,10 @@
     border-radius: 0;
   }
 
+  .form-control-auto-height {
+    height: auto;
+  }
+
   .form-control-fixed-height {
     height: $input-height !important;
   }

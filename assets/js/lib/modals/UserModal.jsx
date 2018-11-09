@@ -13,8 +13,6 @@ class UserModal extends React.PureComponent {
     uiVisibleModal: PropTypes.func.isRequired
   };
 
-  static defaultProps = {};
-
   /**
    *
    */
