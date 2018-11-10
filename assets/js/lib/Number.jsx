@@ -11,6 +11,7 @@ class Number extends React.PureComponent {
     value:     PropTypes.number.isRequired,
     commas:    PropTypes.bool,
     money:     PropTypes.bool,
+    percent:   PropTypes.bool,
     kcal:      PropTypes.bool,
     round:     PropTypes.bool,
     prefix:    PropTypes.node,
@@ -20,6 +21,7 @@ class Number extends React.PureComponent {
 
   static defaultProps = {
     commas:    true,
+    percent:   false,
     money:     false,
     kcal:      false,
     round:     false,
@@ -32,7 +34,7 @@ class Number extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { value, commas, money, kcal, round, prefix, postfix, className, ...props } = this.props;
+    const { value, percent, commas, money, kcal, round, prefix, postfix, className, ...props } = this.props;
 
     let parsedValue = value;
     if (money) {
@@ -42,6 +44,9 @@ class Number extends React.PureComponent {
     }
     if (round) {
       parsedValue = Math.round(parsedValue);
+    }
+    if (percent) {
+      parsedValue = `${parsedValue}%`;
     }
 
     return (

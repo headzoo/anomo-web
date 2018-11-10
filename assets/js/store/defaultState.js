@@ -128,7 +128,8 @@ export const defaultActivity = {
   isLoading:         false,
   isRefreshing:      false,
   isCommentsLoading: false,
-  isCommentSending:  false
+  isCommentSending:  false,
+  isPollSending:     false
 };
 
 /**

@@ -115,6 +115,18 @@ function commentSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function pollSending(state, action) {
+  return {
+    ...state,
+    isPollSending: action.isPollSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function activityLoading(state, action) {
   return {
     ...state,
@@ -293,6 +305,8 @@ export default function activityReducer(state = {}, action = {}) {
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
+    case types.ACTIVITY_POLL_SENDING:
+      return pollSending(state, action);
     case types.ACTIVITY_ACTIVITY_LOADING:
       return activityLoading(state, action);
     case types.ACTIVITY_FEED_NEW_NUMBER:

@@ -7,7 +7,7 @@ import { Twemoji } from 'react-emoji-render';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Image, Avatar, Number, Pluralize, Link, Icon, withRouter } from 'lib';
+import { Image, Avatar, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';
@@ -17,13 +17,14 @@ import * as uiActions from 'actions/uiActions';
  */
 class ActivityCard extends React.PureComponent {
   static propTypes = {
-    activity:       PropTypes.object.isRequired,
-    className:      PropTypes.string,
-    history:        PropTypes.object.isRequired,
-    activityLike:   PropTypes.func.isRequired,
-    clickable:      PropTypes.bool,
-    clickableImage: PropTypes.bool,
-    uiVisibleModal: PropTypes.func.isRequired
+    activity:           PropTypes.object.isRequired,
+    className:          PropTypes.string,
+    history:            PropTypes.object.isRequired,
+    clickable:          PropTypes.bool,
+    clickableImage:     PropTypes.bool,
+    activityLike:       PropTypes.func.isRequired,
+    activityAnswerPoll: PropTypes.func.isRequired,
+    uiVisibleModal:     PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -77,6 +78,17 @@ class ActivityCard extends React.PureComponent {
   };
 
   /**
+   *
+   * @param {Event} e
+   * @param {number} answerID
+   */
+  handlePollAnswer = (e, answerID) => {
+    const { activity, activityAnswerPoll } = this.props;
+
+    activityAnswerPoll(activity.Poll.PollQuestionID, answerID);
+  };
+
+  /**
    * @returns {*}
    */
   renderHeader = () => {
@@ -123,6 +135,9 @@ class ActivityCard extends React.PureComponent {
         <CardText>
           {(activity.Message && activity.Message.message) && (
             <Twemoji text={activity.Message.message} />
+          )}
+          {activity.Poll && (
+            <Poll poll={activity.Poll} onAnswer={this.handlePollAnswer} />
           )}
           {activity.Image && (
             <Image

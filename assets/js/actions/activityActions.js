@@ -11,6 +11,7 @@ export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
+export const ACTIVITY_POLL_SENDING         = 'ACTIVITY_POLL_SENDING';
 export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
 export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
 export const ACTIVITY_DELETE               = 'ACTIVITY_DELETE';
@@ -95,6 +96,17 @@ export function activityIsCommentSending(isCommentSending) {
   return {
     type: ACTIVITY_COMMENT_SENDING,
     isCommentSending
+  };
+}
+
+/**
+ * @param {boolean} isPollSending
+ * @returns {{type: string, isLoading: *}}
+ */
+export function activityIsPollSending(isPollSending) {
+  return {
+    type: ACTIVITY_POLL_SENDING,
+    isPollSending
   };
 }
 
@@ -472,6 +484,27 @@ export function activitySubmitComment(message, refID, actionType, topicID, isAno
       dispatch(activityIsCommentSending(false));
       dispatch(formSubmitting(formName, false));
     });
+  };
+}
+
+/**
+ * @param {number} pollID
+ * @param {number} answerID
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function activityAnswerPoll(pollID, answerID) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch(activityIsPollSending(true));
+
+    const url = endpoints.create('activityAnswerPoll', {
+      token: user.getToken(),
+      answerID,
+      pollID
+    });
+    proxy.get(url)
+      .finally(() => {
+        dispatch(activityIsPollSending(false));
+      });
   };
 }
 

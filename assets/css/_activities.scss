@@ -1,0 +1,22 @@
+@import "vars";
+@import "mixins";
+
+.activity-poll {
+  padding: $gutter-size 0;
+
+  .forms-custom-checkbox {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.activity-poll-result {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+
+  .number {
+    width: 60px;
+    color: $color-primary;
+    margin-right: 0.5rem;
+  }
+}

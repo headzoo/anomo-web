@@ -188,12 +188,12 @@
     padding-left: 5px;
     margin-bottom: 1rem;
     position: relative;
-    display: inline-block;
+    display: inline;
 
     &::before {
       left: 0;
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 20px;
       content: "";
       position: absolute;
       margin-left: -20px;
@@ -231,7 +231,8 @@
 
   &:checked + label::after {
     content: "\f00c";
-    font-family: 'FontAwesome';
+    font-weight: 900;
+    font-family: "Font Awesome 5 Free";
   }
 
   &:disabled + label {

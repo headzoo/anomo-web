@@ -25,3 +25,4 @@ export { default as PrivateRoute } from './PrivateRoute';
 export { default as ScrollToTop } from './ScrollToTop';
 export { default as Feed } from './Feed';
 export { default as EmojiPopper } from './EmojiPopper';
+export { default as Poll } from './Poll';
