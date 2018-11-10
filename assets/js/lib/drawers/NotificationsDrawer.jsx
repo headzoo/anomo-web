@@ -145,6 +145,9 @@ class NotificationsDrawer extends React.PureComponent {
             case constants.NOTIFICATION_FOLLOW:
               message = `${n.UserName} followed you on Anomo`;
               break;
+            case constants.NOTIFICATION_MENTION:
+              message = `${n.UserName} mentioned you`;
+              break;
             case constants.NOTIFICATION_LIKE_COMMENT:
               message = `${n.UserName} liked your comment`;
               break;
