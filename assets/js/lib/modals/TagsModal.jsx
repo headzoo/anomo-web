@@ -12,18 +12,25 @@ import * as anomoActions from 'actions/anomoActions';
  */
 class TagsModal extends React.PureComponent {
   static propTypes = {
-    tags:           PropTypes.array.isRequired,
-    selected:       PropTypes.array,
-    isTagsLoading:  PropTypes.bool.isRequired,
-    visibleModals:  PropTypes.object.isRequired,
-    uiVisibleModal: PropTypes.func.isRequired,
-    anomoTagsFetch: PropTypes.func.isRequired,
-    onSave:         PropTypes.func
+    tags:              PropTypes.array,
+    intents:           PropTypes.array,
+    selected:          PropTypes.array,
+    isIntents:         PropTypes.bool,
+    isTagsLoading:     PropTypes.bool.isRequired,
+    isIntentsLoading:  PropTypes.bool.isRequired,
+    visibleModals:     PropTypes.object.isRequired,
+    uiVisibleModal:    PropTypes.func.isRequired,
+    anomoTagsFetch:    PropTypes.func.isRequired,
+    anomoIntentsFetch: PropTypes.func.isRequired,
+    onSave:            PropTypes.func
   };
 
   static defaultProps = {
-    selected: [],
-    onSave:   () => {}
+    tags:      [],
+    intents:   [],
+    selected:  [],
+    isIntents: false,
+    onSave:    () => {}
   };
 
   /**
@@ -33,6 +40,7 @@ class TagsModal extends React.PureComponent {
     super(props);
     this.state = {
       tags:        props.tags,
+      intents:     props.intents,
       selected:    props.selected,
       createValue: ''
     };
@@ -43,9 +51,13 @@ class TagsModal extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { anomoTagsFetch } = this.props;
+    const { isIntents, anomoTagsFetch, anomoIntentsFetch } = this.props;
 
-    anomoTagsFetch();
+    if (isIntents) {
+      anomoIntentsFetch();
+    } else {
+      anomoTagsFetch();
+    }
   };
 
   /**
@@ -59,6 +71,9 @@ class TagsModal extends React.PureComponent {
       }
       if (!objects.isEqual(prevProps.tags, this.props.tags)) {
         this.setState({ tags: this.props.tags });
+      }
+      if (!objects.isEqual(prevProps.intents, this.props.intents)) {
+        this.setState({ intents: this.props.intents });
       }
     }
   };
@@ -87,13 +102,22 @@ class TagsModal extends React.PureComponent {
    * @param {*} tag
    */
   handleCheckboxChange = (e, tag) => {
+    const { isIntents } = this.props;
     const { selected } = this.state;
 
     let found = false;
     const newSelected = [];
     const isChecked   = e.target.checked;
+
     selected.forEach((t) => {
-      if (t.TagID === tag.TagID) {
+      if (isIntents && t.IntentID === tag.IntentID) {
+        if (isChecked) {
+          newSelected.push(t);
+        }
+        found = true;
+        return;
+      }
+      if (!isIntents && t.TagID === tag.TagID) {
         if (isChecked) {
           newSelected.push(t);
         }
@@ -119,7 +143,6 @@ class TagsModal extends React.PureComponent {
       TagID: this.createInput.current.getValue(),
       Name:  this.createInput.current.getValue()
     };
-
     tags.unshift(tag);
     selected.push(tag);
     this.setState({ tags, selected, createValue: '' });
@@ -129,21 +152,24 @@ class TagsModal extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isTagsLoading, visibleModals, ...props } = this.props;
-    const { tags, selected, createValue } = this.state;
+    const { isIntents, isTagsLoading, isIntentsLoading, ...props } = this.props;
+    const { tags, intents, selected, createValue } = this.state;
 
-    if (visibleModals.tags === false) {
-      return null;
+    let selectedIDs = [];
+    if (isIntents) {
+      selectedIDs = selected.map((intent) => {
+        return intent.IntentID;
+      });
+    } else {
+      selectedIDs = selected.map((tag) => {
+        return tag.TagID;
+      });
     }
-
-    const selectedIDs = selected.map((tag) => {
-      return tag.TagID;
-    });
 
     const footer = (
       <ModalFooter>
-        <Button disabled={isTagsLoading} onClick={this.handleSaveClick}>
-          Save
+        <Button disabled={isTagsLoading || isIntentsLoading} onClick={this.handleSaveClick}>
+          Select
         </Button>
       </ModalFooter>
     );
@@ -157,42 +183,59 @@ class TagsModal extends React.PureComponent {
 
     return (
       <Modal
-        title="Interests"
         footer={footer}
-        className="modal-tags modal-list"
         onClosed={this.handleClose}
+        className="modal-tags modal-list"
+        title={isIntents ? 'Intents' : 'Interests'}
         {...rest}
       >
-        <div className="modal-tags-create-container">
-          <Input
-            name="create"
-            value={createValue}
-            ref={this.createInput}
-            className="full-width"
-            id="modal-tags-create"
-            placeholder="Add new interest"
-            onChange={(e, value) => { this.setState({ createValue: value }); }}
-          />
-          <Button onClick={this.handleCreateClick}>Add</Button>
-        </div>
-        {isTagsLoading ? (
+        {!isIntents && (
+          <div className="modal-tags-create-container">
+            <Input
+              name="create"
+              value={createValue}
+              ref={this.createInput}
+              className="full-width"
+              id="modal-tags-create"
+              placeholder="Add new interest"
+              onChange={(e, value) => { this.setState({ createValue: value }); }}
+            />
+            <Button onClick={this.handleCreateClick}>Add</Button>
+          </div>
+        )}
+        {(isTagsLoading || isIntentsLoading) ? (
           <div className="gutter">
             <Loading className="text-center" />
           </div>
         ) : (
           <ul className="gutter-top">
-            {tags.map(tag => (
-              <li key={tag.TagID}>
-                <Badge className="profile-badge-tag">
-                  <input
-                    type="checkbox"
-                    checked={selectedIDs.indexOf(tag.TagID) !== -1}
-                    onChange={e => this.handleCheckboxChange(e, tag)}
-                  />
-                  {tag.Name}
-                </Badge>
-              </li>
-            ))}
+            {isIntents ? (
+              intents.map(intent => (
+                <li key={intent.IntentID}>
+                  <Badge className="profile-badge-tag">
+                    <input
+                      type="checkbox"
+                      checked={selectedIDs.indexOf(intent.IntentID) !== -1}
+                      onChange={e => this.handleCheckboxChange(e, intent)}
+                    />
+                    {intent.Name}
+                  </Badge>
+                </li>
+              ))
+            ) : (
+              tags.map(tag => (
+                <li key={tag.TagID}>
+                  <Badge className="profile-badge-tag">
+                    <input
+                      type="checkbox"
+                      checked={selectedIDs.indexOf(tag.TagID) !== -1}
+                      onChange={e => this.handleCheckboxChange(e, tag)}
+                    />
+                    {tag.Name}
+                  </Badge>
+                </li>
+              ))
+            )}
           </ul>
         )}
       </Modal>
@@ -202,9 +245,11 @@ class TagsModal extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    tags:          state.anomo.tags,
-    isTagsLoading: state.anomo.isTagsLoading,
-    visibleModals: state.ui.visibleModals
+    tags:             state.anomo.tags,
+    intents:          state.anomo.intents,
+    isTagsLoading:    state.anomo.isTagsLoading,
+    isIntentsLoading: state.anomo.isIntentsLoading,
+    visibleModals:    state.ui.visibleModals
   };
 };
 

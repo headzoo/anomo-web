@@ -4,7 +4,7 @@ import { connect } from 'utils';
 import { formChange } from 'actions/formActions';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
-import { Icon, EmojiPopper, withConfig } from 'lib';
+import { Icon, Image, EmojiPopper, withConfig } from 'lib';
 
 /**
  *
@@ -29,8 +29,8 @@ class PostForm extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      emojiOpen:     false,
-      photoFilename: ''
+      emojiOpen:   false,
+      photoSource: ''
     };
     this.photo = React.createRef();
   }
@@ -59,7 +59,7 @@ class PostForm extends React.PureComponent {
     }
 
     onSubmit(e, values);
-    this.setState({ photoFilename: '' });
+    this.setState({ photoSource: '' });
   };
 
   /**
@@ -69,7 +69,11 @@ class PostForm extends React.PureComponent {
    */
   handleChange = (e, value, name) => {
     if (name === 'photo') {
-      this.setState({ photoFilename: value });
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        this.setState({ photoSource: event.target.result });
+      };
+      reader.readAsDataURL(this.photo.current.files()[0]);
     }
   };
 
@@ -97,7 +101,7 @@ class PostForm extends React.PureComponent {
    */
   render() {
     const { post, config, withUpload } = this.props;
-    const { emojiOpen, photoFilename } = this.state;
+    const { emojiOpen, photoSource } = this.state;
 
     return (
       <Card className="card-form-post">
@@ -146,9 +150,9 @@ class PostForm extends React.PureComponent {
                 </Button>
               </div>
             </div>
-            {photoFilename && (
-              <div className="card-form-post-filename">
-                {photoFilename}
+            {photoSource && (
+              <div className="card-form-post-photo-preview">
+                <Image data={{ src: photoSource, alt: 'Preview' }} />
               </div>
             )}
           </Form>

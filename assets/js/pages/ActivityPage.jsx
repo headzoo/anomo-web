@@ -20,7 +20,8 @@ class ActivityPage extends React.PureComponent {
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
-    activityIsCommentsLoading: PropTypes.func.isRequired
+    activityIsCommentsLoading: PropTypes.func.isRequired,
+    activityIsActivityLoading: PropTypes.func.isRequired,
   };
 
   static defaultProps = {};
@@ -58,11 +59,12 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { match, location, history, activityGet, activityReset } = this.props;
+    const { match, location, history, activityGet, activityReset, activityIsActivityLoading } = this.props;
     const { activity, highlightedComment } = this.state;
 
     if (match.params.refID !== prevProps.match.params.refID) {
       activityReset();
+      activityIsActivityLoading(true);
       activityGet(match.params.refID, match.params.actionType);
       return;
     }
@@ -152,7 +154,10 @@ class ActivityPage extends React.PureComponent {
     const { activity } = this.state;
 
     if (objects.isEmpty(activity)) {
-      return null;
+      // return null;
+    }
+    if (this.props.activity.isActivityLoading) {
+      return <Loading middle />;
     }
 
     return (

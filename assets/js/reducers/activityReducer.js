@@ -115,6 +115,18 @@ function commentSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function activityLoading(state, action) {
+  return {
+    ...state,
+    isActivityLoading: action.isActivityLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function feedNewNumber(state, action) {
   const feeds = objects.clone(state.feeds);
   const feed  = feeds[action.feedType];
@@ -281,6 +293,8 @@ export default function activityReducer(state = {}, action = {}) {
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
+    case types.ACTIVITY_ACTIVITY_LOADING:
+      return activityLoading(state, action);
     case types.ACTIVITY_FEED_NEW_NUMBER:
       return feedNewNumber(state, action);
     case types.ACTIVITY_FEED_FETCH:

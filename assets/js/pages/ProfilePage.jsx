@@ -102,7 +102,7 @@ class ProfilePage extends React.PureComponent {
           )}
           {profile.Tags.length > 0 && (
             <div className="card-profile-tags">
-              <h3>Interest</h3>
+              <h3>Interests</h3>
               {profile.Tags.map(tag => (
                 <Badge className="card-profile-badge" key={tag.TagID}>
                   {tag.Name}

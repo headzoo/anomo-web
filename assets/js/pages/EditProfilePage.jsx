@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { Row, Column, Card, CardBody, CardText, Badge, Button } from 'lib/bootstrap';
+import { Row, Column, Card, CardBody, CardText, Badge, Button, ButtonGroup } from 'lib/bootstrap';
 import { Form, Input, Textarea, Hidden } from 'lib/forms';
 import { TagsModal } from 'lib/modals';
-import { Page, Icon, Avatar, withConfig } from 'lib';
+import { Page, Icon, Avatar, withRouter, withConfig } from 'lib';
+import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
 import * as formActions from 'actions/formActions';
@@ -21,6 +22,7 @@ class EditProfilePage extends React.PureComponent {
     forms:              PropTypes.object.isRequired,
     anomo:              PropTypes.object.isRequired,
     config:             PropTypes.object.isRequired,
+    history:            PropTypes.object.isRequired,
     formChange:         PropTypes.func.isRequired,
     formChanges:        PropTypes.func.isRequired,
     uiVisibleModal:     PropTypes.func.isRequired,
@@ -82,7 +84,7 @@ class EditProfilePage extends React.PureComponent {
 
     formChanges('profile', {
       [constants.SETTING_ABOUT_ME]:   user.AboutMe,
-      [constants.SETTING_TAGS]:       tags,
+      [constants.SETTING_TAGS_IDS]:   tags,
       [constants.SETTING_INTENT_IDS]: intents
     });
 
@@ -97,11 +99,11 @@ class EditProfilePage extends React.PureComponent {
     const { forms, formChange } = this.props;
     const { profile } = forms;
 
-    const tags = profile[constants.SETTING_TAGS].split(',').filter((t) => {
+    const tags = profile[constants.SETTING_TAGS_IDS].split(',').filter((t) => {
       return t !== tag.Name;
     }).join(',');
 
-    formChange('profile', constants.SETTING_TAGS, tags);
+    formChange('profile', constants.SETTING_TAGS_IDS, tags);
   };
 
   /**
@@ -132,7 +134,9 @@ class EditProfilePage extends React.PureComponent {
    *
    */
   handleAddIntentClick = () => {
+    const { uiVisibleModal } = this.props;
 
+    uiVisibleModal('intents', true);
   };
 
   /**
@@ -147,8 +151,24 @@ class EditProfilePage extends React.PureComponent {
     }).join(',');
 
     uiVisibleModal('tags', false);
-    formChange('profile', constants.SETTING_TAGS, newTags);
+    formChange('profile', constants.SETTING_TAGS_IDS, newTags);
     this.setState({ tags });
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} intents
+   */
+  handleSaveIntents = (e, intents) => {
+    const { formChange, uiVisibleModal } = this.props;
+
+    const newIntents = intents.map((t) => {
+      return t.IntentID;
+    }).join(',');
+
+    uiVisibleModal('intents', false);
+    formChange('profile', constants.SETTING_INTENT_IDS, newIntents);
+    this.setState({ intents });
   };
 
   /**
@@ -166,11 +186,20 @@ class EditProfilePage extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleCancelClick = () => {
+    const { user, history } = this.props;
+
+    history.push(routes.route('profile', { id: user.UserID }));
+  };
+
+  /**
    * @param {Event} e
    * @param {*} values
    */
   handleSubmit = (e, values) => {
-    const { userUpdateSettings } = this.props;
+    const { user, history, userUpdateSettings } = this.props;
 
     e.preventDefault();
 
@@ -195,6 +224,7 @@ class EditProfilePage extends React.PureComponent {
     delete values.avatar;
 
     userUpdateSettings(values);
+    history.push(routes.route('profile', { id: user.UserID }));
   };
 
   /**
@@ -291,7 +321,7 @@ class EditProfilePage extends React.PureComponent {
         <Hidden
           ref={this.tags}
           id="form-profile-tags"
-          name={constants.SETTING_TAGS}
+          name={constants.SETTING_TAGS_IDS}
         />
         <Hidden
           ref={this.intents}
@@ -321,9 +351,19 @@ class EditProfilePage extends React.PureComponent {
         </Row>
         <Row>
           <Column className="gutter-top">
-            <Button disabled={profile.isSubmitting} block>
-              Save
-            </Button>
+            <ButtonGroup className="full-width">
+              <Button
+                theme="secondary"
+                className="half-width"
+                disabled={profile.isSubmitting}
+                onClick={this.handleCancelClick}
+              >
+                Cancel
+              </Button>
+              <Button className="half-width" disabled={profile.isSubmitting}>
+                Save
+              </Button>
+            </ButtonGroup>
           </Column>
         </Row>
       </Form>
@@ -390,6 +430,12 @@ class EditProfilePage extends React.PureComponent {
           onSave={this.handleSaveTags}
           open={ui.visibleModals.tags !== false}
         />
+        <TagsModal
+          selected={user.ListIntent}
+          onSave={this.handleSaveIntents}
+          open={ui.visibleModals.intents !== false}
+          isIntents
+        />
       </Page>
     );
   }
@@ -398,4 +444,4 @@ class EditProfilePage extends React.PureComponent {
 export default connect(
   mapStateToProps('ui', 'user', 'forms', 'anomo'),
   mapActionsToProps(uiActions, formActions, userActions, anomoActions)
-)(withConfig(EditProfilePage));
+)(withConfig(withRouter(EditProfilePage)));

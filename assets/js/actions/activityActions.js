@@ -4,6 +4,7 @@ import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
+export const ACTIVITY_ACTIVITY_LOADING     = 'ACTIVITY_ACTIVITY_LOADING';
 export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
 export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
 export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
@@ -48,6 +49,17 @@ export function activityIsLikeLoading(isLoading, refID) {
     type: ACTIVITY_LIKE_LOADING,
     isLoading,
     refID
+  };
+}
+
+/**
+ * @param {boolean} isActivityLoading
+ * @returns {{type: string, isActivityLoading: *}}
+ */
+export function activityIsActivityLoading(isActivityLoading) {
+  return {
+    type: ACTIVITY_ACTIVITY_LOADING,
+    isActivityLoading
   };
 }
 
@@ -328,6 +340,7 @@ export function activityGet(refID, actionType) {
         }
       })
       .finally(() => {
+        dispatch(activityIsActivityLoading(false));
         dispatch(activityIsCommentsLoading(false));
       });
   };

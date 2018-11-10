@@ -22,6 +22,7 @@ export const defaultUi = {
   visibleModals: {
     user:     false,
     tags:     false,
+    intents:  false,
     activity: false
   },
   visibleDrawers: {

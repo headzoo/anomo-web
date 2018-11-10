@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Drawer from 'rc-drawer';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
-import { Avatar, Icon, LinkButton, withRouter } from 'lib';
+import { Avatar, Icon, Link, LinkButton, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
@@ -104,7 +104,9 @@ class NotificationsDrawer extends React.PureComponent {
 
     return (
       <div className="drawer-header">
-        <Avatar src={user.Avatar} />
+        <Link name="profile" params={{ id: user.UserID }} onClick={this.close}>
+          <Avatar src={user.Avatar} />
+        </Link>
         <h3>{user.UserName}</h3>
         <Icon name="cog" onClick={this.handleSettingsClick} />
       </div>
