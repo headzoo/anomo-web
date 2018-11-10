@@ -34,17 +34,17 @@ export function profileFetch(userID) {
   return (dispatch, getState, { user }) => {
     dispatch(profileIsSending(true));
 
-/*    const profile = JSON.parse(localStorage.getItem('profile'));
+    const profile = JSON.parse(localStorage.getItem('profile'));
     dispatch({
       type: PROFILE_FETCH,
       profile
     });
     dispatch(profileIsSending(false));
-    return;*/
+    return;
 
     user.info(userID)
       .then((data) => {
-        // localStorage.setItem('profile', JSON.stringify(data.results));
+        localStorage.setItem('profile', JSON.stringify(data.results));
         if (data.code === 'OK') {
           dispatch({
             type:    PROFILE_FETCH,

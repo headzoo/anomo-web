@@ -161,7 +161,7 @@ class ActivityPage extends React.PureComponent {
     }
 
     return (
-      <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName}>
+      <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
             <ActivityCard activity={activity} clickableImage clickable={false} />

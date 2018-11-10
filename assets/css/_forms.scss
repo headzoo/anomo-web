@@ -74,7 +74,8 @@
   background-color: $color-primary;
   border-color: lighten($color-primary, 5%);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-primary, 10%);
   }
 
@@ -84,13 +85,18 @@
     border-color: lighten($color-primary, 5%);
     background-color: darken($color-primary, 5%);
   }
+
+  &.btn-active {
+    background-color: darken($color-primary, 5%);
+  }
 }
 
 .btn-success {
   color: #FFF;
   background-color: $color-success;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-success, 10%);
   }
 }
@@ -99,7 +105,8 @@
   color: #FFF;
   background-color: $color-secondary;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-secondary, 10%);
   }
 }
@@ -108,7 +115,8 @@
   color: #FFF;
   background-color: $color-info;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-info, 10%);
   }
 }
@@ -117,7 +125,8 @@
   color: #FFF;
   background-color: $color-danger;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-danger, 10%);
   }
 }
@@ -126,7 +135,8 @@
   color: #000;
   background-color: $color-warning;
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-warning, 10%);
   }
 }
@@ -136,7 +146,8 @@
   background-color: $color-brand;
   border-color: lighten($color-brand, 5%);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled),
+  &.hover {
     background-color: darken($color-brand, 10%);
   }
 
@@ -151,6 +162,16 @@
 .btn-group-spaced {
   .btn + .btn {
     margin-left: 2px;
+  }
+}
+
+.btn-group-stretch {
+  width: 100%;
+  flex-direction: row;
+  align-items: stretch;
+
+  .btn {
+    flex: 1;
   }
 }
 

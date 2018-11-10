@@ -15,6 +15,7 @@ const urls = {
   userStatus:            `${base}/user/post_status/{token}`,
   userPicture:           `${base}/user/post_picture_activity/{token}`,
   userUpdate:            `${base}/user/update/{token}`,
+  userUpdatePrivacy:     `${base}/user/update_privacy/{token}/{userID}`,
   anomoListIntent:       `${base}/user/list_intent`,
   anomoListInterest:     `${base}/user/list_interests`,
   profilePosts:          `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,

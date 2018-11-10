@@ -10,6 +10,7 @@ class ButtonGroup extends React.PureComponent {
     lg:        PropTypes.bool,
     sm:        PropTypes.bool,
     spaced:    PropTypes.bool,
+    stretch:   PropTypes.bool,
     className: PropTypes.string,
     children:  PropTypes.node
   };
@@ -18,6 +19,7 @@ class ButtonGroup extends React.PureComponent {
     lg:        false,
     sm:        false,
     spaced:    false,
+    stretch:   false,
     className: '',
     children:  ''
   };
@@ -26,12 +28,13 @@ class ButtonGroup extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { lg, sm, spaced, className, children, ...props } = this.props;
+    const { lg, sm, stretch, spaced, className, children, ...props } = this.props;
 
     const classes = classNames('btn-group', className, {
-      'btn-group-sm':     sm,
-      'btn-group-lg':     lg,
-      'btn-group-spaced': spaced
+      'btn-group-sm':      sm,
+      'btn-group-lg':      lg,
+      'btn-group-stretch': stretch,
+      'btn-group-spaced':  spaced
     });
 
     return (

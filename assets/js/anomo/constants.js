@@ -13,3 +13,12 @@ export const SETTING_TAGS_IDS   = 'TagIDs';
 export const SETTING_INTENT_IDS = 'IntentIDs';
 export const SETTING_PHOTO      = 'Photo';
 export const SETTING_FULL_PHOTO = 'FullPhoto';
+
+export const PRIVACY_ALLOW_REVEAL_NOTICE           = 'AllowRevealNotice';
+export const PRIVACY_ALLOW_CHAT_NOTICE             = 'AllowChatNotice';
+export const PRIVACY_ALLOW_ANOMO_NOTICE            = 'AllowAnomoNotice';
+export const PRIVACY_ALLOW_COMMENT_ACTIVITY_NOTICE = 'AllowCommentActivityNotice';
+export const PRIVACY_ALLOW_LIKE_ACTIVITY_NOTICE    = 'AllowLikeActivityNotice';
+export const PRIVACY_ALLOW_FOLLOW_NOTICE           = 'AllowFollowNotice';
+export const PRIVACY_ANSWER_POLL_NOTICE            = 'AllowAnswerPollNotice';
+export const PRIVACY_GOING_EVENT_NOTICE            = 'AllowGoingEventNotice';

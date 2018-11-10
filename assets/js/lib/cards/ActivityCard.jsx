@@ -191,7 +191,10 @@ class ActivityCard extends React.PureComponent {
     }
 
     return (
-      <Card key={activity.RefID} className={`${classNames('card-activity', className)} card-activity-clickable`}>
+      <Card
+        key={`activity_${activity.RefID}`}
+        className={`${classNames('card-activity', className)} card-activity-clickable`}
+      >
         <Link
           name="activity"
           params={{ refID: activity.RefID, actionType: activity.ActionType }}

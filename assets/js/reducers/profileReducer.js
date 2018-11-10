@@ -1,7 +1,6 @@
 import * as types from 'actions/profileActions';
 import { objects } from 'utils';
 import anomo from 'anomo';
-import { PROFILE_POSTS_FETCH, PROFILE_POSTS_RESET } from '../actions/profileActions';
 
 /**
  * @param {*} state
@@ -48,12 +47,21 @@ function postsFetch(state, action) {
   const newActivities = action.activities.slice(0).map((a) => {
     return anomo.activities.sanitizeActivity(a);
   });
+  const newImageActivities = objects.clone(state.imageActivities);
 
-  let activities = [];
+  let activities      = [];
+  let imageActivities = [];
+
   if (action.refresh) {
     activities = newActivities;
+    imageActivities = newActivities.filter((a) => {
+      return !!a.Image;
+    });
   } else {
     activities = objects.clone(state.activities).concat(newActivities);
+    imageActivities = objects.clone(newImageActivities).concat(newActivities.filter((a) => {
+      return !!a.Image;
+    }));
   }
 
   let lastActivityID = 0;
@@ -65,6 +73,7 @@ function postsFetch(state, action) {
   return {
     ...state,
     activities,
+    imageActivities,
     lastActivityID
   };
 }

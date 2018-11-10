@@ -88,9 +88,12 @@ export const defaultProfile = {
   ...commonUserElements,
   isSending:       false,
   isPostsLoading:  false,
-  activities:      [],
   lastActivityID:  0,
   firstActivityID: 0,
+  activities:      [],
+  imageActivities: [],
+  followers:       [],
+  following:       [],
   errorMessage:    ''
 };
 
@@ -121,11 +124,7 @@ export const defaultActivity = {
       ...commonFeed
     }
   },
-  activities:        [],
   activity:          {},
-  lastActivityID:    0,
-  firstActivityID:   0,
-  newNumber:         0,
   isLoading:         false,
   isRefreshing:      false,
   isCommentsLoading: false,

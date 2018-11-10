@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
-import { Row, Column, Card, CardBody, CardText, Badge } from 'lib/bootstrap';
+import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
 import { Page, Feed, Loading, Avatar, LinkButton, withRouter } from 'lib';
 import * as profileActions from 'actions/profileActions';
 
@@ -16,6 +16,16 @@ class ProfilePage extends React.PureComponent {
     profilePosts:      PropTypes.func.isRequired,
     profilePostsReset: PropTypes.func.isRequired
   };
+
+  /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+    this.state = {
+      panel: 'activity'
+    };
+  }
 
   /**
    *
@@ -55,9 +65,17 @@ class ProfilePage extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   * @param {string} panel
+   */
+  handleNavClick = (e, panel) => {
+    this.setState({ panel });
+  };
+
+  /**
    * @returns {*}
    */
-  renderBody = () => {
+  renderInfo = () => {
     const { user, profile } = this.props;
 
     const coverStyles = {
@@ -79,7 +97,7 @@ class ProfilePage extends React.PureComponent {
         <div className="card-profile-container">
           {profile.UserID === user.UserID && (
             <div className="card-profile-edit-btn">
-              <LinkButton name="editProfile">
+              <LinkButton name="editProfile" theme="link">
                 Edit
               </LinkButton>
             </div>
@@ -118,8 +136,94 @@ class ProfilePage extends React.PureComponent {
   /**
    * @returns {*}
    */
+  renderNav = () => {
+    const { panel } = this.state;
+
+    return (
+      <ButtonGroup className="card-profile-nav" stretch>
+        <Button
+          className={panel === 'activity' ? 'btn-active' : ''}
+          onClick={e => this.handleNavClick(e, 'activity')}
+        >
+          Activity
+        </Button>
+        <Button
+          className={panel === 'pics' ? 'btn-active' : ''}
+          onClick={e => this.handleNavClick(e, 'pics')}
+        >
+          Pics &amp; Vids
+        </Button>
+        <Button
+          className={panel === 'followers' ? 'btn-active' : ''}
+          onClick={e => this.handleNavClick(e, 'followers')}
+        >
+          Followers
+        </Button>
+        <Button
+          className={panel === 'following' ? 'btn-active' : ''}
+          onClick={e => this.handleNavClick(e, 'following')}
+        >
+          Following
+        </Button>
+      </ButtonGroup>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderActivityPanel = () => {
+    const { profile } = this.props;
+
+    return (
+      <Feed
+        onNext={this.handleNext}
+        onRefresh={this.handleRefresh}
+        activities={profile.activities}
+      />
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderPicsPanel = () => {
+    const { profile } = this.props;
+
+    return (
+      <Feed
+        onNext={this.handleNext}
+        onRefresh={this.handleRefresh}
+        activities={profile.imageActivities}
+        isPics
+      />
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderFollowersPanel = () => {
+    return (
+      <div />
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderFollowingPanel = () => {
+    return (
+      <div />
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
   render() {
     const { profile } = this.props;
+    const { panel } = this.state;
 
     if (profile.UserID === 0 || profile.isSending) {
       return (
@@ -133,18 +237,24 @@ class ProfilePage extends React.PureComponent {
           <Column md={4} offsetMd={4} xs={12}>
             <Card className="card-profile">
               <CardBody>
-                {this.renderBody()}
+                {this.renderInfo()}
               </CardBody>
             </Card>
           </Column>
         </Row>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            <Feed
-              onNext={this.handleNext}
-              onRefresh={this.handleRefresh}
-              activities={profile.activities}
-            />
+            {this.renderNav()}
+          </Column>
+        </Row>
+        <Row>
+          <Column md={4} offsetMd={4} xs={12}>
+            {{
+              'activity':  this.renderActivityPanel(),
+              'pics':      this.renderPicsPanel(),
+              'followers': this.renderFollowersPanel(),
+              'following': this.renderFollowingPanel()
+            }[panel]}
           </Column>
         </Row>
       </Page>
