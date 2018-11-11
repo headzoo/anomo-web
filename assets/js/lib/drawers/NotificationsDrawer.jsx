@@ -162,7 +162,9 @@ class NotificationsDrawer extends React.PureComponent {
               onClick={e => this.handleNotificationClick(e, n)}
             >
               <Avatar src={n.Avatar} />
-              <div>{message}</div>
+              <div className="drawer-notifications-message">
+                {message}
+              </div>
               <div className="gutter-left">
                 <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
               </div>

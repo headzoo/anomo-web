@@ -155,12 +155,14 @@ class Nav extends React.PureComponent {
           </Link>
         )}
         <div className="nav-badges">
-          <NavBadge
-            number={notifications.newNumber}
-            onClick={this.handleNotificationsClick}
-          >
-            {user.UserName}
-          </NavBadge>
+          {user.isAuthenticated && (
+            <NavBadge
+              number={notifications.newNumber}
+              onClick={this.handleNotificationsClick}
+            >
+              {user.UserName}
+            </NavBadge>
+          )}
           <NavBadge
             number={feeds.recent.newNumber}
             active={activeFeed === 'recent'}
