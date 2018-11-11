@@ -1,5 +1,7 @@
 import axios from 'axios';
+import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
+import { objects } from 'utils';
 import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
@@ -11,6 +13,7 @@ export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
+export const ACTIVITY_COMMENT_PREPEND      = 'ACTIVITY_COMMENT_PREPEND';
 export const ACTIVITY_POLL_SENDING         = 'ACTIVITY_POLL_SENDING';
 export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
 export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
@@ -461,7 +464,16 @@ export function activitySubmitComment(message, refID, actionType, topicID, isAno
   return (dispatch, getState, { user, proxy, endpoints }) => {
     const formName = 'post';
 
-    dispatch(activityIsCommentSending(true));
+    const comment = objects.merge(getState().user, {
+      'ID':          10,
+      'CreatedDate': moment().format(''),
+      'Content':     message
+    });
+    dispatch({
+      type: ACTIVITY_COMMENT_PREPEND,
+      comment
+    });
+
     dispatch(formSubmitting(formName, true));
 
     const url = endpoints.create('activityComment', {
@@ -475,13 +487,10 @@ export function activitySubmitComment(message, refID, actionType, topicID, isAno
     }).then((resp) => {
       if (resp.code === 'OK') {
         dispatch(formReset(formName));
-        dispatch(activityIsCommentsLoading(true));
-        dispatch(activityGet(refID, actionType));
       } else {
         dispatch(formError(formName, 'There was an error.'));
       }
     }).finally(() => {
-      dispatch(activityIsCommentSending(false));
       dispatch(formSubmitting(formName, false));
     });
   };

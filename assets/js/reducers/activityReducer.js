@@ -1,6 +1,7 @@
 import * as types from 'actions/activityActions';
 import objects from 'utils/objects';
 import anomo from 'anomo';
+import { ACTIVITY_COMMENT_PREPEND } from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -119,6 +120,25 @@ function pollSending(state, action) {
   return {
     ...state,
     isPollSending: action.isPollSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentPrepend(state, action) {
+  const activity = objects.clone(state.activity);
+
+  if (!activity.ListComment) {
+    activity.ListComment = [];
+  }
+  activity.ListComment.unshift(action.comment);
+
+  return {
+    ...state,
+    activity
   };
 }
 
@@ -305,6 +325,8 @@ export default function activityReducer(state = {}, action = {}) {
       return commentsLoading(state, action);
     case types.ACTIVITY_COMMENT_SENDING:
       return commentSending(state, action);
+    case types.ACTIVITY_COMMENT_PREPEND:
+      return commentPrepend(state, action);
     case types.ACTIVITY_POLL_SENDING:
       return pollSending(state, action);
     case types.ACTIVITY_ACTIVITY_LOADING:
