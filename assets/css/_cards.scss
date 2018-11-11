@@ -128,9 +128,24 @@
       margin: 0 0.25rem 1px 0.25rem;
       vertical-align: middle;
     }
+
+    .card-activity-shimmer,
+    .card-activity-shimmer-short {
+      height: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-activity-shimmer {
+      width: 100%;
+    }
+
+    .card-activity-shimmer-short {
+      width: 50%;
+    }
   }
 
-  .avatar {
+  .avatar,
+  .card-activity-shimmer-avatar {
     height: 44px;
     width: 44px;
     cursor: pointer;
@@ -156,18 +171,33 @@
   flex-grow: 2;
 }
 
+.card-activity-avatar {
+  .shimmer {
+
+  }
+}
+
 .card-activity-date,
 .card-comment-date {
   font-size: 0.8rem;
 }
 
 .card-activity-username {
-
+  .shimmer {
+    width: 200px;
+    height: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
 }
 
 .card-activity-location,
 .card-comment-location {
   font-size: 0.8rem;
+
+  .shimmer {
+    width: 200px;
+    height: 0.8rem;
+  }
 }
 
 .card-activity-like,

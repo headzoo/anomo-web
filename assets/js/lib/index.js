@@ -15,6 +15,7 @@ export { default as Html } from './Html';
 export { default as Link } from './Link';
 export { default as LinkButton } from './LinkButton';
 export { default as Loading } from './Loading';
+export { default as Shimmer } from './Shimmer';
 export { default as Number } from './Number';
 export { default as Editable } from './Editable';
 export { default as DropdownPopper } from './DropdownPopper';

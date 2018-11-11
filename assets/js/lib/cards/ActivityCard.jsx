@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
 import YouTube from 'react-youtube';
-import { Twemoji } from 'react-emoji-render';
-import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { dates, objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Image, Avatar, Message, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
+import { Image, Avatar, Message, Shimmer, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';
@@ -85,7 +84,9 @@ class ActivityCard extends React.PureComponent {
 
     if (clickable) {
       e.preventDefault();
-      history.push(routes.route('activity', { refID: activity.RefID, actionType: activity.ActionType }));
+
+      const route = routes.route('activity', { refID: activity.RefID, actionType: activity.ActionType });
+      history.push(route, { activity });
     }
   };
 
@@ -111,26 +112,41 @@ class ActivityCard extends React.PureComponent {
       activity.Avatar = '/images/anonymous-avatar-sm.jpg';
     }
 
+    const isLoading    = objects.isEmpty(activity) || activity.isLoading;
+    const birthday     = dates.getAge(activity.BirthDate || '1980-12-10');
+    const neighborhood = activity.NeighborhoodName || 'Earth';
+    const location     = `${birthday} · ${neighborhood}`;
+
     return (
       <CardHeader>
         <div className="card-activity-avatar" onClick={this.handleUserClick}>
-          <Avatar src={activity.Avatar || ''} />
+          {isLoading ? (
+            <Shimmer className="card-activity-shimmer-avatar" />
+          ) : (
+            <Avatar src={activity.Avatar || '/images/anonymous-avatar-sm.jpg'} />
+          )}
         </div>
         <div className="card-activity-user">
           <div className="card-activity-username" onClick={this.handleUserClick}>
-            {activity.FromUserName}
+            {isLoading ? (
+              <Shimmer className="card-activity-shimmer" />
+            ) : activity.FromUserName}
           </div>
           <div className="card-activity-location">
-            {dates.getAge(activity.BirthDate || '1980-12-10')} &middot; {activity.NeighborhoodName || 'Earth'}
+            {isLoading ? (
+              <Shimmer className="card-activity-shimmer" />
+            ) : location}
           </div>
         </div>
         <div className="card-activity-date">
           <div className="card-activity-ellipsis" onClick={this.handleMenuClick}>
             <Icon name="ellipsis-h" />
           </div>
-          <Moment fromNow>
-            {activity.CreatedDate}
-          </Moment>
+          {!isLoading && (
+            <Moment fromNow>
+              {activity.CreatedDate}
+            </Moment>
+          )}
         </div>
       </CardHeader>
     );
@@ -141,6 +157,17 @@ class ActivityCard extends React.PureComponent {
    */
   renderBody = () => {
     const { activity } = this.props;
+
+    if (objects.isEmpty(activity) || activity.isLoading) {
+      return (
+        <CardBody>
+          <CardText>
+            <Shimmer className="card-activity-shimmer" />
+            <Shimmer className="card-activity-shimmer-short" />
+          </CardText>
+        </CardBody>
+      );
+    }
 
     return (
       <CardBody onClick={this.handleBodyClick}>

@@ -62,13 +62,32 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevState
    */
   componentDidUpdate = (prevProps, prevState) => {
-    const { match, location, history, activityGet, activityReset, activityIsActivityLoading } = this.props;
+    const {
+      match,
+      location,
+      history,
+      activityGet,
+      activityReset,
+      activityIsActivityLoading,
+      activityIsCommentsLoading
+    } = this.props;
+
     const { activity, highlightedComment } = this.state;
+    const { state } = location;
 
     if (match.params.refID !== prevProps.match.params.refID) {
-      activityReset();
-      activityIsActivityLoading(true);
-      activityGet(match.params.refID, match.params.actionType);
+      if (state && state.activity) {
+        if (state.activity.Comment !== '0') {
+          activityIsCommentsLoading(true);
+        }
+        this.setState({ activity: state.activity }, () => {
+          activityGet(match.params.refID, match.params.actionType);
+        });
+      } else {
+        activityReset();
+        activityIsActivityLoading(true);
+        activityGet(match.params.refID, match.params.actionType);
+      }
       return;
     }
 
@@ -83,6 +102,7 @@ class ActivityPage extends React.PureComponent {
         this.setState({ highlightedComment: parsed.c });
       }
     }
+
     if (prevState.highlightedComment !== highlightedComment) {
       setTimeout(() => {
         const comment = document.getElementById(`comment-${highlightedComment}`);
@@ -129,7 +149,7 @@ class ActivityPage extends React.PureComponent {
   renderComments = () => {
     const { activity, highlightedComment } = this.state;
 
-    if (!activity.ListComment) {
+    if (!objects.isEmpty(activity) && !activity.ListComment) {
       activity.ListComment = [];
     }
 
@@ -141,7 +161,7 @@ class ActivityPage extends React.PureComponent {
       );
     }
 
-    return activity.ListComment.map(comment => (
+    return (activity.ListComment || []).map(comment => (
       <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
         <CommentCard
           comment={comment}
