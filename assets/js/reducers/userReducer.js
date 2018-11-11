@@ -1,7 +1,6 @@
 import * as types from 'actions/userActions';
 import * as defaultState from 'store/defaultState';
 import { objects } from 'utils';
-import { USER_FOLLOWERS, USER_FOLLOWING } from '../actions/userActions';
 
 /**
  * @param {*} state
