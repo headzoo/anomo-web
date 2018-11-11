@@ -43,6 +43,44 @@ function fetch(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function followers(state, action) {
+  let newFollowers = [];
+  if (action.page === 1) {
+    newFollowers = action.followers.slice(0);
+  } else {
+    newFollowers = state.followers.slice(0).concat(action.followers.slice(0));
+  }
+
+  return {
+    ...state,
+    followers: newFollowers
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function following(state, action) {
+  let newFollowing = [];
+  if (action.page === 1) {
+    newFollowing = action.following.slice(0);
+  } else {
+    newFollowing = state.following.slice(0).concat(action.following.slice(0));
+  }
+
+  return {
+    ...state,
+    following: newFollowing
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function postsFetch(state, action) {
   const newActivities = action.activities.slice(0).map((a) => {
     return anomo.activities.sanitizeActivity(a);
@@ -108,6 +146,10 @@ export default function profileReducer(state = {}, action = {}) {
       return fetch(state, action);
     case types.PROFILE_POSTS_FETCH:
       return postsFetch(state, action);
+    case types.PROFILE_FOLLOWING:
+      return following(state, action);
+    case types.PROFILE_FOLLOWERS:
+      return followers(state, action);
     case types.PROFILE_POSTS_RESET:
       return postsReset(state);
     default: return state;

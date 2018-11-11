@@ -63,7 +63,10 @@ const commonUserElements = {
   AllowAnswerPollNotice:      0,
   ListIntent:                 [],
   Tags:                       [],
-  RestrictMenuKey:            []
+  RestrictMenuKey:            [],
+  followers:                  [],
+  following:                  [],
+  blocked:                    [],
 };
 
 /**
@@ -71,9 +74,6 @@ const commonUserElements = {
  */
 export const defaultUser = {
   ...commonUserElements,
-  followers:         [],
-  following:         [],
-  blocked:           [],
   isAuthenticated:   false,
   isSending:         false,
   isStatusSending:   false,
@@ -93,8 +93,6 @@ export const defaultProfile = {
   firstActivityID: 0,
   activities:      [],
   imageActivities: [],
-  followers:       [],
-  following:       [],
   errorMessage:    ''
 };
 

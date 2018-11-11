@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
 import { Page, Feed, Loading, Avatar, LinkButton, withRouter } from 'lib';
+import { UserCard } from 'lib/cards';
 import * as profileActions from 'actions/profileActions';
 
 /**
@@ -14,6 +15,8 @@ class ProfilePage extends React.PureComponent {
     profile:           PropTypes.object.isRequired,
     profileFetch:      PropTypes.func.isRequired,
     profilePosts:      PropTypes.func.isRequired,
+    profileFollowers:  PropTypes.func.isRequired,
+    profileFollowing:  PropTypes.func.isRequired,
     profilePostsReset: PropTypes.func.isRequired
   };
 
@@ -31,10 +34,12 @@ class ProfilePage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { profileFetch, profilePosts, match } = this.props;
+    const { profileFetch, profilePosts, profileFollowers, profileFollowing, match } = this.props;
 
     profileFetch(match.params.id);
     profilePosts(match.params.id);
+    profileFollowers(match.params.id);
+    profileFollowing(match.params.id);
   };
 
   /**
@@ -206,8 +211,16 @@ class ProfilePage extends React.PureComponent {
    * @returns {*}
    */
   renderFollowersPanel = () => {
+    const { profile } = this.props;
+
     return (
-      <div />
+      <Row className="profile-user-cards">
+        {profile.followers.map(user => (
+          <Column key={user.UserID}>
+            <UserCard user={user} />
+          </Column>
+        ))}
+      </Row>
     );
   };
 
@@ -215,8 +228,16 @@ class ProfilePage extends React.PureComponent {
    * @returns {*}
    */
   renderFollowingPanel = () => {
+    const { profile } = this.props;
+
     return (
-      <div />
+      <Row className="profile-user-cards">
+        {profile.following.map(user => (
+          <Column key={user.UserID}>
+            <UserCard user={user} />
+          </Column>
+        ))}
+      </Row>
     );
   };
 
