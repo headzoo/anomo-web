@@ -343,6 +343,8 @@ export function activitySet(activity) {
  */
 export function activityGet(refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(activityReset());
+
     const url = endpoints.create('activityGet', {
       token: user.getToken(),
       actionType,

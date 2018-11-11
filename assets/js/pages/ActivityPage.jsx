@@ -124,15 +124,6 @@ class ActivityPage extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  componentWillUnmount = () => {
-    const { activityReset } = this.props;
-
-    activityReset();
-  };
-
-  /**
    * @param {Event} e
    * @param {*} values
    */
