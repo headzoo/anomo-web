@@ -7,7 +7,7 @@ import { Twemoji } from 'react-emoji-render';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Image, Avatar, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
+import { Image, Avatar, Message, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';
@@ -78,6 +78,18 @@ class ActivityCard extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   */
+  handleBodyClick = (e) => {
+    const { activity, clickable, history } = this.props;
+
+    if (clickable) {
+      e.preventDefault();
+      history.push(routes.route('activity', { refID: activity.RefID, actionType: activity.ActionType }));
+    }
+  };
+
+  /**
    *
    * @param {Event} e
    * @param {number} answerID
@@ -131,10 +143,10 @@ class ActivityCard extends React.PureComponent {
     const { activity } = this.props;
 
     return (
-      <CardBody>
+      <CardBody onClick={this.handleBodyClick}>
         <CardText>
           {(activity.Message && activity.Message.message) && (
-            <Twemoji text={activity.Message.message} />
+            <Message text={activity.Message.message} tags={activity.Message.message_tags} />
           )}
           {activity.Poll && (
             <Poll poll={activity.Poll} onAnswer={this.handlePollAnswer} />
@@ -182,8 +194,14 @@ class ActivityCard extends React.PureComponent {
           <Pluralize number={likes} singular="Like" plural="Likes" />
         </div>
         <div className={commentClasses}>
-          <Number value={comments} />&nbsp;
-          <Pluralize number={comments} plural="Comments" singular="Comment" />
+          <Link
+            name="activity"
+            state={{ activity }}
+            params={{ refID: activity.RefID, actionType: activity.ActionType }}
+          >
+            <Number value={comments} />&nbsp;
+            <Pluralize number={comments} plural="Comments" singular="Comment" />
+          </Link>
         </div>
       </CardFooter>
     );
@@ -193,32 +211,16 @@ class ActivityCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, clickable, className } = this.props;
-
-    if (!clickable) {
-      return (
-        <Card key={activity.RefID} className={classNames('card-activity', className)}>
-          {this.renderHeader()}
-          {this.renderBody()}
-          {this.renderFooter()}
-        </Card>
-      );
-    }
+    const { activity, className } = this.props;
 
     return (
       <Card
         key={`activity_${activity.RefID}`}
-        className={`${classNames('card-activity', className)} card-activity-clickable`}
+        className={classNames('card-activity  card-activity-clickable', className)}
       >
-        <Link
-          name="activity"
-          params={{ refID: activity.RefID, actionType: activity.ActionType }}
-          state={{ activity }}
-        >
-          {this.renderHeader()}
-          {this.renderBody()}
-          {this.renderFooter()}
-        </Link>
+        {this.renderHeader()}
+        {this.renderBody()}
+        {this.renderFooter()}
       </Card>
     );
   }

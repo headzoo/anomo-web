@@ -1,4 +1,4 @@
-import objects from '../utils/objects';
+import { objects } from 'utils';
 
 /**
  *
@@ -19,7 +19,7 @@ class Activities {
    */
   unescapeUnicode = (message) => {
     try {
-      return JSON.parse(`"${this.unescape(message)}"`);
+      return JSON.parse(`"${this.unescape(message).replace(/"/g, '\\"')}"`);
     } catch (error) {
       return message;
     }
@@ -48,9 +48,11 @@ class Activities {
     a.IsDeleted       = false;
     a.DeleteIsSending = false;
     a.LikeIsLoading   = false;
+
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
+
     if (a.ListComment) {
       a.ListComment = a.ListComment.map((comment) => {
         comment.Content         = this.unescapeUnicode(comment.Content);

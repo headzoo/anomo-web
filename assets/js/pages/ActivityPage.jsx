@@ -84,13 +84,15 @@ class ActivityPage extends React.PureComponent {
       }
     }
     if (prevState.highlightedComment !== highlightedComment) {
-      const comment = document.getElementById(`comment-${highlightedComment}`);
-      if (comment) {
-        comment.scrollIntoView({
-          block:    'center',
-          behavior: 'smooth'
-        });
-      }
+      setTimeout(() => {
+        const comment = document.getElementById(`comment-${highlightedComment}`);
+        if (comment) {
+          comment.scrollIntoView({
+            block:    'center',
+            behavior: 'smooth'
+          });
+        }
+      }, 1000);
     }
 
     if (!objects.isEmpty(this.props.activity.activity)

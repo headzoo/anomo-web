@@ -9,6 +9,7 @@ export { default as Footer } from './Footer';
 export { default as Icon } from './Icon';
 export { default as Image } from './Image';
 export { default as Avatar } from './Avatar';
+export { default as Message } from './Message';
 export { default as Text } from './Text';
 export { default as Html } from './Html';
 export { default as Link } from './Link';
