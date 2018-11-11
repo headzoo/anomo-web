@@ -23,10 +23,22 @@ class Poll extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      panel:   props.IsAnswerPoll === '0' ? 'questions' : 'results',
+      panel:   props.poll.IsAnswerPoll === '0' ? 'questions' : 'results',
       checked: '0'
     };
   }
+
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { poll } = this.props;
+
+    if (prevProps.poll.IsAnswerPoll !== poll.IsAnswerPoll) {
+      const panel = poll.IsAnswerPoll === '0' ? 'questions' : 'results';
+      this.setState({ panel });
+    }
+  };
 
   /**
    * @param {Event} e
