@@ -44,12 +44,15 @@ class ActivityPage extends React.PureComponent {
     const { location, match, activityGet, activityIsCommentsLoading } = this.props;
     const { state } = location;
 
-    activityIsCommentsLoading(true);
     if (state && state.activity) {
+      if (state.activity.Comment !== '0') {
+        activityIsCommentsLoading(true);
+      }
       this.setState({ activity: state.activity }, () => {
         activityGet(match.params.refID, match.params.actionType);
       });
     } else {
+      activityIsCommentsLoading(true);
       activityGet(match.params.refID, match.params.actionType);
     }
   };
