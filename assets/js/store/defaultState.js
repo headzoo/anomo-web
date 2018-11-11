@@ -88,6 +88,7 @@ export const defaultProfile = {
   ...commonUserElements,
   isSending:       false,
   isPostsLoading:  false,
+  isLastPage:      false,
   lastActivityID:  0,
   firstActivityID: 0,
   activities:      [],

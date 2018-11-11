@@ -178,6 +178,7 @@ class ProfilePage extends React.PureComponent {
     return (
       <Feed
         onNext={this.handleNext}
+        hasMore={!profile.isLastPage}
         onRefresh={this.handleRefresh}
         activities={profile.activities}
       />
@@ -193,6 +194,7 @@ class ProfilePage extends React.PureComponent {
     return (
       <Feed
         onNext={this.handleNext}
+        hasMore={!profile.isLastPage}
         onRefresh={this.handleRefresh}
         activities={profile.imageActivities}
         isPics

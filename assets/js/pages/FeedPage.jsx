@@ -112,6 +112,7 @@ class FeedPage extends React.PureComponent {
             <Feed
               onNext={this.handleNext}
               activities={feeds[feedType].activities}
+              hasMore
             />
           </Column>
         </Row>

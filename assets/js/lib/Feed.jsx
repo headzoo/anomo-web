@@ -15,27 +15,29 @@ class Feed extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.array.isRequired,
     isPics:     PropTypes.bool,
+    hasMore:    PropTypes.bool,
     onNext:     PropTypes.func
   };
 
   static defaultProps = {
-    isPics: false,
-    onNext: () => {}
+    isPics:  false,
+    hasMore: false,
+    onNext:  () => {}
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { activities, isPics, onNext } = this.props;
+    const { activities, isPics, hasMore, onNext } = this.props;
 
     return (
       <InfiniteScroll
         next={onNext}
+        hasMore={hasMore}
         dataLength={activities.length}
         style={{ overflow: 'hidden' }}
         loader={<Loading className="text-center" />}
-        hasMore
       >
         <TransitionGroup component={Row}>
           {activities.map(a => (

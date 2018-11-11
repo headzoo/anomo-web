@@ -74,7 +74,8 @@ function postsFetch(state, action) {
     ...state,
     activities,
     imageActivities,
-    lastActivityID
+    lastActivityID,
+    isLastPage: action.isLastPage
   };
 }
 
@@ -87,7 +88,8 @@ function postsReset(state) {
     ...state,
     activities:      [],
     imageActivities: [],
-    lastActivityID:  0
+    lastActivityID:  0,
+    isLastPage:      false
   };
 }
 

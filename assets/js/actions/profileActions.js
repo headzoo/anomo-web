@@ -82,6 +82,7 @@ export function profilePosts(userID, refresh = false) {
           dispatch({
             type:       PROFILE_POSTS_FETCH,
             activities: data.Activities,
+            isLastPage: data.Activities.length < 10,
             refresh
           });
         }
