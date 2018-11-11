@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { objects, browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
@@ -155,20 +156,24 @@ class ActivityPage extends React.PureComponent {
 
     if (this.props.activity.isCommentsLoading) {
       return (
-        <Column key={0} className="text-center" md={4} offsetMd={4} xs={12}>
-          <Loading />
-        </Column>
+        <FadeAndSlideTransition key={0} duration={150}>
+          <Column className="text-center" md={4} offsetMd={4} xs={12}>
+            <Loading />
+          </Column>
+        </FadeAndSlideTransition>
       );
     }
 
     return (activity.ListComment || []).map(comment => (
-      <Column key={comment.ID} md={4} offsetMd={4} xs={12}>
-        <CommentCard
-          comment={comment}
-          activity={activity}
-          highlighted={comment.ID === highlightedComment}
-        />
-      </Column>
+      <FadeAndSlideTransition key={comment.ID} duration={150}>
+        <Column md={4} offsetMd={4} xs={12}>
+          <CommentCard
+            comment={comment}
+            activity={activity}
+            highlighted={comment.ID === highlightedComment}
+          />
+        </Column>
+      </FadeAndSlideTransition>
     ));
   };
 
@@ -178,9 +183,6 @@ class ActivityPage extends React.PureComponent {
   render() {
     const { activity } = this.state;
 
-    if (objects.isEmpty(activity)) {
-      // return null;
-    }
     if (this.props.activity.isActivityLoading) {
       return <Loading middle />;
     }
@@ -188,8 +190,12 @@ class ActivityPage extends React.PureComponent {
     return (
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
-            <ActivityCard activity={activity} clickableImage clickable={false} />
+          <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
+            <ActivityCard
+              clickable={false}
+              activity={activity}
+              clickableImage
+            />
           </Column>
         </Row>
         <Row>
@@ -197,9 +203,9 @@ class ActivityPage extends React.PureComponent {
             <PostForm onSubmit={this.handleCommentSubmit} />
           </Column>
         </Row>
-        <Row>
+        <TransitionGroup component={Row}>
           {this.renderComments()}
-        </Row>
+        </TransitionGroup>
       </Page>
     );
   }
