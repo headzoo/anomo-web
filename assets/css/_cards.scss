@@ -84,7 +84,9 @@
     display: flex;
     color: $color-dim;
     text-align: left;
-    padding: $gutter-size;
+    padding: $gutter-size $gutter-size 0;
+    background-color: inherit;
+    border-bottom: 0;
   }
 
   .card-body {
@@ -104,9 +106,15 @@
   .card-text {
     white-space: pre-line;
 
+    span + img,
+    span + iframe {
+      margin-top: $gutter-size;
+    }
+
     img,
     iframe {
       width: 100%;
+      border: 1px solid #e8e8e8;
     }
 
     .text {
