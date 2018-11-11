@@ -85,8 +85,9 @@ function postsFetch(state, action) {
 function postsReset(state) {
   return {
     ...state,
-    activities:     [],
-    lastActivityID: 0
+    activities:      [],
+    imageActivities: [],
+    lastActivityID:  0
   };
 }
 
