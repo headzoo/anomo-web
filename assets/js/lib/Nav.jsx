@@ -188,7 +188,6 @@ class Nav extends React.PureComponent {
           )}
           {!isXs && this.renderNavItems()}
         </div>
-        {!isXs && this.renderSearch()}
       </nav>
     );
   }
