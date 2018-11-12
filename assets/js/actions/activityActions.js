@@ -10,6 +10,7 @@ export const ACTIVITY_ACTIVITY_LOADING     = 'ACTIVITY_ACTIVITY_LOADING';
 export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
 export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
 export const ACTIVITY_LIKE                 = 'ACTIVITY_LIKE';
+export const ACTIVITY_LIKE_COMMENT         = 'ACTIVITY_LIKE_COMMENT';
 export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
@@ -430,6 +431,15 @@ export function activityLike(refID, actionType) {
 export function activityLikeComment(commentID, refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLikeCommentLoading(true, commentID));
+    dispatch({
+      type: ACTIVITY_LIKE_COMMENT,
+      commentID,
+      refID,
+      actionType
+    });
+    setTimeout(() => {
+      dispatch(activityIsLikeCommentLoading(false, commentID));
+    }, 1000);
 
     const url = endpoints.create('activityCommentLike', {
       token: user.getToken(),
@@ -440,9 +450,6 @@ export function activityLikeComment(commentID, refID, actionType) {
         if (data.code === 'OK') {
           dispatch(activityGet(refID, actionType));
         }
-      })
-      .finally(() => {
-        dispatch(activityIsLikeCommentLoading(false, commentID));
       });
   };
 }

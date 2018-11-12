@@ -67,10 +67,12 @@ function likeLoading(state, action) {
 function likeCommentLoading(state, action) {
   const activity = objects.clone(state.activity);
 
-  for (let i = 0; i < activity.ListComment.length; i++) {
-    if (activity.ListComment[i].ID === action.commentID) {
-      activity.ListComment[i].LikeIsLoading = action.isLoading;
-      break;
+  if (activity.ListComment) {
+    for (let i = 0; i < activity.ListComment.length; i++) {
+      if (activity.ListComment[i].ID === action.commentID) {
+        activity.ListComment[i].LikeIsLoading = action.isLoading;
+        break;
+      }
     }
   }
 
@@ -167,6 +169,60 @@ function like(state, action) {
     } else {
       a.IsLike = '0';
       a.Like   = parseInt(a.Like || 0, 10) - 1;
+    }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeComment(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    if (!activity.ListComment) {
+      return;
+    }
+
+    for (let i = 0; i < activity.ListComment.length; i++) {
+      const comment = activity.ListComment[i];
+      if (comment.ID === action.commentID) {
+        if (!comment.IsLike || comment.IsLike === '0') {
+          comment.IsLike = '1';
+          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
+        } else {
+          comment.IsLike = '0';
+          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
+        }
+      }
+    }
+  }
+
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    if (!a.ListComment) {
+      return;
+    }
+
+    for (let i = 0; i < a.ListComment.length; i++) {
+      const comment = a.ListComment[i];
+      if (comment.ID === action.commentID) {
+        if (!comment.IsLike || comment.IsLike === '0') {
+          comment.IsLike = '1';
+          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
+        } else {
+          comment.IsLike = '0';
+          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
+        }
+      }
     }
   });
 
@@ -345,6 +401,8 @@ export default function activityReducer(state = {}, action = {}) {
       return feedRefreshing(state, action);
     case types.ACTIVITY_LIKE:
       return like(state, action);
+    case types.ACTIVITY_LIKE_COMMENT:
+      return likeComment(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
     case types.ACTIVITY_LIKE_COMMENT_LOADING:
