@@ -11,9 +11,10 @@ class User {
    *
    */
   constructor() {
-    this.id    = 0;
-    this.token = '';
-    this.proxy = new Proxy();
+    this.id      = 0;
+    this.details = null;
+    this.token   = '';
+    this.proxy   = new Proxy();
   }
 
   /**
@@ -82,6 +83,35 @@ class User {
   };
 
   /**
+   * @param {*} details
+   * @returns {User}
+   */
+  setDetails = (details) => {
+    this.details = details;
+    browser.storage.set(browser.storage.KEY_DETAILS, details);
+    return this;
+  };
+
+  /**
+   * @returns {*}
+   */
+  getDetails = () => {
+    if (!this.details) {
+      this.details = browser.storage.get(browser.storage.KEY_DETAILS, {});
+    }
+    return this.details;
+  };
+
+  /**
+   * @returns {User}
+   */
+  removeDetails = () => {
+    this.details = null;
+    browser.storage.remove(browser.storage.KEY_DETAILS);
+    return this;
+  };
+
+  /**
    * @param {string} username
    * @param {string} password
    * @returns {Promise}
@@ -94,6 +124,10 @@ class User {
       if (data.token) {
         this.setID(parseInt(data.UserID, 10));
         this.setToken(data.token);
+
+        delete data.token;
+        delete data.code;
+        this.setDetails(data);
       }
       return data;
     });
@@ -102,18 +136,19 @@ class User {
   /**
    * @returns {Promise}
    */
-  logout = () => {
-    if (!this.hasToken()) {
-      return Promise.resolve();
-    }
-
+  logout = (localOnly = false) => {
     this.removeID();
     this.removeToken();
-    const url = endpoints.create('userLogout', {
-      token: this.getToken()
-    });
+    this.removeDetails();
 
-    return this.proxy.get(url);
+    if (this.hasToken() && !localOnly) {
+      const url = endpoints.create('userLogout', {
+        token: this.getToken()
+      });
+      return this.proxy.get(url);
+    }
+
+    return Promise.resolve();
   };
 
   /**

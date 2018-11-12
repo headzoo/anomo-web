@@ -395,3 +395,19 @@
 .card-profile-nav {
   margin-bottom: $gutter-size;
 }
+
+/**
+ * Settings
+ */
+.card-settings-list-group {
+  .list-group-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+}

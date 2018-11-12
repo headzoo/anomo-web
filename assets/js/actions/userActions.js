@@ -1,3 +1,4 @@
+import { objects } from 'utils';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll } from 'actions/activityActions';
@@ -186,6 +187,7 @@ export function userLogin(username, password) {
       .then((u) => {
         if (u.code && u.code === 'FAIL') {
           dispatch(userError('Username or password is incorrect.'));
+          user.logout(true);
         } else {
           dispatch({
             type: USER_LOGIN,
@@ -229,12 +231,14 @@ export function userRefresh() {
           if (data.code === 'OK') {
             dispatch({
               type: USER_LOGIN,
-              user: data.results
+              user: objects.merge(user.getDetails(), data.results)
             });
 
             dispatch(activityFeedFetchAll());
             dispatch(notificationsFetch());
             dispatch(userFollowing(id));
+          } else {
+            user.logout(true);
           }
         })
         .finally(() => {
@@ -273,6 +277,32 @@ export function userUpdateSettings(values) {
       .then((data) => {
         if (data.code === 'OK') {
           dispatch(userSet(data));
+        }
+      })
+      .finally(() => {
+        dispatch(userIsSettingsSending(false));
+      });
+  };
+}
+
+/**
+ * @param {*} values
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function userUpdatePrivacy(values) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch(userIsSettingsSending(true));
+
+    const url = endpoints.create('userUpdatePrivacy', {
+      token:  user.getToken(),
+      userID: user.getID()
+    });
+    proxy.post(url, values)
+      .then((data) => {
+        if (data.code === 'OK') {
+          const details = objects.merge(user.getDetails(), values);
+          user.setDetails(details);
+          dispatch(userSet(details));
         }
       })
       .finally(() => {

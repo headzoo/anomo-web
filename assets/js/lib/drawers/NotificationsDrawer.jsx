@@ -90,10 +90,10 @@ class NotificationsDrawer extends React.PureComponent {
    *
    */
   handleSettingsClick = () => {
-    const { user, history } = this.props;
+    const { history } = this.props;
 
     this.close();
-    history.push(routes.route('profile', { id: user.UserID }));
+    history.push(routes.route('settings'));
   };
 
   /**

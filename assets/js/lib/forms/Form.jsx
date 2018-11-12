@@ -16,6 +16,7 @@ class Form extends React.PureComponent {
     name:       PropTypes.string.isRequired,
     disabled:   PropTypes.bool,
     required:   PropTypes.bool,
+    reset:      PropTypes.bool,
     onSubmit:   PropTypes.func,
     onChange:   PropTypes.func,
     onComplete: PropTypes.func,
@@ -26,6 +27,7 @@ class Form extends React.PureComponent {
   };
 
   static defaultProps = {
+    reset:      true,
     disabled:   false,
     required:   false,
     className:  '',
@@ -86,9 +88,11 @@ class Form extends React.PureComponent {
    * Called before the component unmounts
    */
   componentWillUnmount() {
-    const { name, dispatch } = this.props;
+    const { name, reset, dispatch } = this.props;
 
-    dispatch(formReset(name));
+    if (reset) {
+      dispatch(formReset(name));
+    }
   }
 
   /**

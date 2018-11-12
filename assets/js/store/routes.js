@@ -13,6 +13,7 @@ const pathsAndRoutes = {
   hashtag:     '/hashtag',
   login:       '/login',
   logout:      '/logout',
+  settings:    '/settings',
   about:       '/about',
   contact:     '/contact',
   privacy:     '/privacy',
