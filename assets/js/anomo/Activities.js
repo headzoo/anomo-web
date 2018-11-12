@@ -60,7 +60,7 @@ class Activities {
         comment.DeleteIsSending = false;
         comment.LikeIsLoading   = false;
         return comment;
-      }).reverse();
+      });
     }
 
     return a;
