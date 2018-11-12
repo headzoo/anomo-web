@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
+import { NotificationsIcon } from 'lib/icons';
 import { Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
@@ -102,11 +102,11 @@ class Nav extends React.PureComponent {
         <span className="navbar-toggler-icon" onClick={this.handleNotificationsClick} />
         <ul className="navbar-nav">
           {user.isAuthenticated && (
-            <li className="nav-item nav-item-notifications" onClick={this.handleNotificationsClick}>
-              <Icon name="bell" />
-              <div className={classNames({ active: notifications.newNumber })}>
-                {notifications.newNumber}
-              </div>
+            <li className="nav-item">
+              <NotificationsIcon
+                number={notifications.newNumber}
+                onClick={this.handleNotificationsClick}
+              />
             </li>
           )}
         </ul>

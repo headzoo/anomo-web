@@ -11,6 +11,48 @@
   opacity: 1;
 }
 
+.icon-notifications {
+  padding: 12px;
+  margin-left: $gutter-size;
+  position: relative;
+
+  .icon,
+  div {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto auto;
+    position: absolute;
+    cursor: pointer;
+  }
+
+  .icon {
+    color: #bdbdbd;
+    font-size: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  div {
+    height: 1rem;
+    width: 1rem;
+    color: #f5f3f3;
+    display: flex;
+    font-size: 0.6rem;
+    border-radius: 50%;
+    line-height: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-dim;
+
+    &.active {
+      background-color: #9e2f2f;
+    }
+  }
+}
+
 .emoji-popper {
   z-index: 1000;
   margin-top: 75px;
