@@ -9,6 +9,7 @@ export const ACTIVITY_SET                  = 'ACTIVITY_SET';
 export const ACTIVITY_ACTIVITY_LOADING     = 'ACTIVITY_ACTIVITY_LOADING';
 export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
 export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
+export const ACTIVITY_LIKE                 = 'ACTIVITY_LIKE';
 export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
@@ -398,6 +399,13 @@ export function activityDelete(activityID) {
 export function activityLike(refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityIsLikeLoading(true, refID));
+    dispatch({
+      type: ACTIVITY_LIKE,
+      refID
+    });
+    setTimeout(() => {
+      dispatch(activityIsLikeLoading(false, refID));
+    }, 1000);
 
     const url = endpoints.create('activityLike', {
       token: user.getToken(),
@@ -409,9 +417,6 @@ export function activityLike(refID, actionType) {
         if (data.code === 'OK') {
           dispatch(activityGet(refID, actionType));
         }
-      })
-      .finally(() => {
-        dispatch(activityIsLikeLoading(false, refID));
       });
   };
 }

@@ -6,10 +6,8 @@ export { default as react } from './react';
 export { default as strings } from './strings';
 export { default as numbers } from './numbers';
 export { default as arrays } from './arrays';
-export { default as entries } from './entries';
-export { default as nutrients } from './nutrients';
 export { default as dates } from './dates';
-export { default as lang } from './lang';
+export { default as feeds } from './feeds';
 export {
   connect,
   mapStateToProps,

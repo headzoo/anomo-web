@@ -1,7 +1,6 @@
 import * as types from 'actions/activityActions';
-import objects from 'utils/objects';
+import { objects, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
-import { ACTIVITY_COMMENT_PREPEND } from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -49,14 +48,8 @@ function likeLoading(state, action) {
   if (activity && activity.RefID === action.refID) {
     activity.LikeIsLoading = action.isLoading;
   }
-
-  objects.forEach(feeds, (feed) => {
-    for (let i = 0; i < feed.activities.length; i++) {
-      if (feed.activities[i].RefID === action.refID) {
-        feed.activities[i].LikeIsLoading = action.isLoading;
-        break;
-      }
-    }
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    a.LikeIsLoading = action.isLoading;
   });
 
   return {
@@ -129,16 +122,58 @@ function pollSending(state, action) {
  * @returns {*}
  */
 function commentPrepend(state, action) {
+  const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
   if (!activity.ListComment) {
     activity.ListComment = [];
   }
   activity.ListComment.unshift(action.comment);
+  activity.Comment = parseInt(activity.Comment || 0, 10) + 1;
+
+  feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
+    a.Comment = activity.Comment;
+  });
 
   return {
     ...state,
-    activity
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function like(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    if (!activity.IsLike || activity.IsLike === '0') {
+      activity.IsLike = '1';
+      activity.Like   = parseInt(activity.Like || 0, 10) + 1;
+    } else {
+      activity.IsLike = '0';
+      activity.Like   = parseInt(activity.Like || 0, 10) - 1;
+    }
+  }
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    if (!a.IsLike || a.IsLike === '0') {
+      a.IsLike = '1';
+      a.Like   = parseInt(a.Like || 0, 10) + 1;
+    } else {
+      a.IsLike = '0';
+      a.Like   = parseInt(a.Like || 0, 10) - 1;
+    }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
   };
 }
 
@@ -217,14 +252,17 @@ function set(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = anomo.activities.sanitizeActivity(action.activity);
 
-  objects.forEach(feeds, (feed) => {
+  feedUtils.traverseForActivityID(feeds, activity.ActivityID, () => {
+    return objects.clone(activity);
+  });
+/*  objects.forEach(feeds, (feed) => {
     for (let i = 0; i < feed.activities.length; i++) {
       if (feed.activities[i].ActivityID === activity.ActivityID) {
         feed.activities[i] = objects.clone(activity);
         break;
       }
     }
-  });
+  });*/
 
   return {
     ...state,
@@ -256,14 +294,8 @@ function deleteActivity(state, action) {
   if (activity && activity.ActivityID === action.activityID) {
     activity.IsDeleted = true;
   }
-
-  objects.forEach(feeds, (feed) => {
-    for (let i = 0; i < feed.activities.length; i++) {
-      if (feed.activities[i].ActivityID === action.activityID) {
-        feed.activities[i].IsDeleted = true;
-        break;
-      }
-    }
+  feedUtils.traverseForActivityID(feeds, action.activityID, (a) => {
+    a.IsDeleted = true;
   });
 
   return {
@@ -285,14 +317,8 @@ function deleteIsSending(state, action) {
   if (activity && activity.ActivityID === action.activityID) {
     activity.DeleteIsSending = action.isSending;
   }
-
-  objects.forEach(feeds, (feed) => {
-    for (let i = 0; i < feed.activities.length; i++) {
-      if (feed.activities[i].ActivityID === action.activityID) {
-        feed.activities[i].DeleteIsSending = action.isSending;
-        break;
-      }
-    }
+  feedUtils.traverseForActivityID(feeds, action.activityID, (a) => {
+    a.DeleteIsSending = action.isSending;
   });
 
   return {
@@ -317,6 +343,8 @@ export default function activityReducer(state = {}, action = {}) {
       return feedLoading(state, action);
     case types.ACTIVITY_FEED_REFRESHING:
       return feedRefreshing(state, action);
+    case types.ACTIVITY_LIKE:
+      return like(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
     case types.ACTIVITY_LIKE_COMMENT_LOADING:
