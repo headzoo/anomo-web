@@ -61,6 +61,8 @@ const commonUserElements = {
   AllowFollowNotice:          0,
   OnlyShowCountry:            0,
   AllowAnswerPollNotice:      0,
+  Latitude:                   0,
+  Longitude:                  0,
   ListIntent:                 [],
   Tags:                       [],
   RestrictMenuKey:            [],
@@ -74,10 +76,12 @@ const commonUserElements = {
  */
 export const defaultUser = {
   ...commonUserElements,
+  searchResults:     [],
   isAuthenticated:   false,
   isSending:         false,
   isStatusSending:   false,
   isSettingsSending: false,
+  isSearchSending:   false,
   errorMessage:      ''
 };
 

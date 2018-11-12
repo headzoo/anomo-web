@@ -55,6 +55,18 @@ function settingsSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function searchSending(state, action) {
+  return {
+    ...state,
+    isSearchSending: action.isSearchSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function set(state, action) {
   return objects.merge(state, action.user);
 }
@@ -132,6 +144,18 @@ function blocked(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function searchResults(state, action) {
+  return {
+    ...state,
+    searchResults: action.searchResults.slice(0)
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function userReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.USER_ERROR:
@@ -142,6 +166,8 @@ export default function userReducer(state = {}, action = {}) {
       return statusSending(state, action);
     case types.USER_SETTINGS_SENDING:
       return settingsSending(state, action);
+    case types.USER_SEARCH_SENDING:
+      return searchSending(state, action);
     case types.USER_LOGIN:
       return login(state, action);
     case types.USER_LOGOUT:
@@ -154,6 +180,8 @@ export default function userReducer(state = {}, action = {}) {
       return following(state, action);
     case types.USER_BLOCKED:
       return blocked(state, action);
+    case types.USER_SEARCH_RESULTS:
+      return searchResults(state, action);
     default: return state;
   }
 }

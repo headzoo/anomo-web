@@ -193,6 +193,22 @@ export function browserShowScrollbars() {
   document.body.scroll = 'yes';
 }
 
+/**
+ * @param {Function} cb
+ */
+export function browserPosition(cb) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      cb(latitude, longitude);
+    }, () => {
+      cb(0, 0);
+    });
+  } else {
+    cb(0, 0);
+  }
+}
+
 export default {
   on:             browserOn,
   off:            browserOff,
@@ -202,6 +218,7 @@ export default {
   hideScrollbars: browserHideScrollbars,
   showScrollbars: browserShowScrollbars,
   parseHash:      browserParseHash,
+  position:       browserPosition,
   storage:        {
     get:         browserStorageGet,
     set:         browserStorageSet,

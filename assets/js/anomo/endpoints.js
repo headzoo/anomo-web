@@ -13,6 +13,7 @@ const urls = {
   userFollowers:         `${base}/user/get_list_follower/{token}/{userID}/{page}`,
   userFollowing:         `${base}/user/get_list_following/{token}/{userID}/{page}`,
   userStatus:            `${base}/user/post_status/{token}`,
+  userSearch:            `${base}/user/search_user/{token}/{userID}/{latitude}/{longitude}/1/0/18/100`,
   userPicture:           `${base}/user/post_picture_activity/{token}`,
   userUpdate:            `${base}/user/update/{token}`,
   userUpdatePrivacy:     `${base}/user/update_privacy/{token}/{userID}`,

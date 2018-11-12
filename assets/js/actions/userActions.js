@@ -1,4 +1,4 @@
-import { objects } from 'utils';
+import { objects, browser } from 'utils';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll } from 'actions/activityActions';
@@ -8,12 +8,14 @@ export const USER_ERROR            = 'USER_ERROR';
 export const USER_SENDING          = 'USER_SENDING';
 export const USER_STATUS_SENDING   = 'USER_STATUS_SENDING';
 export const USER_SETTINGS_SENDING = 'USER_SETTINGS_SENDING';
+export const USER_SEARCH_SENDING   = 'USER_SEARCH_SENDING';
 export const USER_LOGIN            = 'USER_LOGIN';
 export const USER_LOGOUT           = 'USER_LOGOUT';
 export const USER_SET              = 'USER_SET';
 export const USER_FOLLOWERS        = 'USER_FOLLOWERS';
 export const USER_FOLLOWING        = 'USER_FOLLOWING';
 export const USER_BLOCKED          = 'USER_BLOCKED';
+export const USER_SEARCH_RESULTS   = 'USER_SEARCH_RESULTS';
 
 /**
  * @param {string} errorMessage
@@ -56,6 +58,17 @@ export function userIsSettingsSending(isSettingSending) {
   return {
     type: USER_SETTINGS_SENDING,
     isSettingSending
+  };
+}
+
+/**
+ * @param {boolean} isSearchSending
+ * @returns {{type: string, isSearchSending: *}}
+ */
+export function userIsSearchSending(isSearchSending) {
+  return {
+    type: USER_SEARCH_SENDING,
+    isSearchSending
   };
 }
 
@@ -360,5 +373,39 @@ export function userSubmitStatus(message, photo = '') {
         dispatch(userIsStatusSending(false));
         dispatch(formSubmitting(formName, false));
       });
+  };
+}
+
+/**
+ * @returns {function(*=, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function userSearch() {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    /**
+     * @param {number} latitude
+     * @param {number} longitude
+     */
+    browser.position((latitude, longitude) => {
+      dispatch(userIsSearchSending(true));
+
+      const url = endpoints.create('userSearch', {
+        token:  user.getToken(),
+        userID: user.getID(),
+        latitude,
+        longitude
+      });
+      proxy.get(url)
+        .then((data) => {
+          if (data.code === 'OK') {
+            dispatch({
+              type:          USER_SEARCH_RESULTS,
+              searchResults: data.results.ListUser || []
+            });
+          }
+        })
+        .finally(() => {
+          dispatch(userIsSearchSending(false));
+        });
+    });
   };
 }
