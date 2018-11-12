@@ -1,6 +1,8 @@
 import Favico from 'favico.js';
 
-export const NOTIFICATIONS_FETCH = 'NOTIFICATIONS_FETCH';
+export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
+export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
+export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 
 const favicon = new Favico({
   animation: 'popFade'
@@ -40,6 +42,11 @@ export function notificationsFetch() {
  */
 export function notificationsRead(notificationID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch({
+      type: NOTIFICATIONS_READ,
+      notificationID
+    });
+
     const url = endpoints.create('notificationsRead', {
       token: user.getToken(),
       notificationID
@@ -48,6 +55,15 @@ export function notificationsRead(notificationID) {
       .then(() => {
         dispatch(notificationsFetch());
       });
+  };
+}
+
+/**
+ * @returns {{type: string}}
+ */
+export function notificationsReadAll() {
+  return {
+    type: NOTIFICATIONS_READ_ALL
   };
 }
 

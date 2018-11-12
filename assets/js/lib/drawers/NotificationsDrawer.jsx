@@ -14,14 +14,15 @@ import * as notificationActions from 'actions/notificationsActions';
  */
 class NotificationsDrawer extends React.PureComponent {
   static propTypes = {
-    ui:                PropTypes.object.isRequired,
-    user:              PropTypes.object.isRequired,
-    open:              PropTypes.bool,
-    notifications:     PropTypes.object.isRequired,
-    history:           PropTypes.object.isRequired,
-    notificationsRead: PropTypes.func.isRequired,
-    uiVisibleModal:    PropTypes.func.isRequired,
-    uiVisibleDrawer:   PropTypes.func.isRequired
+    ui:                   PropTypes.object.isRequired,
+    user:                 PropTypes.object.isRequired,
+    open:                 PropTypes.bool,
+    notifications:        PropTypes.object.isRequired,
+    history:              PropTypes.object.isRequired,
+    notificationsRead:    PropTypes.func.isRequired,
+    notificationsReadAll: PropTypes.func.isRequired,
+    uiVisibleModal:       PropTypes.func.isRequired,
+    uiVisibleDrawer:      PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -66,12 +67,10 @@ class NotificationsDrawer extends React.PureComponent {
    *
    */
   handleClearAllClick = () => {
-    const { notifications, notificationsRead } = this.props;
+    const { notificationsReadAll } = this.props;
 
     this.close();
-    notifications.notifications.forEach((n) => {
-      notificationsRead(n.ID);
-    });
+    notificationsReadAll();
   };
 
   /**
