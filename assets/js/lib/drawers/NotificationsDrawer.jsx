@@ -69,7 +69,7 @@ class NotificationsDrawer extends React.PureComponent {
   handleClearAllClick = () => {
     const { notificationsReadAll } = this.props;
 
-    this.close();
+    setTimeout(this.close, 250);
     notificationsReadAll();
   };
 
@@ -178,7 +178,7 @@ class NotificationsDrawer extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { ui, open, ...props } = this.props;
+    const { ui, notifications, open, ...props } = this.props;
 
     return (
       <Drawer
@@ -193,7 +193,11 @@ class NotificationsDrawer extends React.PureComponent {
         {this.renderHeader()}
         {this.renderNotifications()}
         <div className="drawer-footer gutter-sides gutter-top">
-          <Button onClick={this.handleClearAllClick} block>
+          <Button
+            onClick={this.handleClearAllClick}
+            disabled={notifications.notifications.length === 0}
+            block
+          >
             Clear Notifications
           </Button>
           <LinkButton onClick={this.close} name="logout" block>

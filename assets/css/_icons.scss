@@ -46,9 +46,10 @@
     align-items: center;
     justify-content: center;
     background-color: $color-dim;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
 
     &.active {
-      background-color: #9e2f2f;
+      background-color: $color-primary;
     }
   }
 }
