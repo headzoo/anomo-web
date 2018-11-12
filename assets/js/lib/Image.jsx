@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { objects } from 'utils';
+import { objects, browser } from 'utils';
 import { withConfig } from 'lib';
 
 /**
@@ -15,12 +15,16 @@ class Image extends React.PureComponent {
       src: PropTypes.string
     }).isRequired,
     circle:    PropTypes.bool,
-    className: PropTypes.string
+    className: PropTypes.string,
+    onLoad:    PropTypes.func,
+    onError:   PropTypes.func
   };
 
   static defaultProps = {
     circle:    false,
-    className: ''
+    className: '',
+    onLoad:    () => {},
+    onError:   () => {}
   };
 
   /**
@@ -31,20 +35,49 @@ class Image extends React.PureComponent {
     this.state = {
       src: props.data.src
     };
+    this.img = React.createRef();
     this.isErrored = false;
   }
 
   /**
    *
    */
-  handleError = () => {
-    const { config } = this.props;
+  componentDidMount = () => {
+    this.loadOff  = browser.on(this.img.current, 'load', this.handleLoad);
+    this.errorOff = browser.on(this.img.current, 'error', this.handleError);
+  };
+
+  /**
+   *
+   */
+  componentWillUnmount = () => {
+    this.loadOff();
+    this.errorOff();
+  };
+
+  /**
+   * @param {Event} e
+   */
+  handleLoad = (e) => {
+    const { onLoad } = this.props;
+
+    onLoad(e);
+  };
+
+  /**
+   * @param {Event} e
+   */
+  handleError = (e) => {
+    const { config, onError } = this.props;
 
     if (!this.isErrored) {
-      this.isErrored = true;
-      this.setState({
-        src: config.styles.placeholderImage
-      });
+      onError(e);
+      if (!e.defaultPrevented) {
+        this.isErrored = true;
+        this.setState({
+          src: config.styles.placeholderImage
+        });
+      }
     }
   };
 
@@ -67,9 +100,9 @@ class Image extends React.PureComponent {
       <img
         src={src}
         alt={data.alt}
+        ref={this.img}
         className={classes}
         {...objects.propsFilter(props, Image.propTypes)}
-        onError={this.handleError}
       />
     );
   }

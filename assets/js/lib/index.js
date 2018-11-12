@@ -28,3 +28,4 @@ export { default as ScrollToTop } from './ScrollToTop';
 export { default as Feed } from './Feed';
 export { default as EmojiPopper } from './EmojiPopper';
 export { default as Poll } from './Poll';
+export { default as GifPlayer } from './GifPlayer';

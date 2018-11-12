@@ -145,7 +145,7 @@ export function browserOff(event, fn, rest = null) {
  * off();
  *
  * @param {string|HTMLElement} event
- * @param {Function} fn
+ * @param {Function|string} fn
  * @param {Function} rest
  * @returns {Function}
  */
