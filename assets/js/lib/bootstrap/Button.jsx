@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import objects from 'utils/objects';
 import themes from 'lib/bootstrap/themes';
 import { Icon, Loading } from 'lib';
+import ButtonGroupContext from 'context/buttonGroupContext';
 
 /**
  *
@@ -15,6 +16,7 @@ class Button extends React.PureComponent {
     lg:        PropTypes.bool,
     sm:        PropTypes.bool,
     icon:      PropTypes.string,
+    type:      PropTypes.string,
     loading:   PropTypes.bool,
     className: PropTypes.string,
     disabled:  PropTypes.bool,
@@ -28,6 +30,7 @@ class Button extends React.PureComponent {
     lg:        false,
     sm:        false,
     loading:   false,
+    type:      'submit',
     icon:      '',
     className: '',
     disabled:  false,
@@ -39,30 +42,38 @@ class Button extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { theme, block, lg, sm, icon, loading, disabled, className, children, onClick, ...props } = this.props;
-
-    const classes = classNames(`btn btn-${theme}`, className, {
-      'btn-block': block,
-      'btn-lg':    lg,
-      'btn-sm':    sm
-    });
+    const { theme, block, type, lg, sm, icon, loading, disabled, className, children, onClick, ...props } = this.props;
 
     return (
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        className={classes}
-        {...objects.propsFilter(props, Button.propTypes)}
-      >
-        {(icon && !loading) && (
-          <Icon name={icon} />
-        )}
-        {loading ? (
-          <Loading color="#FFF" style={{ margin: 3 }} />
-        ) : (
-          children
-        )}
-      </button>
+      <ButtonGroupContext.Consumer>
+        {(context) => {
+          const btnTheme = context.theme || theme;
+          const classes = classNames(`btn btn-${btnTheme}`, className, {
+            'btn-block': block,
+            'btn-lg':    lg,
+            'btn-sm':    sm
+          });
+
+          return (
+            <button
+              type={type}
+              onClick={onClick}
+              disabled={disabled}
+              className={classes}
+              {...objects.propsFilter(props, Button.propTypes)}
+            >
+              {(icon && !loading) && (
+                <Icon name={icon} />
+              )}
+              {loading ? (
+                <Loading color="#FFF" style={{ margin: 3 }} />
+              ) : (
+                children
+              )}
+            </button>
+          );
+        }}
+      </ButtonGroupContext.Consumer>
     );
   }
 }

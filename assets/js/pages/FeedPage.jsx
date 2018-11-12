@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { browser, strings, connect, mapActionsToProps } from 'utils';
-import { Row, Column } from 'lib/bootstrap';
+import { Row, Column, ButtonGroup, Button, Badge } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
-import { Page, Feed, Loading, withRouter } from 'lib';
+import { Page, Feed, Loading, LinkButton, Number, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
@@ -14,6 +14,7 @@ import * as activityActions from 'actions/activityActions';
 class FeedPage extends React.PureComponent {
   static propTypes = {
     feeds:             PropTypes.object.isRequired,
+    history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     userSubmitStatus:  PropTypes.func.isRequired
@@ -83,13 +84,56 @@ class FeedPage extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   * @param {string} feedType
+   */
+  handleNavClick = (e, feedType) => {
+    const { history, activityFeedFetch } = this.props;
+
+    e.preventDefault();
+    history.replace(routes.route(feedType));
+    activityFeedFetch(feedType, true);
+    this.setState({ feedType });
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderNav = () => {
+    const { feeds } = this.props;
+
+    return (
+      <ButtonGroup className="page-feed-nav-btn-group" theme="none" stretch>
+        <LinkButton name="recent" onClick={e => this.handleNavClick(e, 'recent')}>
+          <div>Recent</div>
+          <Badge>
+            <Number value={feeds.recent.newNumber} />
+          </Badge>
+        </LinkButton>
+        <LinkButton name="following" onClick={e => this.handleNavClick(e, 'following')}>
+          <div>Following</div>
+          <Badge>
+            <Number value={feeds.following.newNumber} />
+          </Badge>
+        </LinkButton>
+        <LinkButton name="popular" onClick={e => this.handleNavClick(e, 'popular')}>
+          <div>Popular</div>
+          <Badge>
+            <Number value={feeds.popular.newNumber} />
+          </Badge>
+        </LinkButton>
+      </ButtonGroup>
+    );
+  };
+
+  /**
    * @returns {*}
    */
   render() {
     const { feeds } = this.props;
     const { feedType } = this.state;
 
-    let title = 'anomo';
+    let title = 'scnstr';
     if (feedType !== 'recent') {
       title = strings.ucWords(feedType);
     }
@@ -102,6 +146,11 @@ class FeedPage extends React.PureComponent {
               onSubmit={this.handlePostSubmit}
               withUpload
             />
+          </Column>
+        </Row>
+        <Row>
+          <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
+            {this.renderNav()}
           </Column>
         </Row>
         <Row>

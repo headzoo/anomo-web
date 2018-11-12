@@ -8,5 +8,6 @@ export default [
   'light',
   'dark',
   'link',
-  'brand'
+  'brand',
+  'none'
 ];

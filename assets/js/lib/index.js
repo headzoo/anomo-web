@@ -3,7 +3,6 @@ export { default as withRouter } from './withRouter';
 export { default as types } from './types';
 export { default as Page } from './Page';
 export { default as PageTitle } from './PageTitle';
-export { default as NavBadge } from './NavBadge';
 export { default as Nav } from './Nav';
 export { default as Footer } from './Footer';
 export { default as Icon } from './Icon';

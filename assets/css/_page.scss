@@ -43,3 +43,33 @@
   font-weight: 600;
   letter-spacing: 4px;
 }
+
+/**
+ * Feed
+ */
+.page-feed-nav-btn-group {
+  .btn {
+    color: #616161;
+    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFF;
+    border-top-left-radius: 0.25rem !important;
+    border-bottom-left-radius: 0.25rem !important;
+    border-top-right-radius: 0.25rem !important;
+    border-bottom-right-radius: 0.25rem !important;
+
+    &:hover {
+      background-color: #efefef;
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
