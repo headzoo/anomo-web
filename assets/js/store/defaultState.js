@@ -169,11 +169,11 @@ export const defaultForms = {
     ...commonFormElements
   },
   notifications: {
-    [constants.PRIVACY_ALLOW_ANOMO_NOTICE]:            0,
+    [constants.PRIVACY_ALLOW_ANOMOTION_NOTICE]:        0,
     [constants.PRIVACY_ALLOW_COMMENT_ACTIVITY_NOTICE]: 0,
     [constants.PRIVACY_ALLOW_LIKE_ACTIVITY_NOTICE]:    0,
     [constants.PRIVACY_ALLOW_FOLLOW_NOTICE]:           0,
-    [constants.PRIVACY_ANSWER_POLL_NOTICE]:            0,
+    [constants.PRIVACY_ALLOW_ANSWER_POLL_NOTICE]:      0,
     [constants.PRIVACY_ALLOW_REVEAL_NOTICE]:           0,
     ...commonFormElements
   },
