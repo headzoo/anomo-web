@@ -62,7 +62,8 @@
 
     &:hover,
     &.active {
-      background-color: #efefef;
+      color: #FFF;
+      background-color: #919ec9;
     }
 
     &:first-child {
@@ -71,6 +72,10 @@
 
     &:last-child {
       margin-right: 0;
+    }
+
+    .badge {
+      background-color: #bccae4;
     }
   }
 }
