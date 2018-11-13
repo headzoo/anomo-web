@@ -60,12 +60,12 @@ class ActivityCardBody extends React.PureComponent {
               data={{ src: activity.Image, alt: 'Image' }}
             />
           )}
-          {activity.VideoID && (
+          {(activity.VideoID && activity.VideoSource === 'youtube') && (
             <YouTube
               videoId={activity.VideoID}
             />
           )}
-          {activity.VideoURL && (
+          {(activity.VideoURL && activity.VideoSource !== 'youtube') && (
             <Video
               source={activity.VideoURL}
               poster={activity.VideoThumbnail}

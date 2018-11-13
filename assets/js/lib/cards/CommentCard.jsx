@@ -67,7 +67,7 @@ class CommentCard extends React.PureComponent {
     return (
       <CardHeader>
         <div className="card-comment-avatar" onClick={this.handleUserClick}>
-          <Avatar src={comment.Avatar || ''} />
+          <Avatar src={comment.Avatar || '/images/anonymous-avatar-sm.jpg'} />
         </div>
         <div className="card-comment-user">
           <div className="card-comment-username" onClick={this.handleUserClick}>

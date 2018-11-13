@@ -146,7 +146,6 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderComments = () => {
-    const { ui } = this.props;
     const { activity, highlightedComment } = this.state;
 
     if (!objects.isEmpty(activity) && !activity.ListComment) {
@@ -198,7 +197,7 @@ class ActivityPage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
             <PostForm name="post" onSubmit={this.handleCommentSubmit} comment />
           </Column>
         </Row>
