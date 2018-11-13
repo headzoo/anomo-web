@@ -6,7 +6,7 @@ import YouTube from 'react-youtube';
 import { dates, objects, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
-import { Image, Avatar, Message, Shimmer, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
+import { Image, Avatar, Message, Video, Shimmer, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';
@@ -194,6 +194,9 @@ class ActivityCard extends React.PureComponent {
             <YouTube
               videoId={activity.VideoID}
             />
+          )}
+          {activity.VideoURL && (
+            <Video source={activity.VideoURL} poster={activity.VideoThumbnail} />
           )}
         </CardText>
       </CardBody>

@@ -118,6 +118,14 @@ class Nav extends React.PureComponent {
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <span className="navbar-toggler-icon" onClick={this.handleNotificationsClick} />
+
+        <ul className="nav navbar-nav mx-auto">
+          <li className="nav-item">
+            <div className="navbar-brand clickable" onClick={this.handleBrandClick}>
+              scnstr.com
+            </div>
+          </li>
+        </ul>
         <ul className="navbar-nav">
           {user.isAuthenticated && (
             <li className="nav-item">
@@ -127,13 +135,6 @@ class Nav extends React.PureComponent {
               />
             </li>
           )}
-        </ul>
-        <ul className="nav navbar-nav mx-auto">
-          <li className="nav-item">
-            <div className="navbar-brand clickable" onClick={this.handleBrandClick}>
-              scnstr.com
-            </div>
-          </li>
         </ul>
       </nav>
     );
