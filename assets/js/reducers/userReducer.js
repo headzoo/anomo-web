@@ -102,9 +102,12 @@ function followers(state, action) {
     newFollowers = state.followers.slice(0).concat(action.followers.slice(0));
   }
 
+  const followerUserNames = newFollowers.map(u => u.UserName);
+
   return {
     ...state,
-    followers: newFollowers
+    followers: newFollowers,
+    followerUserNames
   };
 }
 
@@ -121,9 +124,12 @@ function following(state, action) {
     newFollowing = state.following.slice(0).concat(action.following.slice(0));
   }
 
+  const followingUserNames = newFollowing.map(u => u.UserName);
+
   return {
     ...state,
-    following: newFollowing
+    following: newFollowing,
+    followingUserNames
   };
 }
 

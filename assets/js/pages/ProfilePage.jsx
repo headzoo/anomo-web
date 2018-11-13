@@ -83,7 +83,8 @@ class ProfilePage extends React.PureComponent {
   renderInfo = () => {
     const { user, profile } = this.props;
 
-    const coverStyles = {
+    const isFollowing  = user.followingUserNames.indexOf(profile.UserName) !== -1;
+    const coverStyles  = {
       backgroundImage: `url(${profile.CoverPicture})`
     };
 
@@ -91,7 +92,9 @@ class ProfilePage extends React.PureComponent {
       <CardText>
         <div className="card-profile-cover-container" style={coverStyles}>
           <div className="card-profile-cover-info">
-            <Avatar src={profile.Avatar || ''} />
+            <span className={isFollowing ? 'avatar-following lg' : ''}>
+              <Avatar src={profile.Avatar || '/images/anonymous-avatar-sm.jpg'} />
+            </span>
             <h1>{profile.UserName}</h1>
             <div className="card-profile-location">
               {dates.getAge(profile.BirthDate || '1980-12-10')} &middot; {profile.NeighborhoodName || 'Earth'}

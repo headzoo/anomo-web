@@ -94,7 +94,7 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
             page
           });
           if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(userFollowers(userID, page + 1, true));
+            dispatch(userFollowers(userID, page + 1, false));
           }
         }
       });
@@ -208,7 +208,7 @@ export function userLogin(username, password) {
           });
 
           dispatch(activityFeedFetchAll());
-          dispatch(userFollowing(u.UserID));
+          dispatch(userFollowing(u.UserID), 1, true);
         }
       })
       .finally(() => {
@@ -249,7 +249,7 @@ export function userRefresh() {
 
             dispatch(activityFeedFetchAll());
             dispatch(notificationsFetch());
-            dispatch(userFollowing(id));
+            dispatch(userFollowing(id, 1, true));
           } else {
             user.logout(true);
           }

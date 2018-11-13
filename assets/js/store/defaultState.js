@@ -68,7 +68,9 @@ const commonUserElements = {
   Tags:                       [],
   RestrictMenuKey:            [],
   followers:                  [],
+  followerUserNames:          [],
   following:                  [],
+  followingUserNames:         [],
   blocked:                    [],
 };
 

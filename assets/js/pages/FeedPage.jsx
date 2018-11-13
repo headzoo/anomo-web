@@ -24,6 +24,25 @@ class FeedPage extends React.PureComponent {
   };
 
   /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+
+    switch (props.location.pathname) {
+      case routes.route('recent'):
+        props.uiActiveFeed('recent');
+        break;
+      case routes.route('popular'):
+        props.uiActiveFeed('popular');
+        break;
+      case routes.route('following'):
+        props.uiActiveFeed('following');
+        break;
+    }
+  }
+
+  /**
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {

@@ -26,3 +26,25 @@
     margin-bottom: $gutter-size;
   }
 }
+
+.avatar-following {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: "\F005";
+    color: gold;
+    top: -5px;
+    left: -5px;
+    font-weight: 900;
+    font-size: 0.8rem;
+    position: absolute;
+    font-family: "Font Awesome 5 Free";
+  }
+
+  &.lg::after {
+    top: -10px;
+    left: -10px;
+    font-size: 1.5rem;
+  }
+}

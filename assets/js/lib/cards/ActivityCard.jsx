@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
 import YouTube from 'react-youtube';
-import { dates, objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { dates, objects, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { LikeIcon } from 'lib/icons';
 import { Image, Avatar, Message, Shimmer, Poll, Number, Pluralize, Link, Icon, withRouter } from 'lib';
@@ -21,6 +21,7 @@ class ActivityCard extends React.PureComponent {
     history:            PropTypes.object.isRequired,
     clickable:          PropTypes.bool,
     clickableImage:     PropTypes.bool,
+    followingUserNames: PropTypes.array.isRequired,
     activityLike:       PropTypes.func.isRequired,
     activityAnswerPoll: PropTypes.func.isRequired,
     uiVisibleModal:     PropTypes.func.isRequired
@@ -105,13 +106,14 @@ class ActivityCard extends React.PureComponent {
    * @returns {*}
    */
   renderHeader = () => {
-    const { activity } = this.props;
+    const { activity, followingUserNames } = this.props;
 
     if (activity.IsAnonymous === '1') {
       activity.FromUserName = 'Anonymous';
       activity.Avatar = '/images/anonymous-avatar-sm.jpg';
     }
 
+    const isFollowing  = followingUserNames.indexOf(activity.FromUserName) !== -1;
     const isLoading    = objects.isEmpty(activity) || activity.isLoading;
     const birthday     = dates.getAge(activity.BirthDate || '1980-12-10');
     const neighborhood = activity.NeighborhoodName || 'Earth';
@@ -123,7 +125,11 @@ class ActivityCard extends React.PureComponent {
           {isLoading ? (
             <Shimmer className="card-activity-shimmer-avatar" />
           ) : (
-            <Avatar src={activity.Avatar || '/images/anonymous-avatar-sm.jpg'} />
+            <span className={isFollowing ? 'avatar-following' : ''}>
+              <Avatar
+                src={activity.Avatar || '/images/anonymous-avatar-sm.jpg'}
+              />
+            </span>
           )}
         </div>
         <div className="card-activity-user">
@@ -253,7 +259,13 @@ class ActivityCard extends React.PureComponent {
   }
 }
 
+const mapStateToProps = state => (
+  {
+    followingUserNames: state.user.followingUserNames
+  }
+);
+
 export default connect(
-  mapStateToProps(),
+  mapStateToProps,
   mapActionsToProps(activityActions, uiActions)
 )(withRouter(ActivityCard));
