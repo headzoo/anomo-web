@@ -19,6 +19,7 @@ class PostForm extends React.PureComponent {
     user:           PropTypes.object.isRequired,
     post:           PropTypes.object.isRequired,
     config:         PropTypes.object.isRequired,
+    comment:        PropTypes.bool,
     withUpload:     PropTypes.bool,
     onSubmit:       PropTypes.func,
     formChange:     PropTypes.func,
@@ -26,6 +27,7 @@ class PostForm extends React.PureComponent {
   };
 
   static defaultProps = {
+    comment:    false,
     withUpload: false,
     onSubmit:   () => {}
   };
@@ -157,7 +159,7 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, post, config, withUpload } = this.props;
+    const { user, post, comment, config, withUpload } = this.props;
     const { emojiOpen, photoSource, charCount, focused } = this.state;
 
     const placeholder = photoSource ? '' : 'Add to conversation';
@@ -230,7 +232,10 @@ class PostForm extends React.PureComponent {
           </CardBody>
         </Card>
         <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
-          <ActivityPreviewCard activity={previewActivity} />
+          <ActivityPreviewCard
+            activity={previewActivity}
+            comment={comment}
+          />
         </AnimateHeight>
       </div>
     );

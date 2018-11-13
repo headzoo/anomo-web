@@ -10,14 +10,19 @@ import ActivityCardFooter from './ActivityCardFooter';
  */
 class ActivityPreviewCard extends React.PureComponent {
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    comment:  PropTypes.bool
+  };
+
+  static defaultProps = {
+    comment: false
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { activity } = this.props;
+    const { activity, comment } = this.props;
 
     return (
       <Card className="card-activity card-activity-preview">
@@ -30,6 +35,7 @@ class ActivityPreviewCard extends React.PureComponent {
         />
         <ActivityCardFooter
           activity={activity}
+          comment={comment}
           onCommentClick={(e) => { e.preventDefault(); }}
         />
       </Card>

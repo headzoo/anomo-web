@@ -12,11 +12,13 @@ import { Pluralize, Number, Link } from 'lib';
 class ActivityCardFooter extends React.PureComponent {
   static propTypes = {
     activity:       PropTypes.object.isRequired,
+    comment:        PropTypes.bool,
     onLikeClick:    PropTypes.func,
     onCommentClick: PropTypes.func
   };
 
   static defaultProps = {
+    comment:        false,
     onLikeClick:    () => {},
     onCommentClick: () => {}
   };
@@ -25,7 +27,7 @@ class ActivityCardFooter extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, onLikeClick, onCommentClick } = this.props;
+    const { activity, comment, onLikeClick, onCommentClick } = this.props;
 
     if (objects.isEmpty(activity) || activity.isLoading) {
       return null;
@@ -53,15 +55,17 @@ class ActivityCardFooter extends React.PureComponent {
           <Pluralize number={likes} singular="Like" plural="Likes" />
         </div>
         <div className={commentClasses}>
-          <Link
-            name="activity"
-            state={{ activity }}
-            onClick={onCommentClick}
-            params={{ refID: RefID || '0', actionType: ActionType || '0' }}
-          >
-            <Number value={comments} />&nbsp;
-            <Pluralize number={comments} plural="Comments" singular="Comment" />
-          </Link>
+          {!comment && (
+            <Link
+              name="activity"
+              state={{ activity }}
+              onClick={onCommentClick}
+              params={{ refID: RefID || '0', actionType: ActionType || '0' }}
+            >
+              <Number value={comments} />&nbsp;
+              <Pluralize number={comments} plural="Comments" singular="Comment" />
+            </Link>
+          )}
         </div>
       </CardFooter>
     );

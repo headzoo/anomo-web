@@ -14,6 +14,7 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityPage extends React.PureComponent {
   static propTypes = {
+    ui:                        PropTypes.object.isRequired,
     activity:                  PropTypes.object.isRequired,
     match:                     PropTypes.object.isRequired,
     history:                   PropTypes.object.isRequired,
@@ -139,6 +140,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderComments = () => {
+    const { ui } = this.props;
     const { activity, highlightedComment } = this.state;
 
     if (!objects.isEmpty(activity) && !activity.ListComment) {
@@ -157,7 +159,7 @@ class ActivityPage extends React.PureComponent {
 
     return (activity.ListComment || []).map(comment => (
       <FadeAndSlideTransition key={comment.ID} duration={150}>
-        <Column md={4} offsetMd={4} xs={12}>
+        <Column className={ui.isPreviewing ? 'activity-feed-previewing' : ''} md={4} offsetMd={4} xs={12}>
           <CommentCard
             comment={comment}
             activity={activity}
@@ -191,7 +193,7 @@ class ActivityPage extends React.PureComponent {
         </Row>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            <PostForm onSubmit={this.handleCommentSubmit} />
+            <PostForm onSubmit={this.handleCommentSubmit} comment />
           </Column>
         </Row>
         <TransitionGroup component={Row}>
@@ -203,6 +205,6 @@ class ActivityPage extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('activity'),
+  mapStateToProps('ui', 'activity'),
   mapActionsToProps(activityActions)
 )(withRouter(ActivityPage));
