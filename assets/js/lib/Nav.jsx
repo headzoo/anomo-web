@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
-import { NotificationsIcon } from 'lib/icons';
-import { Link, Icon, withRouter } from 'lib';
+import { MenuIcon } from 'lib/icons';
+import { Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -64,6 +64,13 @@ class Nav extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleWriteClick = () => {
+
+  };
+
+  /**
    * @param {Event} e
    * @param {*} values
    */
@@ -117,7 +124,7 @@ class Nav extends React.PureComponent {
 
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <span className="navbar-toggler-icon" onClick={this.handleNotificationsClick} />
+        <MenuIcon onClick={this.handleNotificationsClick} />
 
         <ul className="nav navbar-nav mx-auto">
           <li className="nav-item">
@@ -129,9 +136,11 @@ class Nav extends React.PureComponent {
         <ul className="navbar-nav">
           {user.isAuthenticated && (
             <li className="nav-item">
-              <NotificationsIcon
-                number={notifications.newNumber}
-                onClick={this.handleNotificationsClick}
+              <Icon
+                name="edit"
+                title="Add to conversation"
+                className="icon-write clickable"
+                onClick={this.handleWriteClick}
               />
             </li>
           )}

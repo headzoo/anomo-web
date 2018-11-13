@@ -1,6 +1,17 @@
 @import "vars";
 @import "mixins";
 
+.navbar {
+  .icon {
+    color: #FFF;
+    opacity: 0.75;
+
+    &.clickable:hover {
+      opacity: 1;
+    }
+  }
+}
+
 .nav-item.dropdown {
   margin-top: 4px;
 }
