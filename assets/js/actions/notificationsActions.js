@@ -42,6 +42,10 @@ export function notificationsFetch() {
  */
 export function notificationsRead(notificationID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
+    const { notifications } = getState();
+    const { newNumber } = notifications;
+
+    favicon.badge(newNumber - 1);
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
@@ -59,11 +63,19 @@ export function notificationsRead(notificationID) {
 }
 
 /**
- * @returns {{type: string}}
+ * @returns {function(*, *)}
  */
 export function notificationsReadAll() {
-  return {
-    type: NOTIFICATIONS_READ_ALL
+  return (dispatch, getState) => {
+    const { notifications } = getState();
+
+    favicon.badge(0);
+    dispatch({
+      type: NOTIFICATIONS_READ_ALL
+    });
+    notifications.notifications.forEach((n) => {
+      dispatch(notificationsRead(n.ID));
+    });
   };
 }
 
