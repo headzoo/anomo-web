@@ -5,6 +5,7 @@ import { Row, Column, ButtonGroup, Button, Badge } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, LinkButton, Number, withRouter } from 'lib';
 import routes from 'store/routes';
+import * as uiActions from 'actions/uiActions';
 import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
 
@@ -14,50 +15,21 @@ import * as activityActions from 'actions/activityActions';
 class FeedPage extends React.PureComponent {
   static propTypes = {
     feeds:             PropTypes.object.isRequired,
+    activeFeed:        PropTypes.string.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
+    uiActiveFeed:      PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     userSubmitStatus:  PropTypes.func.isRequired
   };
 
   /**
-   * @param {*} nextProps
-   * @returns {{feedType: string}}
-   */
-  static getDerivedStateFromProps(nextProps) {
-    let feedType = 'recent';
-    switch (nextProps.location.pathname) {
-      case routes.path('popular'):
-        feedType = 'popular';
-        break;
-      case routes.path('following'):
-        feedType = 'following';
-        break;
-    }
-
-    return {
-      feedType
-    };
-  }
-
-  /**
-   * @param {*} props
-   */
-  constructor(props) {
-    super(props);
-    this.state = {
-      feedType: 'recent'
-    };
-  }
-
-  /**
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { feeds } = this.props;
-    const { feedType } = this.state;
+    const { feeds, activeFeed } = this.props;
 
-    if (feeds[feedType].isRefreshing && !prevProps.feeds[feedType].isRefreshing) {
+    if (feeds[activeFeed].isRefreshing && !prevProps.feeds[activeFeed].isRefreshing) {
       browser.scroll(0, 'auto');
     }
   };
@@ -66,10 +38,9 @@ class FeedPage extends React.PureComponent {
    *
    */
   handleNext = () => {
-    const { activityFeedFetch } = this.props;
-    const { feedType } = this.state;
+    const { activeFeed, activityFeedFetch } = this.props;
 
-    activityFeedFetch(feedType);
+    activityFeedFetch(activeFeed);
   };
 
   /**
@@ -85,38 +56,50 @@ class FeedPage extends React.PureComponent {
 
   /**
    * @param {Event} e
-   * @param {string} feedType
+   * @param {string} activeFeed
    */
-  handleNavClick = (e, feedType) => {
-    const { history, activityFeedFetch } = this.props;
+  handleNavClick = (e, activeFeed) => {
+    const { history, uiActiveFeed, activityFeedFetch } = this.props;
 
     e.preventDefault();
-    history.replace(routes.route(feedType));
-    activityFeedFetch(feedType, true);
-    this.setState({ feedType });
+    activityFeedFetch(activeFeed, true);
+    uiActiveFeed(activeFeed);
+    history.replace(routes.route(activeFeed));
   };
 
   /**
    * @returns {*}
    */
   renderNav = () => {
-    const { feeds } = this.props;
+    const { activeFeed, feeds } = this.props;
 
     return (
       <ButtonGroup className="page-feed-nav-btn-group" theme="none" stretch>
-        <LinkButton name="recent" onClick={e => this.handleNavClick(e, 'recent')}>
+        <LinkButton
+          name="recent"
+          onClick={e => this.handleNavClick(e, 'recent')}
+          className={activeFeed === 'recent' ? 'active' : ''}
+        >
           <div>Recent</div>
           <Badge>
             <Number value={feeds.recent.newNumber} />
           </Badge>
         </LinkButton>
-        <LinkButton name="following" onClick={e => this.handleNavClick(e, 'following')}>
+        <LinkButton
+          name="following"
+          onClick={e => this.handleNavClick(e, 'following')}
+          className={activeFeed === 'following' ? 'active' : ''}
+        >
           <div>Following</div>
           <Badge>
             <Number value={feeds.following.newNumber} />
           </Badge>
         </LinkButton>
-        <LinkButton name="popular" onClick={e => this.handleNavClick(e, 'popular')}>
+        <LinkButton
+          name="popular"
+          onClick={e => this.handleNavClick(e, 'popular')}
+          className={activeFeed === 'popular' ? 'active' : ''}
+        >
           <div>Popular</div>
           <Badge>
             <Number value={feeds.popular.newNumber} />
@@ -130,12 +113,11 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { feeds } = this.props;
-    const { feedType } = this.state;
+    const { feeds, activeFeed } = this.props;
 
     let title = 'scnstr';
-    if (feedType !== 'recent') {
-      title = strings.ucWords(feedType);
+    if (activeFeed !== 'recent') {
+      title = strings.ucWords(activeFeed);
     }
 
     return (
@@ -155,12 +137,12 @@ class FeedPage extends React.PureComponent {
         </Row>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            {feeds[feedType].isRefreshing && (
+            {feeds[activeFeed].isRefreshing && (
               <Loading className="text-center gutter-bottom" />
             )}
             <Feed
               onNext={this.handleNext}
-              activities={feeds[feedType].activities}
+              activities={feeds[activeFeed].activities}
               hasMore
             />
           </Column>
@@ -172,11 +154,12 @@ class FeedPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    feeds: state.activity.feeds
+    feeds:      state.activity.feeds,
+    activeFeed: state.ui.activeFeed
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapActionsToProps(activityActions, userActions)
+  mapActionsToProps(uiActions, activityActions, userActions)
 )(withRouter(FeedPage));

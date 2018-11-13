@@ -13,7 +13,7 @@ export function browserTitle(title) {
  * @param {string|number} behavior
  * @param {string} rest
  */
-export function browserScroll(top = 0, behavior = 'smooth', rest = 'smooth') {
+export function browserScroll(top = 0, behavior = 'auto', rest = 'auto') {
   if (typeof top !== 'number' && typeof top !== 'string') {
     top.scroll({
       left:     0,

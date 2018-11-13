@@ -3,6 +3,7 @@ export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
 export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
 export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
 export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
+export const UI_ACTIVE_FEED    = 'UI_ACTIVE_FEED';
 
 /**
  * @param {boolean} isLoading
@@ -63,5 +64,16 @@ export function uiVisibleDrawer(drawerName, isVisible) {
     type: UI_VISIBLE_DRAWER,
     drawerName,
     isVisible
+  };
+}
+
+/**
+ * @param {string} activeFeed
+ * @returns {{type: string, activeFeed: *}}
+ */
+export function uiActiveFeed(activeFeed) {
+  return {
+    type: UI_ACTIVE_FEED,
+    activeFeed
   };
 }

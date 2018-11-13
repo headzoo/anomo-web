@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapStateToProps, mapActionsToProps } from 'utils/state';
+import { browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
 import { NotificationsIcon } from 'lib/icons';
@@ -17,9 +17,8 @@ class Nav extends React.PureComponent {
     ui:                PropTypes.object.isRequired,
     user:              PropTypes.object.isRequired,
     forms:             PropTypes.object.isRequired,
-    history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
-    activity:          PropTypes.object.isRequired,
+    history:           PropTypes.object.isRequired,
     notifications:     PropTypes.object.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     uiVisibleDrawer:   PropTypes.func.isRequired
@@ -43,6 +42,25 @@ class Nav extends React.PureComponent {
 
     activityFeedFetch(feedType, true);
     history.push(routes.route(feedType));
+  };
+
+  /**
+   *
+   */
+  handleBrandClick = () => {
+    const { ui, history, location } = this.props;
+
+    const feedRoutes = [
+      routes.route('recent'),
+      routes.route('popular'),
+      routes.route('following')
+    ];
+
+    if (feedRoutes.indexOf(location.pathname) === -1) {
+      history.push(routes.route(ui.activeFeed));
+    } else {
+      browser.scroll();
+    }
   };
 
   /**
@@ -112,9 +130,9 @@ class Nav extends React.PureComponent {
         </ul>
         <ul className="nav navbar-nav mx-auto">
           <li className="nav-item">
-            <Link name="home" className="navbar-brand">
+            <div className="navbar-brand clickable" onClick={this.handleBrandClick}>
               scnstr.com
-            </Link>
+            </div>
           </li>
         </ul>
       </nav>
@@ -123,6 +141,6 @@ class Nav extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('ui', 'user', 'forms', 'activity', 'notifications'),
+  mapStateToProps('ui', 'user', 'forms', 'notifications'),
   mapActionsToProps(uiActions, activityActions)
 )(withRouter(Nav));

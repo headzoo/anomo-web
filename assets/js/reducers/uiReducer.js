@@ -87,6 +87,18 @@ function visibleDrawer(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function activeFeed(state, action) {
+  return {
+    ...state,
+    activeFeed: action.activeFeed
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 export default function uiReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.UI_LOADING:
@@ -99,6 +111,8 @@ export default function uiReducer(state = {}, action = {}) {
       return visibleModal(state, action);
     case types.UI_VISIBLE_DRAWER:
       return visibleDrawer(state, action);
+    case types.UI_ACTIVE_FEED:
+      return activeFeed(state, action);
     default: return state;
   }
 }
