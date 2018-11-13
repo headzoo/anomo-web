@@ -304,6 +304,29 @@ function feedFetch(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function feedUpdate(state, action) {
+  const feeds = objects.clone(state.feeds);
+
+  for (let i = 0; i < action.activities.length; i++) {
+    const activity = action.activities[i];
+    feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
+      a.Like       = activity.Like || '0';
+      a.Comment    = activity.Comment || '0';
+      a.IsFavorite = activity.IsFavorite || '0';
+    });
+  }
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function set(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = anomo.activities.sanitizeActivity(action.activity);
@@ -399,6 +422,8 @@ export default function activityReducer(state = {}, action = {}) {
       return feedLoading(state, action);
     case types.ACTIVITY_FEED_REFRESHING:
       return feedRefreshing(state, action);
+    case types.ACTIVITY_FEED_UPDATE:
+      return feedUpdate(state, action);
     case types.ACTIVITY_LIKE:
       return like(state, action);
     case types.ACTIVITY_LIKE_COMMENT:

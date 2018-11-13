@@ -8,6 +8,7 @@ export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
 export const ACTIVITY_ACTIVITY_LOADING     = 'ACTIVITY_ACTIVITY_LOADING';
 export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
+export const ACTIVITY_FEED_UPDATE          = 'ACTIVITY_FEED_UPDATE';
 export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
 export const ACTIVITY_LIKE                 = 'ACTIVITY_LIKE';
 export const ACTIVITY_LIKE_COMMENT         = 'ACTIVITY_LIKE_COMMENT';
@@ -302,6 +303,10 @@ export function activityFeedFetchNewNumber(feedType) {
             type: ACTIVITY_FEED_NEW_NUMBER,
             newNumber,
             feedType
+          });
+          dispatch({
+            type:       ACTIVITY_FEED_UPDATE,
+            activities: data.Activities
           });
         }
       })
