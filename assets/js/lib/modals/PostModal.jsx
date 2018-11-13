@@ -58,6 +58,7 @@ class PostModal extends React.PureComponent {
     return (
       <Modal
         withHeader={false}
+        centered={false}
         className="modal-post"
         onClosed={this.handleClose}
         {...objects.propsFilter(rest, PostModal.propTypes, uiActions, userActions)}

@@ -107,7 +107,11 @@ class NotificationsDrawer extends React.PureComponent {
           <Avatar src={user.Avatar} />
         </Link>
         <h3>{user.UserName}</h3>
-        <Icon name="cog" onClick={this.handleSettingsClick} />
+        <Icon
+          name="cog"
+          title="Settings"
+          onClick={this.handleSettingsClick}
+        />
       </div>
     );
   };

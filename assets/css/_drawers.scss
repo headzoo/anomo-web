@@ -1,6 +1,12 @@
 @import "vars";
 @import "mixins";
 
+.drawer {
+  .btn {
+    border: 0;
+  }
+}
+
 .drawer-content-wrapper {
   color: #FFF;
   background-color: #343A40;
@@ -28,12 +34,13 @@
   }
 
   .icon {
-    cursor: pointer;
-    color: $color-dim;
+    color: #FFF;
+    opacity: 0.9;
     font-size: 1.5rem;
+    cursor: pointer;
 
     &:hover {
-      color: #FFF;
+      opacity: 1;
     }
   }
 }
