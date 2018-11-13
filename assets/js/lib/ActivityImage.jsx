@@ -20,7 +20,7 @@ class ActivityImage extends React.PureComponent {
   };
 
   static defaultProps = {
-    maxHeight: 800,
+    maxHeight: 1000,
     className: ''
   };
 
