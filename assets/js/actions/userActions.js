@@ -361,6 +361,10 @@ export function userSubmitStatus(formName, message, photo = '') {
   return (dispatch, getState, { user, proxy, endpoints }) => {
     dispatch(userIsStatusSending(true));
     dispatch(formSubmitting(formName, true));
+/*    setTimeout(() => {
+      dispatch(formReset(formName));
+      dispatch(userIsStatusSending(false));
+    });*/
 
     let url  = '';
     let body = {};

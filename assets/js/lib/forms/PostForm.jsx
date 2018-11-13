@@ -54,7 +54,7 @@ class PostForm extends React.PureComponent {
     const { forms, name, uiIsPreviewing } = this.props;
 
     if (prevProps.forms[name].isSubmitting && !forms[name].isSubmitting) {
-      this.setState({ focused: false }, () => {
+      this.setState({ focused: false, photoSource: '' }, () => {
         uiIsPreviewing(false);
       });
     }
@@ -84,7 +84,6 @@ class PostForm extends React.PureComponent {
     }
 
     onSubmit(e, values);
-    this.setState({ photoSource: '' });
   };
 
   /**
