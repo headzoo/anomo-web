@@ -1,5 +1,4 @@
 export const UI_LOADING        = 'UI_LOADING';
-export const UI_PREVIEWING     = 'UI_PREVIEWING';
 export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
 export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
 export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
@@ -14,17 +13,6 @@ export function uiIsLoading(isLoading) {
   return {
     type: UI_LOADING,
     isLoading
-  };
-}
-
-/**
- * @param {boolean} isPreviewing
- * @returns {{type: string, isPreviewing: *}}
- */
-export function uiIsPreviewing(isPreviewing) {
-  return {
-    type: UI_PREVIEWING,
-    isPreviewing
   };
 }
 

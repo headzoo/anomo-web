@@ -25,8 +25,7 @@ class PostForm extends React.PureComponent {
     withUpload:     PropTypes.bool,
     withMobileForm: PropTypes.bool,
     onSubmit:       PropTypes.func,
-    formChange:     PropTypes.func,
-    uiIsPreviewing: PropTypes.func.isRequired
+    formChange:     PropTypes.func
   };
 
   static defaultProps = {
@@ -54,12 +53,10 @@ class PostForm extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { forms, name, uiIsPreviewing } = this.props;
+    const { forms, name } = this.props;
 
     if (prevProps.forms[name].isSubmitting && !forms[name].isSubmitting) {
-      this.setState({ focused: false, photoSource: '' }, () => {
-        uiIsPreviewing(false);
-      });
+      this.setState({ focused: false, photoSource: '' });
     }
   };
 
@@ -96,15 +93,13 @@ class PostForm extends React.PureComponent {
    * @param {string} name
    */
   handleChange = (e, value, name) => {
-    const { uiIsPreviewing, config } = this.props;
+    const { config } = this.props;
     const { maxChars } = config.anomo;
 
     if (name === 'photo') {
       const reader = new FileReader();
       reader.onload = (event) => {
-        this.setState({ focused: true, photoSource: event.target.result }, () => {
-          uiIsPreviewing(true);
-        });
+        this.setState({ focused: true, photoSource: event.target.result });
       };
       reader.readAsDataURL(this.photo.current.files()[0]);
     } else if (name === 'message') {
@@ -139,12 +134,10 @@ class PostForm extends React.PureComponent {
    *
    */
   handleClickOutside = () => {
-    const { forms, name, uiIsPreviewing } = this.props;
+    const { forms, name } = this.props;
 
     if (!forms[name].message && !forms[name].photo) {
-      this.setState({ focused: false }, () => {
-        uiIsPreviewing(false);
-      });
+      this.setState({ focused: false });
     }
   };
 
@@ -152,11 +145,7 @@ class PostForm extends React.PureComponent {
    *
    */
   handleMessageFocus = () => {
-    const { uiIsPreviewing } = this.props;
-
-    this.setState({ focused: true }, () => {
-      uiIsPreviewing(true);
-    });
+    this.setState({ focused: true });
   };
 
   /**
