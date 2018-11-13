@@ -71,7 +71,7 @@ class FeedPage extends React.PureComponent {
     const { userSubmitStatus } = this.props;
 
     e.preventDefault();
-    userSubmitStatus(values.message, values.photo);
+    userSubmitStatus('post', values.message, values.photo);
   };
 
   /**
@@ -145,6 +145,7 @@ class FeedPage extends React.PureComponent {
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
             <PostForm
+              name="post"
               onSubmit={this.handlePostSubmit}
               withUpload
             />

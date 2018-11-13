@@ -23,3 +23,14 @@
     margin-bottom: 0;
   }
 }
+
+.modal-post {
+  .modal-dialog {
+    max-width: 585px;
+  }
+
+  .card-form-post {
+    border: 0;
+    box-shadow: none;
+  }
+}

@@ -472,6 +472,7 @@ export function activityReport(refID, actionType) {
 }
 
 /**
+ * @param {string} formName
  * @param {string} message
  * @param {number} refID
  * @param {number} actionType
@@ -479,10 +480,8 @@ export function activityReport(refID, actionType) {
  * @param {number} isAnonymous
  * @returns {function(*, *, {endpoints: *})}
  */
-export function activitySubmitComment(message, refID, actionType, topicID, isAnonymous = 0) {
+export function activitySubmitComment(formName, message, refID, actionType, topicID, isAnonymous = 0) {
   return (dispatch, getState, { user, proxy, endpoints }) => {
-    const formName = 'post';
-
     const comment = objects.merge(getState().user, {
       'ID':          10,
       'CreatedDate': moment().format(''),

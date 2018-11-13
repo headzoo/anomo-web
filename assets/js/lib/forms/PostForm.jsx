@@ -16,8 +16,9 @@ import * as formActions from 'actions/formActions';
  */
 class PostForm extends React.PureComponent {
   static propTypes = {
+    name:           PropTypes.string.isRequired,
     user:           PropTypes.object.isRequired,
-    post:           PropTypes.object.isRequired,
+    forms:          PropTypes.object.isRequired,
     config:         PropTypes.object.isRequired,
     comment:        PropTypes.bool,
     withUpload:     PropTypes.bool,
@@ -50,9 +51,9 @@ class PostForm extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { post, uiIsPreviewing } = this.props;
+    const { forms, name, uiIsPreviewing } = this.props;
 
-    if (prevProps.post.isSubmitting && !post.isSubmitting) {
+    if (prevProps.forms[name].isSubmitting && !forms[name].isSubmitting) {
       this.setState({ focused: false }, () => {
         uiIsPreviewing(false);
       });
@@ -125,9 +126,9 @@ class PostForm extends React.PureComponent {
    * @param {*} emoji
    */
   handleEmojiSelect = (emoji) => {
-    const { post, formChange } = this.props;
+    const { forms, name, formChange } = this.props;
 
-    formChange('post', 'message', `${post.message}${emoji.native}`);
+    formChange(name, 'message', `${forms[name].message}${emoji.native}`);
     this.setState({ emojiOpen: false });
   };
 
@@ -135,9 +136,9 @@ class PostForm extends React.PureComponent {
    *
    */
   handleClickOutside = () => {
-    const { post, uiIsPreviewing } = this.props;
+    const { forms, name, uiIsPreviewing } = this.props;
 
-    if (!post.message && !post.photo) {
+    if (!forms[name].message && !forms[name].photo) {
       this.setState({ focused: false }, () => {
         uiIsPreviewing(false);
       });
@@ -159,7 +160,7 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, post, comment, config, withUpload } = this.props;
+    const { user, forms, name, comment, config, withUpload } = this.props;
     const { emojiOpen, photoSource, charCount, focused } = this.state;
 
     const placeholder = photoSource ? '' : 'Add to conversation';
@@ -168,7 +169,7 @@ class PostForm extends React.PureComponent {
       CreatedDate:  moment().format(''),
       Image:        photoSource,
       Message:      {
-        message:      post.message || placeholder,
+        message:      forms[name].message || placeholder,
         message_tags: []
       }
     });
@@ -178,10 +179,10 @@ class PostForm extends React.PureComponent {
         <Card className="card-form-post">
           <CardBody>
             <Form
-              name="post"
+              name={name}
               onSubmit={this.handleSubmit}
               onChange={this.handleChange}
-              disabled={post.isSubmitting}
+              disabled={forms[name].isSubmitting}
             >
               <div className="card-form-post-inputs">
                 {withUpload && (
@@ -223,7 +224,7 @@ class PostForm extends React.PureComponent {
                   )}
                 </div>
                 <div className="card-form-post-btn">
-                  <Button disabled={post.isSubmitting} block>
+                  <Button disabled={forms[name].isSubmitting} block>
                     Post
                   </Button>
                 </div>
@@ -244,8 +245,8 @@ class PostForm extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    post: state.forms.post,
-    user: state.user
+    forms: state.forms,
+    user:  state.user
   }
 );
 

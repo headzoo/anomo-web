@@ -352,14 +352,13 @@ export function userUpdatePrivacy(values) {
 }
 
 /**
+ * @param {string} formName
  * @param {string} message
  * @param {*} photo
  * @returns {function(*, *, {endpoints: *})}
  */
-export function userSubmitStatus(message, photo = '') {
+export function userSubmitStatus(formName, message, photo = '') {
   return (dispatch, getState, { user, proxy, endpoints }) => {
-    const formName = 'post';
-
     dispatch(userIsStatusSending(true));
     dispatch(formSubmitting(formName, true));
 

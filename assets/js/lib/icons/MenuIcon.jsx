@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect, mapStateToProps } from 'utils';
+import { objects, connect, mapStateToProps } from 'utils';
 
 /**
  *
@@ -24,7 +24,10 @@ class MenuIcon extends React.PureComponent {
     const { user, notifications, className, ...props } = this.props;
 
     return (
-      <span className={classNames('icon icon-menu clickable', className)} {...props}>
+      <span
+        className={classNames('icon icon-menu clickable', className)}
+        {...objects.propsFilter(props, MenuIcon.propTypes, 'dispatch')}
+      >
         {user.isAuthenticated && (
           <div className={classNames({ active: notifications.newNumber })}>
             {notifications.newNumber}

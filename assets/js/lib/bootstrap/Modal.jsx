@@ -176,7 +176,7 @@ class Modal extends React.PureComponent {
         ref={this.modalRef}
         data-backdrop={backdrop}
         className={modalClasses}
-        {...objects.propsFilter(props, Modal.propTypes)}
+        {...objects.propsFilter(props, Modal.propTypes, 'dispatch')}
       >
         <div className={dialogClasses} role="document">
           <div className="modal-content">

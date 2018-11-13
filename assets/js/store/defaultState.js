@@ -24,6 +24,7 @@ export const defaultUi = {
   visibleModals: {
     user:     false,
     tags:     false,
+    post:     false,
     intents:  false,
     activity: false
   },
@@ -164,6 +165,11 @@ const commonFormElements = {
  */
 export const defaultForms = {
   post: {
+    message: '',
+    photo:   '',
+    ...commonFormElements
+  },
+  postModal: {
     message: '',
     photo:   '',
     ...commonFormElements

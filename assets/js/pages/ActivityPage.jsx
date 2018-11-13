@@ -133,7 +133,13 @@ class ActivityPage extends React.PureComponent {
     const { activity } = this.state;
 
     e.preventDefault();
-    activitySubmitComment(values.message, activity.RefID, activity.ActionType, activity.TopicID);
+    activitySubmitComment(
+      'post',
+      values.message,
+      activity.RefID,
+      activity.ActionType,
+      activity.TopicID
+    );
   };
 
   /**
@@ -193,7 +199,7 @@ class ActivityPage extends React.PureComponent {
         </Row>
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            <PostForm onSubmit={this.handleCommentSubmit} comment />
+            <PostForm name="post" onSubmit={this.handleCommentSubmit} comment />
           </Column>
         </Row>
         <TransitionGroup component={Row}>

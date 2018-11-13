@@ -21,6 +21,7 @@ class Nav extends React.PureComponent {
     history:           PropTypes.object.isRequired,
     notifications:     PropTypes.object.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
+    uiVisibleModal:    PropTypes.func.isRequired,
     uiVisibleDrawer:   PropTypes.func.isRequired
   };
 
@@ -67,7 +68,9 @@ class Nav extends React.PureComponent {
    *
    */
   handleWriteClick = () => {
+    const { uiVisibleModal } = this.props;
 
+    uiVisibleModal('post', true);
   };
 
   /**
