@@ -2,11 +2,13 @@
 @import "mixins";
 
 .navbar {
+  font-size: 1.2rem;
   background-color: #7c86ad !important;
 
   .icon {
     color: #FFF;
     opacity: 0.9;
+    transition: $transition-btn;
 
     &.clickable:hover {
       opacity: 1;
