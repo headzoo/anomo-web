@@ -163,7 +163,7 @@ class PostForm extends React.PureComponent {
     const { user, forms, name, comment, config, withUpload } = this.props;
     const { emojiOpen, photoSource, charCount, focused } = this.state;
 
-    const placeholder = photoSource ? '' : 'Add to conversation';
+    const placeholder = photoSource ? '' : '...';
     const previewActivity = objects.merge(user, {
       FromUserName: user.UserName,
       CreatedDate:  moment().format(''),
@@ -230,14 +230,16 @@ class PostForm extends React.PureComponent {
                 </div>
               </div>
             </Form>
+            <div className="gutter-top">
+              <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
+                <ActivityPreviewCard
+                  activity={previewActivity}
+                  comment={comment}
+                />
+              </AnimateHeight>
+            </div>
           </CardBody>
         </Card>
-        <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
-          <ActivityPreviewCard
-            activity={previewActivity}
-            comment={comment}
-          />
-        </AnimateHeight>
       </div>
     );
   }
