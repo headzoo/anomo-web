@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
-import { Page, Feed, Loading, Avatar, LinkButton, withRouter } from 'lib';
+import { Page, Feed, Loading, Avatar, LinkButton, Number, withRouter } from 'lib';
 import { UserCard } from 'lib/cards';
 import * as profileActions from 'actions/profileActions';
 
@@ -136,6 +136,19 @@ class ProfilePage extends React.PureComponent {
               ))}
             </div>
           )}
+          <div className="card-profile-stats">
+            <Row>
+              <Column xs={4}>
+                <Number value={parseInt(profile.NumberOfFollowing, 10)} /> Following
+              </Column>
+              <Column xs={4}>
+                <Number value={parseInt(profile.NumberOfFollower, 10)} /> Followers
+              </Column>
+              <Column xs={4}>
+                <Number value={parseInt(profile.Point, 10)} /> Points
+              </Column>
+            </Row>
+          </div>
         </div>
       </CardText>
     );
