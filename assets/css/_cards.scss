@@ -2,7 +2,9 @@
 @import "mixins";
 
 .card {
+  background-color: #FFF;
   box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.21);
+  transition: background-color 0.2s ease-in-out;
 
   form {
     .btn-lg {
@@ -273,14 +275,6 @@
       color: $color-dim;
       text-align: right;
       font-size: 0.8rem;
-    }
-  }
-
-  .card-form-post-photo-preview {
-    padding-top: $gutter-size;
-
-    img {
-      width: 100%;
     }
   }
 

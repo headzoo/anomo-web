@@ -18,6 +18,7 @@ class FeedPage extends React.PureComponent {
     activeFeed:        PropTypes.string.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
+    isPreviewing:      PropTypes.bool.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     userSubmitStatus:  PropTypes.func.isRequired
@@ -132,7 +133,7 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { feeds, activeFeed } = this.props;
+    const { feeds, isPreviewing, activeFeed } = this.props;
 
     let title = 'scnstr';
     if (activeFeed !== 'recent') {
@@ -150,12 +151,17 @@ class FeedPage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
-          <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
+          <Column
+            md={4}
+            xs={12}
+            offsetMd={4}
+            className={isPreviewing ? 'gutter-bottom activity-feed-previewing' : 'gutter-bottom'}
+          >
             {this.renderNav()}
           </Column>
         </Row>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column className={isPreviewing ? 'activity-feed-previewing' : ''} md={4} offsetMd={4} xs={12}>
             {feeds[activeFeed].isRefreshing && (
               <Loading className="text-center gutter-bottom" />
             )}
@@ -173,8 +179,9 @@ class FeedPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    feeds:      state.activity.feeds,
-    activeFeed: state.ui.activeFeed
+    feeds:        state.activity.feeds,
+    isPreviewing: state.ui.isPreviewing,
+    activeFeed:   state.ui.activeFeed
   };
 };
 

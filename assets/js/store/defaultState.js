@@ -18,6 +18,7 @@ export const defaultUi = {
   deviceSize:    'xs',
   activeFeed:    'recent',
   isLoading:     true,
+  isPreviewing:  false,
   errorMessage:  '',
   errorInfo:     {},
   visibleModals: {

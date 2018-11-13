@@ -23,6 +23,18 @@ function loading(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function previewing(state, action) {
+  return {
+    ...state,
+    isPreviewing: action.isPreviewing
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function errorMessage(state, action) {
   return {
     ...state,
@@ -103,6 +115,8 @@ export default function uiReducer(state = {}, action = {}) {
   switch (action.type) {
     case types.UI_LOADING:
       return loading(state, action);
+    case types.UI_PREVIEWING:
+      return previewing(state, action);
     case types.UI_ERROR_MESSAGE:
       return errorMessage(state, action);
     case types.UI_WINDOW_RESIZE:
