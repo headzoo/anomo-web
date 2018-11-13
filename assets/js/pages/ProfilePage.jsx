@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
-import { Page, Feed, Loading, Avatar, LinkButton, Number, withRouter } from 'lib';
+import { Page, Feed, Loading, Avatar, Icon, LinkButton, Number, withRouter } from 'lib';
 import { UserCard } from 'lib/cards';
+import * as uiActions from 'actions/uiActions';
 import * as profileActions from 'actions/profileActions';
 
 /**
@@ -17,7 +18,8 @@ class ProfilePage extends React.PureComponent {
     profilePosts:      PropTypes.func.isRequired,
     profileFollowers:  PropTypes.func.isRequired,
     profileFollowing:  PropTypes.func.isRequired,
-    profilePostsReset: PropTypes.func.isRequired
+    profilePostsReset: PropTypes.func.isRequired,
+    uiVisibleModal:    PropTypes.func.isRequired,
   };
 
   /**
@@ -78,6 +80,15 @@ class ProfilePage extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleEllipsisClick = () => {
+    const { user, uiVisibleModal} = this.props;
+
+    uiVisibleModal('user', user);
+  };
+
+  /**
    * @returns {*}
    */
   renderInfo = () => {
@@ -92,6 +103,9 @@ class ProfilePage extends React.PureComponent {
       <CardText>
         <div className="card-profile-cover-container" style={coverStyles}>
           <div className="card-profile-cover-info">
+            <div className="card-profile-ellipsis">
+              <Icon name="ellipsis-h" onClick={this.handleEllipsisClick} />
+            </div>
             <span className={isFollowing ? 'avatar-following lg' : ''}>
               <Avatar src={profile.Avatar || '/images/anonymous-avatar-sm.jpg'} />
             </span>
@@ -303,5 +317,5 @@ class ProfilePage extends React.PureComponent {
 
 export default connect(
   mapStateToProps('user', 'profile'),
-  mapActionsToProps(profileActions)
+  mapActionsToProps(uiActions, profileActions)
 )(withRouter(ProfilePage));

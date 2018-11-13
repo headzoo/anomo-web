@@ -411,6 +411,23 @@
   margin-bottom: $gutter-size;
 }
 
+.card-profile-ellipsis {
+  color: #FFF;
+  float: right;
+  opacity: 0.8;
+  cursor: pointer;
+  margin-bottom: 0.25rem;
+  margin-right: 15px;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+}
+
 /**
  * Settings
  */
