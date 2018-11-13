@@ -134,6 +134,30 @@ class User {
   };
 
   /**
+   * @param {string} facebookEmail
+   * @param {string} facebookUserID
+   * @param {string} accessToken
+   * @returns {Promise}
+   */
+  facebookLogin = (facebookEmail, facebookUserID, accessToken) => {
+    return this.proxy.post(endpoints.create('userFBLogin'), {
+      Email:         facebookEmail,
+      FacebookID:    facebookUserID,
+      FbAccessToken: accessToken
+    }).then((data) => {
+      if (data.UserID) {
+        this.setID(parseInt(data.UserID, 10));
+        this.setToken(data.token);
+
+        delete data.token;
+        delete data.code;
+        this.setDetails(data);
+      }
+      return data;
+    });
+  };
+
+  /**
    * @returns {Promise}
    */
   logout = (localOnly = false) => {

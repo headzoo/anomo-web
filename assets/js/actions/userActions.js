@@ -218,6 +218,33 @@ export function userLogin(username, password) {
 }
 
 /**
+ * @param {string} facebookEmail
+ * @param {string} facebookUserID
+ * @param {string} accessToken
+ * @returns {function(*, *, {user: *})}
+ */
+export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
+  return (dispatch, getState, { user }) => {
+    dispatch(userIsSending(true));
+    dispatch(userError(''));
+
+    user.facebookLogin(facebookEmail, facebookUserID, accessToken)
+      .then((u) => {
+        dispatch({
+          type: USER_LOGIN,
+          user: u
+        });
+
+        dispatch(activityFeedFetchAll());
+        dispatch(userFollowing(u.UserID), 1, true);
+      })
+      .finally(() => {
+        dispatch(userIsSending(false));
+      });
+  };
+}
+
+/**
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogout() {

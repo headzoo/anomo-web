@@ -5,6 +5,7 @@ const base = 'https://ws.anomo.com/v101/index.php/webservice';
 // https://github.com/unofficial-anomo-api/open/wiki/New-Anomo-2.11-Update-API-End-Points
 const urls = {
   userLogin:             `${base}/user/login`,
+  userFBLogin:           `${base}/user/login_with_fb`,
   userLogout:            `${base}/user/logout/{token}`,
   userInfo:              `${base}/user/get_user_info/{token}/{userID}`,
   userBlock:             `${base}/user/block_user/{token}/{userID}`,

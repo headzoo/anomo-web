@@ -8,6 +8,10 @@ let config = {
   styles:     {
     primaryColor:     '#00d2d9',
     placeholderImage: ''
+  },
+  facebook: {
+    appID:  '1581500341950614',
+    fields: 'name,email,picture'
   }
 };
 
