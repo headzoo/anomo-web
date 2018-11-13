@@ -56,6 +56,13 @@ class Image extends React.PureComponent {
   };
 
   /**
+   * @returns {number}
+   */
+  height = () => {
+    return this.img.current.offsetHeight;
+  };
+
+  /**
    * @param {Event} e
    */
   handleLoad = (e) => {

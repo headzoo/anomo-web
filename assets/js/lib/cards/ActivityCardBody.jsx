@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { objects } from 'utils';
 import YouTube from 'react-youtube';
 import { CardBody, CardText } from 'lib/bootstrap';
-import { Image, Message, Video, Shimmer, Poll } from 'lib';
+import { ActivityImage, Message, Video, Shimmer, Poll } from 'lib';
 
 /**
  *
@@ -55,7 +55,7 @@ class ActivityCardBody extends React.PureComponent {
             />
           )}
           {activity.Image && (
-            <Image
+            <ActivityImage
               onClick={onImageClick}
               data={{ src: activity.Image, alt: 'Image' }}
             />

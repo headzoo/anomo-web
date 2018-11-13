@@ -11,10 +11,25 @@ function withConfig(WrappedComponent) {
     static displayName = `withConfig(${reactDisplayName(WrappedComponent)})`;
 
     /**
+     * @param {*} props
+     */
+    constructor(props) {
+      super(props);
+      this.wrappedRef = React.createRef();
+    }
+
+    /**
+     * @returns {*}
+     */
+    getWrappedInstance = () => {
+      return this.wrappedRef.current;
+    };
+
+    /**
      * @returns {*}
      */
     render() {
-      return <WrappedComponent config={getConfig()} {...this.props} />;
+      return <WrappedComponent ref={this.wrappedRef} config={getConfig()} {...this.props} />;
     }
   };
 }

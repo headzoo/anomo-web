@@ -17,6 +17,7 @@ function withRouter(WrappedComponent) {
      */
     constructor(props) {
       super(props);
+      this.wrappedRef = React.createRef();
 
       const routerParams = {};
       Object.keys(props.match.params).forEach((key) => {
@@ -53,11 +54,19 @@ function withRouter(WrappedComponent) {
     /**
      * @returns {*}
      */
+    getWrappedInstance = () => {
+      return this.wrappedRef.current;
+    };
+
+    /**
+     * @returns {*}
+     */
     render() {
       const { routerParams, routerQuery } = this.state;
 
       return (
         <WrappedComponent
+          ref={this.wrappedRef}
           routerParams={routerParams}
           routerQuery={routerQuery}
           {...this.props}
