@@ -121,8 +121,10 @@ class Form extends React.PureComponent {
   handleChange = (e, value, fieldName) => {
     const { name, dispatch, onChange } = this.props;
 
-    dispatch(formChange(name, fieldName, value));
     onChange(e, value, fieldName);
+    if (!e.defaultPrevented) {
+      dispatch(formChange(name, fieldName, value));
+    }
   };
 
   /**

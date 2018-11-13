@@ -32,6 +32,7 @@ class PostForm extends React.PureComponent {
     this.state = {
       emojiOpen:   false,
       focused:     false,
+      charCount:   props.config.anomo.maxChars,
       photoSource: ''
     };
     this.photo = React.createRef();
@@ -81,12 +82,20 @@ class PostForm extends React.PureComponent {
    * @param {string} name
    */
   handleChange = (e, value, name) => {
+    const { maxChars } = this.props.config.anomo;
+
     if (name === 'photo') {
       const reader = new FileReader();
       reader.onload = (event) => {
         this.setState({ photoSource: event.target.result });
       };
       reader.readAsDataURL(this.photo.current.files()[0]);
+    } else if (name === 'message') {
+      const charCount = maxChars - value.length;
+      if (charCount < 1) {
+        e.preventDefault();
+      }
+      this.setState({ charCount });
     }
   };
 
@@ -128,7 +137,7 @@ class PostForm extends React.PureComponent {
    */
   render() {
     const { post, config, withUpload } = this.props;
-    const { emojiOpen, photoSource, focused } = this.state;
+    const { emojiOpen, photoSource, charCount, focused } = this.state;
 
     return (
       <Card className="card-form-post">
@@ -172,6 +181,11 @@ class PostForm extends React.PureComponent {
                   style={{ display: 'none' }}
                   accept={config.imageTypes}
                 />
+                {focused && (
+                  <div className="card-form-post-message-char-count">
+                    {charCount}
+                  </div>
+                )}
               </div>
               <div className="card-form-post-btn">
                 <Button disabled={post.isSubmitting} block>

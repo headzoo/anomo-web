@@ -9,6 +9,9 @@ let config = {
     primaryColor:     '#00d2d9',
     placeholderImage: ''
   },
+  anomo: {
+    maxChars: 520
+  },
   facebook: {
     appID:  '1581500341950614',
     fields: 'name,email,picture'
