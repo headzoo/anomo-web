@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'utils';
+import enhanceWithClickOutside from 'react-click-outside';
 import { formChange } from 'actions/formActions';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
@@ -30,10 +31,22 @@ class PostForm extends React.PureComponent {
     super(props);
     this.state = {
       emojiOpen:   false,
+      focused:     false,
       photoSource: ''
     };
     this.photo = React.createRef();
   }
+
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { post } = this.props;
+
+    if (prevProps.post.isSubmitting && !post.isSubmitting) {
+      this.setState({ focused: false });
+    }
+  };
 
   /**
    *
@@ -97,11 +110,25 @@ class PostForm extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleClickOutside = () => {
+    this.setState({ focused: false });
+  };
+
+  /**
+   *
+   */
+  handleMessageFocus = () => {
+    this.setState({ focused: true });
+  };
+
+  /**
    * @returns {*}
    */
   render() {
     const { post, config, withUpload } = this.props;
-    const { emojiOpen, photoSource } = this.state;
+    const { emojiOpen, photoSource, focused } = this.state;
 
     return (
       <Card className="card-form-post">
@@ -133,7 +160,9 @@ class PostForm extends React.PureComponent {
                 <Textarea
                   name="message"
                   id="form-post-message"
+                  onFocus={this.handleMessageFocus}
                   placeholder="Add to conversation"
+                  className={focused ? 'focused' : ''}
                 />
                 <Input
                   type="file"
@@ -145,7 +174,7 @@ class PostForm extends React.PureComponent {
                 />
               </div>
               <div className="card-form-post-btn">
-                <Button block>
+                <Button disabled={post.isSubmitting} block>
                   Post
                 </Button>
               </div>
@@ -162,10 +191,12 @@ class PostForm extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
+const mapStateToProps = state => (
+  {
     post: state.forms.post
-  };
-};
+  }
+);
 
-export default connect(mapStateToProps)(withConfig(PostForm));
+export default connect(
+  mapStateToProps
+)(withConfig(enhanceWithClickOutside(PostForm)));

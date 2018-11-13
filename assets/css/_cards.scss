@@ -230,7 +230,7 @@
     overflow: hidden;
     transition: height 0.2s ease-in-out;
 
-    &:focus {
+    &.focused {
       overflow: auto;
       height: $input-height * 3;
     }

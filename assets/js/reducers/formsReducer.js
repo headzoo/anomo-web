@@ -44,9 +44,6 @@ function changes(state, action) {
 function submitting(state, action) {
   const form        = objects.clone(state[action.formName]);
   form.isSubmitting = action.isSubmitting;
-  if (form.isSubmitting) {
-    form.isSubmitted = false;
-  }
 
   return {
     ...state,

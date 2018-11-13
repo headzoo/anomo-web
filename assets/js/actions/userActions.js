@@ -371,7 +371,6 @@ export function userSubmitStatus(message, photo = '') {
         }
       }).finally(() => {
         dispatch(userIsStatusSending(false));
-        dispatch(formSubmitting(formName, false));
       });
   };
 }
