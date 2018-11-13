@@ -66,6 +66,7 @@ class PostModal extends React.PureComponent {
         <PostForm
           name="postModal"
           onSubmit={this.handleSubmit}
+          withMobileForm
           withUpload
         />
       </Modal>

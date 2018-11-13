@@ -20,17 +20,20 @@ class PostForm extends React.PureComponent {
     user:           PropTypes.object.isRequired,
     forms:          PropTypes.object.isRequired,
     config:         PropTypes.object.isRequired,
+    deviceSize:     PropTypes.string.isRequired,
     comment:        PropTypes.bool,
     withUpload:     PropTypes.bool,
+    withMobileForm: PropTypes.bool,
     onSubmit:       PropTypes.func,
     formChange:     PropTypes.func,
     uiIsPreviewing: PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    comment:    false,
-    withUpload: false,
-    onSubmit:   () => {}
+    comment:        false,
+    withUpload:     false,
+    withMobileForm: false,
+    onSubmit:       () => {}
   };
 
   /**
@@ -61,9 +64,10 @@ class PostForm extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleUploadClick = () => {
+  handleUploadClick = (e) => {
+    e.preventDefault();
     this.photo.current.click();
   };
 
@@ -159,9 +163,10 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, forms, name, comment, config, withUpload } = this.props;
+    const { user, forms, name, comment, deviceSize, config, withUpload, withMobileForm } = this.props;
     const { emojiOpen, photoSource, charCount, focused } = this.state;
 
+    const isXs = deviceSize === 'xs' && withMobileForm;
     const placeholder = photoSource ? '' : '...';
     const previewActivity = objects.merge(user, {
       FromUserName: user.UserName,
@@ -184,7 +189,7 @@ class PostForm extends React.PureComponent {
               disabled={forms[name].isSubmitting}
             >
               <div className="card-form-post-inputs">
-                {withUpload && (
+                {(withUpload && !isXs) && (
                   <div className="card-form-post-upload">
                     <Icon
                       name="camera"
@@ -193,14 +198,16 @@ class PostForm extends React.PureComponent {
                     />
                   </div>
                 )}
-                <div className="card-form-post-emoji">
-                  <EmojiPopper
-                    open={emojiOpen}
-                    onClick={this.handleEmojiClick}
-                    onSelect={this.handleEmojiSelect}
-                  />
-                </div>
-                <div className="card-form-post-message">
+                {!isXs && (
+                  <div className="card-form-post-emoji">
+                    <EmojiPopper
+                      open={emojiOpen}
+                      onClick={this.handleEmojiClick}
+                      onSelect={this.handleEmojiSelect}
+                    />
+                  </div>
+                )}
+                <div className="card-form-post-message no-gutter">
                   <Textarea
                     name="message"
                     id="form-post-message"
@@ -222,23 +229,49 @@ class PostForm extends React.PureComponent {
                     </div>
                   )}
                 </div>
-                <div className="card-form-post-btn">
+                {!isXs && (
+                  <div className="card-form-post-btn">
+                    <Button disabled={forms[name].isSubmitting} block>
+                      Send
+                    </Button>
+                  </div>
+                )}
+              </div>
+              {isXs && (
+                <div className="card-form-post-btn gutter-top">
                   <Button disabled={forms[name].isSubmitting} block>
-                    Post
+                    Send
                   </Button>
                 </div>
-              </div>
+              )}
+              {isXs && (
+                <div className="card-form-post-btn gutter-top">
+                  <Button disabled={forms[name].isSubmitting} onClick={this.handleUploadClick} block>
+                    Upload
+                  </Button>
+                </div>
+              )}
             </Form>
-            <div className="gutter-top">
+            {!isXs && (
               <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
-                <ActivityPreviewCard
-                  activity={previewActivity}
-                  comment={comment}
-                />
+                <div className="gutter-top">
+                  <ActivityPreviewCard
+                    activity={previewActivity}
+                    comment={comment}
+                  />
+                </div>
               </AnimateHeight>
-            </div>
+            )}
           </CardBody>
         </Card>
+        {isXs && (
+          <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
+            <ActivityPreviewCard
+              activity={previewActivity}
+              comment={comment}
+            />
+          </AnimateHeight>
+        )}
       </div>
     );
   }
@@ -246,8 +279,9 @@ class PostForm extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    forms: state.forms,
-    user:  state.user
+    forms:      state.forms,
+    user:       state.user,
+    deviceSize: state.ui.deviceSize
   }
 );
 

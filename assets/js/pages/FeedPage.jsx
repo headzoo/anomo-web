@@ -15,10 +15,10 @@ import * as activityActions from 'actions/activityActions';
 class FeedPage extends React.PureComponent {
   static propTypes = {
     feeds:             PropTypes.object.isRequired,
+    deviceSize:        PropTypes.string.isRequired,
     activeFeed:        PropTypes.string.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
-    isPreviewing:      PropTypes.bool.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     userSubmitStatus:  PropTypes.func.isRequired
@@ -91,41 +91,43 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   renderNav = () => {
-    const { activeFeed, feeds } = this.props;
+    const { activeFeed, deviceSize, feeds } = this.props;
 
     return (
-      <ButtonGroup className="page-feed-nav-btn-group" theme="none" stretch>
-        <LinkButton
-          name="recent"
-          onClick={e => this.handleNavClick(e, 'recent')}
-          className={activeFeed === 'recent' ? 'active' : ''}
-        >
-          <div>Recent</div>
-          <Badge>
-            <Number value={feeds.recent.newNumber} />
-          </Badge>
-        </LinkButton>
-        <LinkButton
-          name="following"
-          onClick={e => this.handleNavClick(e, 'following')}
-          className={activeFeed === 'following' ? 'active' : ''}
-        >
-          <div>Following</div>
-          <Badge>
-            <Number value={feeds.following.newNumber} />
-          </Badge>
-        </LinkButton>
-        <LinkButton
-          name="popular"
-          onClick={e => this.handleNavClick(e, 'popular')}
-          className={activeFeed === 'popular' ? 'active' : ''}
-        >
-          <div>Popular</div>
-          <Badge>
-            <Number value={feeds.popular.newNumber} />
-          </Badge>
-        </LinkButton>
-      </ButtonGroup>
+      <div className={deviceSize !== 'xs' ? 'gutter-top' : ''}>
+        <ButtonGroup className="page-feed-nav-btn-group" theme="none" stretch>
+          <LinkButton
+            name="recent"
+            onClick={e => this.handleNavClick(e, 'recent')}
+            className={activeFeed === 'recent' ? 'active' : ''}
+          >
+            <div>Recent</div>
+            <Badge>
+              <Number value={feeds.recent.newNumber} />
+            </Badge>
+          </LinkButton>
+          <LinkButton
+            name="following"
+            onClick={e => this.handleNavClick(e, 'following')}
+            className={activeFeed === 'following' ? 'active' : ''}
+          >
+            <div>Following</div>
+            <Badge>
+              <Number value={feeds.following.newNumber} />
+            </Badge>
+          </LinkButton>
+          <LinkButton
+            name="popular"
+            onClick={e => this.handleNavClick(e, 'popular')}
+            className={activeFeed === 'popular' ? 'active' : ''}
+          >
+            <div>Popular</div>
+            <Badge>
+              <Number value={feeds.popular.newNumber} />
+            </Badge>
+          </LinkButton>
+        </ButtonGroup>
+      </div>
     );
   };
 
@@ -133,7 +135,7 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { feeds, isPreviewing, activeFeed } = this.props;
+    const { feeds, deviceSize, activeFeed } = this.props;
 
     let title = 'scnstr';
     if (activeFeed !== 'recent') {
@@ -142,27 +144,29 @@ class FeedPage extends React.PureComponent {
 
     return (
       <Page title={title}>
-        <Row>
-          <Column md={4} offsetMd={4} xs={12}>
-            <PostForm
-              name="post"
-              onSubmit={this.handlePostSubmit}
-              withUpload
-            />
-          </Column>
-        </Row>
+        {deviceSize !== 'xs' && (
+          <Row>
+            <Column md={4} offsetMd={4} xs={12}>
+              <PostForm
+                name="post"
+                onSubmit={this.handlePostSubmit}
+                withUpload
+              />
+            </Column>
+          </Row>
+        )}
         <Row>
           <Column
             md={4}
             xs={12}
             offsetMd={4}
-            className={isPreviewing ? 'gutter-bottom activity-feed-previewing' : 'gutter-bottom'}
+            className="gutter-bottom"
           >
             {this.renderNav()}
           </Column>
         </Row>
         <Row>
-          <Column className={isPreviewing ? 'activity-feed-previewing' : ''} md={4} offsetMd={4} xs={12}>
+          <Column md={4} offsetMd={4} xs={12}>
             {feeds[activeFeed].isRefreshing && (
               <Loading className="text-center gutter-bottom" />
             )}
@@ -180,9 +184,9 @@ class FeedPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    feeds:        state.activity.feeds,
-    isPreviewing: state.ui.isPreviewing,
-    activeFeed:   state.ui.activeFeed
+    feeds:      state.activity.feeds,
+    deviceSize: state.ui.deviceSize,
+    activeFeed: state.ui.activeFeed
   };
 };
 
