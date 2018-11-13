@@ -16,6 +16,15 @@
   }
 }
 
+.navbar-brand {
+  font-size: 7rem;
+  overflow: hidden;
+  display: flex;
+  margin-top: -4px;
+  align-items: center;
+  height: $header-height - 7px;
+}
+
 .nav-item.dropdown {
   margin-top: 4px;
 }

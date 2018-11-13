@@ -130,9 +130,9 @@ class Nav extends React.PureComponent {
         <MenuIcon onClick={this.handleNotificationsClick} />
 
         <ul className="nav navbar-nav mx-auto">
-          <li className="nav-item">
+          <li className="nav-item" style={{ margin: '-15px 0' }}>
             <div className="navbar-brand clickable" onClick={this.handleBrandClick}>
-              scnstr.com
+              s
             </div>
           </li>
         </ul>
