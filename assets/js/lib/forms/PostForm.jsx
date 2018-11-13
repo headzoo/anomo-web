@@ -210,8 +210,7 @@ class PostForm extends React.PureComponent {
                     ref={this.photo}
                     id="form-post-photo"
                     style={{ display: 'none' }}
-                    accept="image/*"
-                    capture="camera"
+                    accept={config.imageTypes}
                   />
                   {focused && (
                     <div className="card-form-post-message-char-count">
