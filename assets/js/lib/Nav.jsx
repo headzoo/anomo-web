@@ -126,7 +126,7 @@ class Nav extends React.PureComponent {
     }
 
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
         <MenuIcon onClick={this.handleNotificationsClick} />
 
         <ul className="nav navbar-nav mx-auto">

@@ -22,6 +22,11 @@ class MenuIcon extends React.PureComponent {
    */
   render() {
     const { user, notifications, className, ...props } = this.props;
+    let { newNumber } = notifications;
+
+    if (newNumber > 99) {
+      newNumber = '99+';
+    }
 
     return (
       <span
@@ -30,7 +35,7 @@ class MenuIcon extends React.PureComponent {
       >
         {user.isAuthenticated && (
           <div className={classNames({ active: notifications.newNumber })}>
-            {notifications.newNumber}
+            {newNumber}
           </div>
         )}
       </span>
