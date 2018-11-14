@@ -30,3 +30,5 @@ export { default as EmojiPopper } from './EmojiPopper';
 export { default as Poll } from './Poll';
 export { default as GifPlayer } from './GifPlayer';
 export { default as Video } from './Video';
+export { default as Age } from './Age';
+export { default as Neighborhood } from './Neighborhood';

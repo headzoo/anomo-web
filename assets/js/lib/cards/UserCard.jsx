@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { dates } from 'utils';
 import { Card, CardBody, CardText } from 'lib/bootstrap';
-import { Avatar, Link } from 'lib';
+import { Avatar, Link, Age, Neighborhood } from 'lib';
 
 /**
  *
@@ -31,10 +30,10 @@ class UserCard extends React.PureComponent {
             <Link name="profile" params={{ id: user.UserID }}>
               <div className="card-profile-cover-container" style={coverStyles}>
                 <div className="card-profile-cover-info">
-                  <Avatar src={user.Avatar || ''} />
+                  <Avatar src={user.Avatar} />
                   <h1>{user.UserName}</h1>
                   <div className="card-profile-location">
-                    {dates.getAge(user.BirthDate || '1980-12-10')} &middot; {user.NeighborhoodName || 'Earth'}
+                    <Age date={user.BirthDate} /> &middot; <Neighborhood name={user.NeighborhoodName} />
                   </div>
                 </div>
                 <div className="card-profile-cover-mask" />

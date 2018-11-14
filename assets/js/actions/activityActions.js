@@ -17,6 +17,7 @@ export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
 export const ACTIVITY_COMMENT_PREPEND      = 'ACTIVITY_COMMENT_PREPEND';
+export const ACTIVITY_COMMENT_DELETE       = 'ACTIVITY_COMMENT_DELETE';
 export const ACTIVITY_POLL_SENDING         = 'ACTIVITY_POLL_SENDING';
 export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
 export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
@@ -510,6 +511,25 @@ export function activitySubmitComment(formName, message, refID, actionType, topi
     }).finally(() => {
       dispatch(formSubmitting(formName, false));
     });
+  };
+}
+
+/**
+ * @param {number} commentID
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function activityDeleteComment(commentID) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch({
+      type: ACTIVITY_COMMENT_DELETE,
+      commentID
+    });
+
+    const url = endpoints.create('activityCommentDelete', {
+      token: user.getToken(),
+      commentID
+    });
+    proxy.get(url);
   };
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
-import { Page, Feed, Loading, Avatar, Icon, LinkButton, Number, withRouter } from 'lib';
+import { Page, Feed, Loading, Avatar, Icon, LinkButton, Number, Age, withRouter } from 'lib';
 import { UserCard } from 'lib/cards';
 import * as uiActions from 'actions/uiActions';
 import * as profileActions from 'actions/profileActions';
@@ -107,11 +107,11 @@ class ProfilePage extends React.PureComponent {
               <Icon name="ellipsis-h" onClick={this.handleEllipsisClick} />
             </div>
             <span className={isFollowing ? 'avatar-following lg' : ''}>
-              <Avatar src={profile.Avatar || '/images/anonymous-avatar-sm.jpg'} />
+              <Avatar src={profile.Avatar} />
             </span>
             <h1>{profile.UserName}</h1>
             <div className="card-profile-location">
-              {dates.getAge(profile.BirthDate || '1980-12-10')} &middot; {profile.NeighborhoodName || 'Earth'}
+              <Age date={profile.BirthDate} /> &middot; {profile.NeighborhoodName || 'Earth'}
             </div>
           </div>
           <div className="card-profile-cover-mask" />

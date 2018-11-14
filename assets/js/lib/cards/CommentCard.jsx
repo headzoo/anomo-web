@@ -3,29 +3,29 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
 import { Twemoji } from 'react-emoji-render';
-import { dates, connect } from 'utils';
+import { connect, mapActionsToProps } from 'utils';
 import { activityLikeComment } from 'actions/activityActions';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
-import { Image, Avatar, Pluralize, withRouter } from 'lib';
+import { Image, Avatar, Icon, Pluralize, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
 import routes from 'store/routes';
+import * as uiActions from 'actions/uiActions';
 
 /**
  *
  */
 class CommentCard extends React.PureComponent {
   static propTypes = {
-    comment:     PropTypes.object.isRequired,
-    activity:    PropTypes.object.isRequired,
-    highlighted: PropTypes.bool,
-    className:   PropTypes.string,
-    history:     PropTypes.object.isRequired,
-    dispatch:    PropTypes.func.isRequired
+    comment:            PropTypes.object.isRequired,
+    activity:           PropTypes.object.isRequired,
+    followingUserNames: PropTypes.array.isRequired,
+    className:          PropTypes.string,
+    history:            PropTypes.object.isRequired,
+    uiVisibleModal:     PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    highlighted: false,
-    className:   ''
+    className: ''
   };
 
   /**
@@ -59,25 +59,43 @@ class CommentCard extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   */
+  handleMenuClick = (e) => {
+    const { comment, uiVisibleModal } = this.props;
+
+    e.preventDefault();
+    uiVisibleModal('comment', comment);
+  };
+
+  /**
    * @returns {*}
    */
   renderHeader = () => {
-    const { comment } = this.props;
+    const { comment, followingUserNames } = this.props;
+
+    const isFollowing = followingUserNames.indexOf(comment.UserName) !== -1;
 
     return (
       <CardHeader>
-        <div className="card-comment-avatar" onClick={this.handleUserClick}>
-          <Avatar src={comment.Avatar || '/images/anonymous-avatar-sm.jpg'} />
+        <div
+          onClick={this.handleUserClick}
+          className={isFollowing ? 'card-comment-avatar avatar-following' : 'card-comment-avatar'}
+        >
+          <Avatar src={comment.Avatar} />
         </div>
         <div className="card-comment-user">
           <div className="card-comment-username" onClick={this.handleUserClick}>
             {comment.UserName}
           </div>
           <div className="card-comment-location">
-            {dates.getAge(comment.BirthDate || '1980-12-10')} &middot; {comment.NeighborhoodName || 'Earth'}
+            <Age date={comment.BirthDate} /> &middot; <Neighborhood name={comment.NeighborhoodName} />
           </div>
         </div>
         <div className="card-comment-date">
+          <div className="card-comment-ellipsis" onClick={this.handleMenuClick}>
+            <Icon name="ellipsis-h" />
+          </div>
           <Moment fromNow ago>
             {comment.CreatedDate}
           </Moment>
@@ -137,11 +155,9 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { comment, highlighted, className } = this.props;
+    const { comment, className } = this.props;
 
-    const classes = classNames('card-comment', className, {
-      'card-comment-highlighted': highlighted
-    });
+    const classes = classNames('card-comment', className);
 
     return (
       <Card id={`comment-${comment.ID}`} className={classes}>
@@ -153,4 +169,13 @@ class CommentCard extends React.PureComponent {
   }
 }
 
-export default connect()(withRouter(CommentCard));
+const mapStateToProps = state => (
+  {
+    followingUserNames: state.user.followingUserNames
+  }
+);
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps(uiActions)
+)(withRouter(CommentCard));

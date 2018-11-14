@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, dates, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, Button, ButtonGroup } from 'lib/bootstrap';
 import { Form, Input, Textarea, Hidden } from 'lib/forms';
 import { TagsModal } from 'lib/modals';
-import { Page, Icon, Avatar, withRouter, withConfig } from 'lib';
+import { Page, Icon, Avatar, Age, withRouter, withConfig } from 'lib';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
@@ -20,7 +20,6 @@ class EditProfilePage extends React.PureComponent {
     ui:                 PropTypes.object.isRequired,
     user:               PropTypes.object.isRequired,
     forms:              PropTypes.object.isRequired,
-    anomo:              PropTypes.object.isRequired,
     config:             PropTypes.object.isRequired,
     history:            PropTypes.object.isRequired,
     formChange:         PropTypes.func.isRequired,
@@ -390,7 +389,7 @@ class EditProfilePage extends React.PureComponent {
           />
           <h1>{user.UserName}</h1>
           <div className="card-profile-location">
-            {dates.getAge(user.BirthDate || '1980-12-10')} &middot; {user.NeighborhoodName || 'Earth'}
+            <Age date={user.BirthDate} /> &middot; {user.NeighborhoodName || 'Earth'}
           </div>
           <Icon
             name="camera"

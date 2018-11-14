@@ -389,6 +389,33 @@ function deleteActivity(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function deleteComment(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.ListComment) {
+    activity.ListComment = activity.ListComment.filter(c => c.ID !== action.commentID);
+    activity.Comment     = activity.ListComment.length;
+  }
+  feedUtils.traverseActivities(feeds, (a) => {
+    if (a.ListComment) {
+      a.ListComment = a.ListComment.filter(c => c.ID !== action.commentID);
+      a.Comment     = a.ListComment.length;
+    }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function deleteIsSending(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
@@ -448,6 +475,8 @@ export default function activityReducer(state = {}, action = {}) {
       return feedFetch(state, action);
     case types.ACTIVITY_DELETE:
       return deleteActivity(state, action);
+    case types.ACTIVITY_COMMENT_DELETE:
+      return deleteComment(state, action);
     case types.ACTIVITY_DELETE_SENDING:
       return deleteIsSending(state, action);
     default: return state;

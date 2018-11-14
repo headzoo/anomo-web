@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
-import { dates, objects } from 'utils';
+import { objects } from 'utils';
 import { CardHeader } from 'lib/bootstrap';
-import { Avatar, Shimmer, Icon } from 'lib';
+import { Avatar, Shimmer, Icon, Age, Neighborhood } from 'lib';
 
 /**
  *
@@ -34,9 +34,6 @@ class ActivityCardHeader extends React.PureComponent {
 
     const isFollowing  = followingUserNames.indexOf(activity.FromUserName) !== -1;
     const isLoading    = objects.isEmpty(activity) || activity.isLoading;
-    const birthday     = dates.getAge(activity.BirthDate || '1980-12-10');
-    const neighborhood = activity.NeighborhoodName || 'Earth';
-    const location     = `${birthday} · ${neighborhood}`;
 
     return (
       <CardHeader>
@@ -46,7 +43,7 @@ class ActivityCardHeader extends React.PureComponent {
           ) : (
             <span className={isFollowing ? 'avatar-following' : ''}>
               <Avatar
-                src={activity.Avatar || '/images/anonymous-avatar-sm.jpg'}
+                src={activity.Avatar}
               />
             </span>
           )}
@@ -60,7 +57,11 @@ class ActivityCardHeader extends React.PureComponent {
           <div className="card-activity-location">
             {isLoading ? (
               <Shimmer className="card-activity-shimmer" />
-            ) : location}
+            ) : (
+              <span>
+                <Age date={activity.BirthDate} /> &middot; <Neighborhood name={activity.NeighborhoodName} />
+              </span>
+            )}
           </div>
         </div>
         <div className="card-activity-date">

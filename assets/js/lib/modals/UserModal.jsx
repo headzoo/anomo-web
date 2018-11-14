@@ -10,6 +10,7 @@ import * as userActions from 'actions/userActions';
  */
 class UserModal extends React.PureComponent {
   static propTypes = {
+    user:           PropTypes.object.isRequired,
     userFollow:     PropTypes.func.isRequired,
     userBlock:      PropTypes.func.isRequired,
     visibleModals:  PropTypes.object.isRequired,
@@ -21,8 +22,8 @@ class UserModal extends React.PureComponent {
    */
   isFollowing = () => {
     const { user, visibleModals } = this.props;
-    const { following } = user;
     const { UserID } = visibleModals.user;
+    const { following } = user;
 
     let found = false;
     for (let i = 0; i < following.length; i++) {
@@ -40,8 +41,8 @@ class UserModal extends React.PureComponent {
    */
   isBlocked = () => {
     const { user, visibleModals } = this.props;
-    const { blocked } = user;
     const { UserID } = visibleModals.user;
+    const { blocked } = user;
 
     let found = false;
     for (let i = 0; i < blocked.length; i++) {

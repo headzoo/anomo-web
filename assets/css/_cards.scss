@@ -26,16 +26,8 @@
   padding: $gutter-size 0;
   color: rgba(0, 0, 0, 0.4);
 
-/*  .icon {
-    left: 0;
-    right: 0;
-    top: -22px;
-    font-size: 7rem;
-    position: absolute;
-    color: rgba(0, 0, 0, 0.06);
-  }*/
-
-  .card-activity-ellipsis {
+  .card-activity-ellipsis,
+  .card-comment-ellipsis {
     cursor: pointer;
     text-align: right;
     margin-bottom: 0.25rem;
@@ -217,16 +209,6 @@
 .card-activity-comment-commented,
 .card-comment-comment-commented {
   color: $color-liked;
-}
-
-.card-comment-highlighted {
-  border: 1px solid #000000;
-  margin: 0 (-$gutter-size) $gutter-size (-$gutter-size);
-  box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.5);
-
-  @include media-xs {
-    margin: 0 ((-$gutter-size) + 5px) $gutter-size ((-$gutter-size) + 5px);
-  }
 }
 
 .card-form-post {

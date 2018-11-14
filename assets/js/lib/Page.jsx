@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { browser, objects, connect } from 'utils';
 import { Container } from 'lib/bootstrap';
-import { ActivityModal, UserModal, PostModal } from 'lib/modals';
+import { ActivityModal, UserModal, PostModal, CommentModal } from 'lib/modals';
 import { Footer } from 'lib';
 
 /**
@@ -60,6 +60,7 @@ class Page extends React.PureComponent {
         </Container>
         {withFooter && <Footer />}
         <ActivityModal open={visibleModals.activity !== false} />
+        <CommentModal open={visibleModals.comment !== false} />
         <UserModal open={visibleModals.user !== false} />
         <PostModal open={visibleModals.post !== false} />
       </div>

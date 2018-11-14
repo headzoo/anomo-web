@@ -25,7 +25,8 @@ export const defaultUi = {
     tags:     false,
     post:     false,
     intents:  false,
-    activity: false
+    activity: false,
+    comment:  false
   },
   visibleDrawers: {
     notifications: false

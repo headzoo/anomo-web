@@ -8,11 +8,12 @@ import { Image } from 'lib';
  */
 class Avatar extends React.PureComponent {
   static propTypes = {
-    src:       PropTypes.string.isRequired,
+    src:       PropTypes.string,
     className: PropTypes.string
   };
 
   static defaultProps = {
+    src:       '/images/anonymous-avatar-sm.jpg',
     className: ''
   };
 
@@ -23,7 +24,7 @@ class Avatar extends React.PureComponent {
     const { src, className, ...props } = this.props;
 
     const data = {
-      src,
+      src: src || '/images/anonymous-avatar-sm.jpg',
       alt: 'Avatar'
     };
 
