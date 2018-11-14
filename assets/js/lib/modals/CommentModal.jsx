@@ -128,14 +128,19 @@ class CommentModal extends React.PureComponent {
    * @returns {*}
    */
   renderTheirList = () => {
+    const { user, visibleModals } = this.props;
+    const { comment } = visibleModals.comment;
+
     return (
       <ul className="list-group list-group-flush">
-        <li
-          onClick={e => this.handleClick(e, 'notifications')}
-          className="list-group-item list-group-item-action clickable"
-        >
-          Disable Notifications
-        </li>
+        {user.UserID === comment.UserID && (
+          <li
+            onClick={e => this.handleClick(e, 'notifications')}
+            className="list-group-item list-group-item-action clickable"
+          >
+            Disable Notifications
+          </li>
+        )}
         {this.isFollowing() ? (
           <li
             onClick={e => this.handleClick(e, 'follow')}
