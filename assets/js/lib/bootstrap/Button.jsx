@@ -47,7 +47,7 @@ class Button extends React.PureComponent {
     return (
       <ButtonGroupContext.Consumer>
         {(context) => {
-          const btnTheme = context.theme || theme;
+          const btnTheme = (context.theme && context.theme !== 'none') ? context.theme : theme;
           const classes = classNames(`btn btn-${btnTheme}`, className, {
             'btn-block': block,
             'btn-lg':    lg,

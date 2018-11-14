@@ -21,7 +21,7 @@ class ButtonGroup extends React.PureComponent {
   static defaultProps = {
     lg:        false,
     sm:        false,
-    theme:     themes[0],
+    theme:     'none',
     spaced:    false,
     stretch:   false,
     className: '',

@@ -182,6 +182,12 @@ export const defaultForms = {
     [constants.SETTING_ABOUT_ME]: '',
     ...commonFormElements
   },
+  password: {
+    [constants.SETTING_OLD_PASSWORD]: '',
+    [constants.SETTING_NEW_PASSWORD]: '',
+    confirm:                          '',
+    ...commonFormElements
+  },
   notifications: {
     [constants.PRIVACY_ALLOW_ANOMOTION_NOTICE]:        0,
     [constants.PRIVACY_ALLOW_COMMENT_ACTIVITY_NOTICE]: 0,

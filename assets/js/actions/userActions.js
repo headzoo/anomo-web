@@ -1,5 +1,6 @@
+import md5 from 'md5';
 import { objects, browser } from 'utils';
-import { formReset, formError, formSubmitting } from 'actions/formActions';
+import { formReset, formError, formSuccess, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
@@ -299,6 +300,34 @@ export function userSet(user) {
   return {
     type: USER_SET,
     user
+  };
+}
+
+/**
+ * @param {string} oldPassword
+ * @param {string} newPassword
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function userUpdatePassword(oldPassword, newPassword) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch(userIsSettingsSending(true));
+
+    const url = endpoints.create('userUpdatePassword', {
+      token: user.getToken()
+    });
+    const body = {
+      OldPassword: md5(oldPassword),
+      NewPassword: md5(newPassword)
+    };
+    proxy.post(url, body)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch(formSuccess('password', 'Password updated successfully.'));
+        }
+      })
+      .finally(() => {
+        dispatch(userIsSettingsSending(false));
+      });
   };
 }
 

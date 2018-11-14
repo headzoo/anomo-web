@@ -13,10 +13,13 @@ import * as userActions from 'actions/userActions';
  */
 class SettingsPage extends React.PureComponent {
   static propTypes = {
-    user:              PropTypes.object.isRequired,
-    notifications:     PropTypes.object.isRequired,
-    formChanges:       PropTypes.func.isRequired,
-    userUpdatePrivacy: PropTypes.func.isRequired
+    user:               PropTypes.object.isRequired,
+    password:           PropTypes.object.isRequired,
+    notifications:      PropTypes.object.isRequired,
+    formError:          PropTypes.func.isRequired,
+    formChanges:        PropTypes.func.isRequired,
+    userUpdatePrivacy:  PropTypes.func.isRequired,
+    userUpdatePassword: PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -102,6 +105,23 @@ class SettingsPage extends React.PureComponent {
       [c.PRIVACY_ALLOW_ANSWER_POLL_NOTICE]:      values[c.PRIVACY_ALLOW_ANSWER_POLL_NOTICE] === 'on' ? '1' : '0',
       [c.PRIVACY_ALLOW_REVEAL_NOTICE]:           values[c.PRIVACY_ALLOW_REVEAL_NOTICE] === 'on' ? '1' : '0',
     });
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} values
+   */
+  handlePasswordSubmit = (e, values) => {
+    const { userUpdatePassword, formError } = this.props;
+
+    e.preventDefault();
+    if (values[constants.SETTING_NEW_PASSWORD] !== values.confirm) {
+      formError('password', 'Passwords do not match');
+      return;
+    }
+
+    userUpdatePassword(values[constants.SETTING_OLD_PASSWORD], values[constants.SETTING_NEW_PASSWORD]);
+    this.setState({ panel: 'list' });
   };
 
   /**
@@ -205,29 +225,58 @@ class SettingsPage extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderEmail = () => {
-    const { notifications } = this.props;
+  renderPassword = () => {
+    const { password } = this.props;
 
     return (
       <div>
-        Email
-        <Row>
-          <Column className="gutter-top">
-            <ButtonGroup className="full-width">
-              <Button
-                theme="secondary"
-                className="half-width"
-                disabled={notifications.isSubmitting}
-                onClick={e => this.handleItemClick(e, 'list')}
-              >
-                Cancel
-              </Button>
-              <Button className="half-width" disabled={notifications.isSubmitting}>
-                Save
-              </Button>
-            </ButtonGroup>
-          </Column>
-        </Row>
+        <Form
+          name="password"
+          onSubmit={this.handlePasswordSubmit}
+          disabled={password.isSubmitting}
+          reset={false}
+          required
+        >
+          <Row>
+            <Column>
+              <Input
+                type="password"
+                label="Old Password"
+                id="form-settings-old-password"
+                name={constants.SETTING_OLD_PASSWORD}
+              />
+              <Input
+                type="password"
+                label="New Password"
+                id="form-settings-new-password"
+                name={constants.SETTING_NEW_PASSWORD}
+              />
+              <Input
+                type="password"
+                name="confirm"
+                label="Confirm New Password"
+                id="form-settings-confirm-new-password"
+              />
+            </Column>
+          </Row>
+          <Row>
+            <Column className="gutter-top">
+              <ButtonGroup className="full-width">
+                <Button
+                  theme="secondary"
+                  className="half-width"
+                  disabled={password.isSubmitting}
+                  onClick={e => this.handleItemClick(e, 'list')}
+                >
+                  Cancel
+                </Button>
+                <Button className="half-width" disabled={password.isSubmitting}>
+                  Save
+                </Button>
+              </ButtonGroup>
+            </Column>
+          </Row>
+        </Form>
       </div>
     );
   };
@@ -246,8 +295,8 @@ class SettingsPage extends React.PureComponent {
           <div>Blocked Users</div>
           <Icon name="angle-right" />
         </li>
-        <li className="list-group-item" onClick={e => this.handleItemClick(e, 'email')}>
-          <div>Email &amp; Password</div>
+        <li className="list-group-item" onClick={e => this.handleItemClick(e, 'password')}>
+          <div>Change Password</div>
           <Icon name="angle-right" />
         </li>
       </ul>
@@ -268,8 +317,8 @@ class SettingsPage extends React.PureComponent {
       case 'blocked':
         title = 'Blocked Users';
         break;
-      case 'email':
-        title = 'Email & Password';
+      case 'password':
+        title = 'Change Password';
         break;
     }
 
@@ -285,7 +334,7 @@ class SettingsPage extends React.PureComponent {
                 <CardText>
                   {{
                     'list':          this.renderList(),
-                    'email':         this.renderEmail(),
+                    'password':      this.renderPassword(),
                     'blocked':       this.renderBlocked(),
                     'notifications': this.renderNotifications()
                   }[panel]}
@@ -302,6 +351,7 @@ class SettingsPage extends React.PureComponent {
 const mapStateToProps = state => (
   {
     user:          state.user,
+    password:      state.forms.password,
     notifications: state.forms.notifications
   }
 );
