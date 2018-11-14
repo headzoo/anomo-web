@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column } from 'lib/bootstrap';
@@ -14,7 +14,6 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityPage extends React.PureComponent {
   static propTypes = {
-    ui:                        PropTypes.object.isRequired,
     activity:                  PropTypes.object.isRequired,
     match:                     PropTypes.object.isRequired,
     history:                   PropTypes.object.isRequired,
@@ -34,8 +33,7 @@ class ActivityPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      activity:           {},
-      highlightedComment: 0
+      activity: {}
     };
   }
 
@@ -74,7 +72,7 @@ class ActivityPage extends React.PureComponent {
       activityIsCommentsLoading
     } = this.props;
 
-    const { activity, highlightedComment } = this.state;
+    const { activity } = this.state;
     const { state } = location;
 
     if (match.params.refID !== prevProps.match.params.refID) {
@@ -96,25 +94,6 @@ class ActivityPage extends React.PureComponent {
     if (this.props.activity.activity.IsDeleted) {
       history.push(routes.route('home'));
       return;
-    }
-
-    if (!this.props.activity.isCommentsLoading && prevProps.activity.isCommentsLoading) {
-      const parsed = browser.parseHash(location);
-      if (parsed.c) {
-        this.setState({ highlightedComment: parsed.c });
-      }
-    }
-
-    if (prevState.highlightedComment !== highlightedComment) {
-      setTimeout(() => {
-        const comment = document.getElementById(`comment-${highlightedComment}`);
-        if (comment) {
-          comment.scrollIntoView({
-            block:    'center',
-            behavior: 'smooth'
-          });
-        }
-      }, 1000);
     }
 
     if (!objects.isEmpty(this.props.activity.activity)
@@ -146,7 +125,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderComments = () => {
-    const { activity, highlightedComment } = this.state;
+    const { activity } = this.state;
 
     if (!objects.isEmpty(activity) && !activity.ListComment) {
       activity.ListComment = [];
@@ -168,7 +147,6 @@ class ActivityPage extends React.PureComponent {
           <CommentCard
             comment={comment}
             activity={activity}
-            highlighted={comment.ID === highlightedComment}
           />
         </Column>
       </FadeAndSlideTransition>
@@ -210,6 +188,6 @@ class ActivityPage extends React.PureComponent {
 }
 
 export default connect(
-  mapStateToProps('ui', 'activity'),
+  mapStateToProps('activity'),
   mapActionsToProps(activityActions)
 )(withRouter(ActivityPage));

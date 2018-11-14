@@ -44,23 +44,14 @@ class NotificationsDrawer extends React.PureComponent {
    */
   handleNotificationClick = (e, notification) => {
     const { history, notificationsRead } = this.props;
-    const { ID, Type, ContentID, ContentType, RefID } = notification;
+    const { ID, ContentID, ContentType } = notification;
 
     this.close();
     notificationsRead(ID);
-
-    if (Type === constants.NOTIFICATION_COMMENT || Type === constants.NOTIFICATION_LIKE_COMMENT) {
-      history.push(routes.route('comment', {
-        refID:      ContentID,
-        actionType: ContentType,
-        commentID:  RefID
-      }));
-    } else if (ContentID) {
-      history.push(routes.route('activity', {
-        refID:      ContentID,
-        actionType: ContentType
-      }));
-    }
+    history.push(routes.route('activity', {
+      refID:      ContentID,
+      actionType: ContentType
+    }));
   };
 
   /**

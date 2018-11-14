@@ -90,6 +90,7 @@
 .drawer-notifications-message {
   max-width: 100%;
   overflow: hidden;
+  flex-grow: 2;
 
   .icon {
     margin-right: 0.5rem;
