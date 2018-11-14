@@ -4,7 +4,7 @@ let config = {
   debug:      false,
   lang:       'en',
   https:      true,
-  imageTypes: 'image/jpg,image/jpeg,image/png',
+  imageTypes: 'image/*',
   styles:     {
     primaryColor:     '#00d2d9',
     placeholderImage: ''
