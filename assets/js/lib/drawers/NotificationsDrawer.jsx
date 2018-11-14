@@ -131,11 +131,13 @@ class NotificationsDrawer extends React.PureComponent {
     }
 
     return (
-      <ul className="list-group">
+      <ul className="list-group drawer-notifications-list-group">
         {notifications.notifications.map((n) => {
+          let icon    = 'comment';
           let message = '';
           switch (n.Type) {
             case constants.NOTIFICATION_LIKE_POST:
+              icon    = 'heart';
               message = `${n.UserName} liked your post`;
               break;
             case constants.NOTIFICATION_COMMENT:
@@ -146,12 +148,15 @@ class NotificationsDrawer extends React.PureComponent {
               }
               break;
             case constants.NOTIFICATION_FOLLOW:
+              icon    = 'star';
               message = `${n.UserName} followed you on Anomo`;
               break;
             case constants.NOTIFICATION_MENTION:
+              icon    = 'comments';
               message = `${n.UserName} mentioned you`;
               break;
             case constants.NOTIFICATION_LIKE_COMMENT:
+              icon    = 'heart';
               message = `${n.UserName} liked your comment`;
               break;
             default:
@@ -164,11 +169,14 @@ class NotificationsDrawer extends React.PureComponent {
               className="list-group-item"
               onClick={e => this.handleNotificationClick(e, n)}
             >
-              <Avatar src={n.Avatar} />
+              <div className="drawer-notifications-avatar">
+                <Avatar src={n.Avatar} />
+              </div>
               <div className="drawer-notifications-message">
+                <Icon name={icon} />
                 {message}
               </div>
-              <div className="gutter-left">
+              <div>
                 <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
               </div>
             </li>
