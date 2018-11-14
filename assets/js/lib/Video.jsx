@@ -84,6 +84,7 @@ class Video extends React.PureComponent {
     const { onClick } = this.props;
     const { isPlaying } = this.state;
 
+    e.stopPropagation();
     onClick(e);
     if (!e.defaultPrevented) {
       this.setState({ isPlaying: !isPlaying }, () => {
