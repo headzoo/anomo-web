@@ -4,24 +4,25 @@ import classNames from 'classnames';
 import Moment from 'react-moment';
 import { Twemoji } from 'react-emoji-render';
 import { connect, mapActionsToProps } from 'utils';
-import { activityLikeComment } from 'actions/activityActions';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { Image, Avatar, Icon, Pluralize, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
+import * as activityActions from 'actions/activityActions';
 
 /**
  *
  */
 class CommentCard extends React.PureComponent {
   static propTypes = {
-    comment:            PropTypes.object.isRequired,
-    activity:           PropTypes.object.isRequired,
-    followingUserNames: PropTypes.array.isRequired,
-    className:          PropTypes.string,
-    history:            PropTypes.object.isRequired,
-    uiVisibleModal:     PropTypes.func.isRequired
+    comment:             PropTypes.object.isRequired,
+    activity:            PropTypes.object.isRequired,
+    followingUserNames:  PropTypes.array.isRequired,
+    className:           PropTypes.string,
+    history:             PropTypes.object.isRequired,
+    uiVisibleModal:      PropTypes.func.isRequired,
+    activityLikeComment: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -52,10 +53,10 @@ class CommentCard extends React.PureComponent {
    * @param {Event} e
    */
   handleHeartClick = (e) => {
-    const { comment, activity, dispatch } = this.props;
+    const { comment, activity, activityLikeComment } = this.props;
 
     e.preventDefault();
-    dispatch(activityLikeComment(comment.ID, activity.RefID, activity.ActionType));
+    activityLikeComment(comment.ID, activity.RefID, activity.ActionType);
   };
 
   /**
@@ -177,5 +178,5 @@ const mapStateToProps = state => (
 
 export default connect(
   mapStateToProps,
-  mapActionsToProps(uiActions)
+  mapActionsToProps(uiActions, activityActions)
 )(withRouter(CommentCard));
