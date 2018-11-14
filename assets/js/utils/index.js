@@ -8,6 +8,7 @@ export { default as numbers } from './numbers';
 export { default as arrays } from './arrays';
 export { default as dates } from './dates';
 export { default as feeds } from './feeds';
+export { default as media } from './media';
 export {
   connect,
   mapStateToProps,

@@ -10,7 +10,7 @@ import { Icon } from 'lib';
 class Video extends React.PureComponent {
   static propTypes = {
     source:    PropTypes.string.isRequired,
-    poster:    PropTypes.string.isRequired,
+    poster:    PropTypes.string,
     playing:   PropTypes.bool,
     muted:     PropTypes.bool,
     volume:    PropTypes.number,
@@ -20,6 +20,7 @@ class Video extends React.PureComponent {
   };
 
   static defaultProps = {
+    poster:    '',
     muted:     false,
     volume:    0.5,
     playing:   false,

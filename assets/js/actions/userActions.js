@@ -384,9 +384,10 @@ export function userUpdatePrivacy(values) {
  * @param {string} formName
  * @param {string} message
  * @param {*} photo
+ * @param {*} video
  * @returns {function(*, *, {endpoints: *})}
  */
-export function userSubmitStatus(formName, message, photo = '') {
+export function userSubmitStatus(formName, message, photo = '', video = '') {
   return (dispatch, getState, { user, proxy, endpoints }) => {
     dispatch(userIsStatusSending(true));
     dispatch(formSubmitting(formName, true));
@@ -397,13 +398,22 @@ export function userSubmitStatus(formName, message, photo = '') {
 
     let url  = '';
     let body = {};
-    if (photo) {
+    if (photo || video) {
       url = endpoints.create('userPicture', {
         token: user.getToken()
       });
       body = new FormData();
-      body.append('PictureCaption', JSON.stringify({ message, message_tags: [] }));
-      body.append('Photo', photo);
+      body.append('PictureCaption', JSON.stringify({
+        message,
+        message_tags: []
+      }));
+
+      if (video) {
+        body.append('Photo', photo, 'poster.png');
+        body.append('Video', video);
+      } else {
+        body.append('Photo', photo);
+      }
     } else {
       if (message === '') {
         dispatch(formError(formName, 'There was an error.'));
@@ -422,6 +432,7 @@ export function userSubmitStatus(formName, message, photo = '') {
 
     proxy.post(url, body)
       .then((resp) => {
+        console.log(resp);
         if (resp.code === 'OK') {
           dispatch(formReset(formName));
           dispatch(activityFeedFetchAll(true));

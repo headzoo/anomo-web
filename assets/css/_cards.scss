@@ -243,7 +243,12 @@
         cursor: pointer;
         font-size: 1.5em;
         color: $color-primary;
+        padding-right: $gutter-size;
         transition: $transition-btn;
+
+        &:last-child {
+          padding-right: 0;
+        }
 
         &:hover {
           color: darken($color-primary, 10%);

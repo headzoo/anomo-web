@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import AnimateHeight from 'react-animate-height';
 import enhanceWithClickOutside from 'react-click-outside';
-import { objects, connect, mapActionsToProps } from 'utils';
+import { objects, media, connect, mapActionsToProps } from 'utils';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
 import { ActivityPreviewCard } from 'lib/cards';
@@ -44,17 +44,36 @@ class PostForm extends React.PureComponent {
       emojiOpen:   false,
       focused:     false,
       charCount:   props.config.anomo.maxChars,
-      photoSource: ''
+      photoSource: '',
+      videoSource: '',
+      videoPoster: ''
     };
     this.photo = React.createRef();
+    this.video = React.createRef();
   }
 
   /**
    * @param {Event} e
    */
-  handleUploadClick = (e) => {
+  handlePhotoClick = (e) => {
+    const { videoSource } = this.state;
+
     e.preventDefault();
-    this.photo.current.click();
+    if (videoSource === '') {
+      this.photo.current.click();
+    }
+  };
+
+  /**
+   * @param {Event} e
+   */
+  handleVideoClick = (e) => {
+    const { photoSource } = this.state;
+
+    e.preventDefault();
+    if (photoSource === '') {
+      this.video.current.click();
+    }
   };
 
   /**
@@ -63,6 +82,7 @@ class PostForm extends React.PureComponent {
    */
   handleSubmit = (e, values) => {
     const { onSubmit } = this.props;
+    const { videoPoster } = this.state;
 
     if (values.photo) {
       const photo = this.photo.current.files()[0];
@@ -72,8 +92,22 @@ class PostForm extends React.PureComponent {
         values.photo = '';
       }
     }
+    if (values.video) {
+      const video = this.video.current.files()[0];
+      if (video) {
+        values.video = video;
+        values.photo = media.dataURItoBlob(videoPoster);
+      } else {
+        values.video = '';
+      }
+    }
 
-    this.setState({ focused: false, photoSource: '' });
+    this.setState({
+      focused:     false,
+      photoSource: '',
+      videoSource: '',
+      videoPoster: ''
+    });
     onSubmit(e, values);
   };
 
@@ -87,11 +121,20 @@ class PostForm extends React.PureComponent {
     const { maxChars } = config.anomo;
 
     if (name === 'photo') {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        this.setState({ focused: true, photoSource: event.target.result });
-      };
-      reader.readAsDataURL(this.photo.current.files()[0]);
+      const photoSource = window.URL.createObjectURL(this.photo.current.files()[0]);
+      this.setState({
+        focused: true,
+        photoSource
+      });
+    } else if (name === 'video') {
+      const videoSource = window.URL.createObjectURL(this.video.current.files()[0]);
+      media.getVideoImage(videoSource, -1, (videoPoster) => {
+        this.setState({
+          focused: true,
+          videoPoster,
+          videoSource
+        });
+      });
     } else if (name === 'message') {
       const charCount = maxChars - value.length;
       if (charCount < 1) {
@@ -144,15 +187,17 @@ class PostForm extends React.PureComponent {
    */
   render() {
     const { user, forms, name, comment, deviceSize, config, withUpload, withMobileForm } = this.props;
-    const { emojiOpen, photoSource, charCount, focused } = this.state;
+    const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
     const isXs = deviceSize === 'xs' && withMobileForm;
-    const placeholder = photoSource ? '' : '...';
+    const placeholder = (photoSource || videoSource) ? '' : '...';
     const previewActivity = objects.merge(user, {
-      FromUserName: user.UserName,
-      CreatedDate:  moment().format(''),
-      Image:        photoSource,
-      Message:      {
+      FromUserName:   user.UserName,
+      CreatedDate:    moment().format(''),
+      Image:          photoSource,
+      VideoURL:       videoSource,
+      VideoThumbnail: videoPoster,
+      Message:        {
         message:      forms[name].message || placeholder,
         message_tags: []
       }
@@ -173,8 +218,13 @@ class PostForm extends React.PureComponent {
                   <div className="card-form-post-upload">
                     <Icon
                       name="camera"
-                      title="Upload"
-                      onClick={this.handleUploadClick}
+                      title="Picture"
+                      onClick={this.handlePhotoClick}
+                    />
+                    <Icon
+                      name="video"
+                      title="Video"
+                      onClick={this.handleVideoClick}
                     />
                   </div>
                 )}
@@ -203,6 +253,14 @@ class PostForm extends React.PureComponent {
                     style={{ display: 'none' }}
                     accept={config.imageTypes}
                   />
+                  <Input
+                    type="file"
+                    name="video"
+                    ref={this.video}
+                    id="form-post-video"
+                    style={{ display: 'none' }}
+                    accept="video/*"
+                  />
                   {focused && (
                     <div className="card-form-post-message-char-count">
                       {charCount}
@@ -226,8 +284,11 @@ class PostForm extends React.PureComponent {
               )}
               {isXs && (
                 <div className="card-form-post-btn gutter-top">
-                  <Button disabled={forms[name].isSubmitting} onClick={this.handleUploadClick} block>
-                    Upload
+                  <Button disabled={forms[name].isSubmitting} onClick={this.handlePhotoClick} block>
+                    Add Picture
+                  </Button>
+                  <Button disabled={forms[name].isSubmitting} onClick={this.handleVideoClick} block>
+                    Add Video
                   </Button>
                 </div>
               )}

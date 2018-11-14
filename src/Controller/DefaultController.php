@@ -58,6 +58,19 @@ class DefaultController extends AbstractController
                     ]
                 ]
             ];
+
+            $video = $request->files->get('Video');
+            if ($video) {
+                $params['multipart'][] = [
+                    'name'     => 'Video',
+                    'filename' => $video->getClientOriginalName(),
+                    'contents' => fopen($video->getPathname(), 'r'),
+                    'headers'  => [
+                        'Content-Type' => $video->getClientMimeType()
+                    ]
+                ];
+            }
+
             foreach($post as $name => $contents) {
                 $params['multipart'][] = [
                     'name'     => $name,

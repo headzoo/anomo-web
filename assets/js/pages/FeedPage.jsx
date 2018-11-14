@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { browser, strings, connect, mapActionsToProps } from 'utils';
-import { Row, Column, ButtonGroup, Button, Badge } from 'lib/bootstrap';
+import { Row, Column, ButtonGroup, Badge } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, LinkButton, Number, withRouter } from 'lib';
 import routes from 'store/routes';
@@ -71,7 +71,7 @@ class FeedPage extends React.PureComponent {
     const { userSubmitStatus } = this.props;
 
     e.preventDefault();
-    userSubmitStatus('post', values.message, values.photo);
+    userSubmitStatus('post', values.message, values.photo, values.video);
   };
 
   /**

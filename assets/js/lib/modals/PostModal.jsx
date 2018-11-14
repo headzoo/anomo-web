@@ -46,7 +46,7 @@ class PostModal extends React.PureComponent {
     const { userSubmitStatus } = this.props;
 
     e.preventDefault();
-    userSubmitStatus('postModal', values.message, values.photo);
+    userSubmitStatus('postModal', values.message, values.photo, values.video);
   };
 
   /**
