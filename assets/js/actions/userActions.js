@@ -2,7 +2,7 @@ import md5 from 'md5';
 import { objects, browser } from 'utils';
 import { formReset, formError, formSuccess, formSubmitting } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFeedFetchAll } from 'actions/activityActions';
+import { activityFeedFetchAll, activityFeedFetch } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR            = 'USER_ERROR';
@@ -432,10 +432,9 @@ export function userSubmitStatus(formName, message, photo = '', video = '') {
 
     proxy.post(url, body)
       .then((resp) => {
-        console.log(resp);
         if (resp.code === 'OK') {
           dispatch(formReset(formName));
-          dispatch(activityFeedFetchAll(true));
+          dispatch(activityFeedFetch('recent', true, false));
         } else {
           dispatch(formError(formName, 'There was an error.'));
         }

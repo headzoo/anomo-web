@@ -329,6 +329,24 @@ function feedUpdate(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function feedPrepend(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const feed     = feeds[action.feedType];
+  const activity = anomo.activities.sanitizeActivity(action.activity);
+
+  feed.activities = feed.activities.unshift(activity);
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function set(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = anomo.activities.sanitizeActivity(action.activity);
@@ -453,6 +471,8 @@ export default function activityReducer(state = {}, action = {}) {
       return feedRefreshing(state, action);
     case types.ACTIVITY_FEED_UPDATE:
       return feedUpdate(state, action);
+    case types.ACTIVITY_FEED_PREPEND:
+      return feedPrepend(state, action);
     case types.ACTIVITY_LIKE:
       return like(state, action);
     case types.ACTIVITY_LIKE_COMMENT:

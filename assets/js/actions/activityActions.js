@@ -21,6 +21,7 @@ export const ACTIVITY_COMMENT_DELETE       = 'ACTIVITY_COMMENT_DELETE';
 export const ACTIVITY_POLL_SENDING         = 'ACTIVITY_POLL_SENDING';
 export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
 export const ACTIVITY_FEED_FETCH           = 'ACTIVITY_FEED_FETCH';
+export const ACTIVITY_FEED_PREPEND         = 'ACTIVITY_FEED_PREPEND';
 export const ACTIVITY_DELETE               = 'ACTIVITY_DELETE';
 export const ACTIVITY_DELETE_SENDING       = 'ACTIVITY_DELETE_SENDING';
 export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
@@ -169,13 +170,14 @@ export function activityIsFeedRefreshing(feedType, isRefreshing) {
 /**
  * @param {string} feedType
  * @param {boolean} refresh
+ * @param {boolean} buffered
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
-export function activityFeedFetch(feedType, refresh = false) {
+export function activityFeedFetch(feedType, refresh = false, buffered = true) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const { activity } = getState();
 
-    if (refresh && feedBuffers[feedType].length > 0) {
+    if (buffered && refresh && feedBuffers[feedType].length > 0) {
       const activities = objects.clone(feedBuffers[feedType]);
       feedBuffers[feedType] = [];
       dispatch({
@@ -241,6 +243,7 @@ export function activityFeedFetch(feedType, refresh = false) {
         }
       })
       .finally(() => {
+        feedBuffers[feedType] = [];
         feedFetchSources[feedType] = null;
         dispatch(activityIsFeedLoading(feedType, false));
         if (refresh) {
@@ -353,6 +356,19 @@ export function activityFeedFetchAllNewNumbers() {
     dispatch(activityFeedFetchNewNumber('recent'));
     // dispatch(activityFeedFetchNewNumber('popular'));
     dispatch(activityFeedFetchNewNumber('following'));
+  };
+}
+
+/**
+ * @param {string} feedType
+ * @param {*} activity
+ * @returns {{type: string, activity: *, feedType: *}}
+ */
+export function activityFeedPrepend(feedType, activity) {
+  return {
+    type: ACTIVITY_FEED_PREPEND,
+    activity,
+    feedType
   };
 }
 
