@@ -9,7 +9,7 @@ import { objects } from 'utils';
 function fetch(state, action) {
   return {
     ...state,
-    notifications: objects.clone(action.notifications),
+    notifications: objects.clone(action.notifications).reverse(),
     newNumber:     action.newNumber
   };
 }
