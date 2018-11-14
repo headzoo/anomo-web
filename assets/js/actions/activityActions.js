@@ -534,6 +534,22 @@ export function activityDeleteComment(commentID) {
 }
 
 /**
+ * @param {number} refID
+ * @param {string} actionType
+ * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ */
+export function activityCommentStopNotify(refID, actionType) {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    const url = endpoints.create('activityCommentStopNotify', {
+      token: user.getToken(),
+      actionType,
+      refID
+    });
+    proxy.get(url);
+  };
+}
+
+/**
  * @param {number} pollID
  * @param {number} answerID
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}

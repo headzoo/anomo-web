@@ -63,10 +63,10 @@ class CommentCard extends React.PureComponent {
    * @param {Event} e
    */
   handleMenuClick = (e) => {
-    const { comment, uiVisibleModal } = this.props;
+    const { comment, activity, uiVisibleModal } = this.props;
 
     e.preventDefault();
-    uiVisibleModal('comment', comment);
+    uiVisibleModal('comment', { comment, activity });
   };
 
   /**

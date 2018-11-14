@@ -11,12 +11,13 @@ import * as activityActions from 'actions/activityActions';
  */
 class CommentModal extends React.PureComponent {
   static propTypes = {
-    user:                  PropTypes.object.isRequired,
-    userFollow:            PropTypes.func.isRequired,
-    userBlock:             PropTypes.func.isRequired,
-    visibleModals:         PropTypes.object.isRequired,
-    uiVisibleModal:        PropTypes.func.isRequired,
-    activityDeleteComment: PropTypes.func.isRequired
+    user:                      PropTypes.object.isRequired,
+    userFollow:                PropTypes.func.isRequired,
+    userBlock:                 PropTypes.func.isRequired,
+    visibleModals:             PropTypes.object.isRequired,
+    uiVisibleModal:            PropTypes.func.isRequired,
+    activityDeleteComment:     PropTypes.func.isRequired,
+    activityCommentStopNotify: PropTypes.func.isRequired
   };
 
   /**
@@ -24,7 +25,8 @@ class CommentModal extends React.PureComponent {
    */
   isFollowing = () => {
     const { user, visibleModals } = this.props;
-    const { UserID } = visibleModals.comment;
+    const { comment } = visibleModals.comment;
+    const { UserID } = comment;
     const { following } = user;
 
     let found = false;
@@ -43,7 +45,8 @@ class CommentModal extends React.PureComponent {
    */
   isBlocked = () => {
     const { user, visibleModals } = this.props;
-    const { UserID } = visibleModals.comment;
+    const { comment } = visibleModals.comment;
+    const { UserID } = comment;
     const { blocked } = user;
 
     let found = false;
@@ -71,8 +74,15 @@ class CommentModal extends React.PureComponent {
    * @param {string} item
    */
   handleClick = (e, item) => {
-    const { visibleModals, uiVisibleModal, userFollow, userBlock, activityDeleteComment } = this.props;
-    const { comment } = visibleModals;
+    const {
+      userBlock,
+      userFollow,
+      visibleModals,
+      uiVisibleModal,
+      activityDeleteComment,
+      activityCommentStopNotify
+    } = this.props;
+    const { activity, comment } = visibleModals.comment;
 
     switch (item) {
       case 'follow':
@@ -85,7 +95,7 @@ class CommentModal extends React.PureComponent {
         activityDeleteComment(comment.ID);
         break;
       case 'notifications':
-        alert('Not implemented');
+        activityCommentStopNotify(activity.RefID, activity.ActionType);
         break;
     }
 
@@ -165,7 +175,7 @@ class CommentModal extends React.PureComponent {
    */
   render() {
     const { user, visibleModals, ...rest } = this.props;
-    const { comment } = visibleModals;
+    const { comment } = visibleModals.comment;
 
     if (!comment) {
       return null;
