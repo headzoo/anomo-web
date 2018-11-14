@@ -277,6 +277,8 @@ function feedFetch(state, action) {
 
   if (action.refresh) {
     feed.activities = newActivities;
+  } else if (action.prepend) {
+    feed.activities = newActivities.concat(objects.clone(feed.activities));
   } else {
     feed.activities = objects.clone(feed.activities).concat(newActivities);
   }

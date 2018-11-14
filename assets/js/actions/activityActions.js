@@ -27,16 +27,26 @@ export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
 export const ACTIVITY_REPORT               = 'ACTIVITY_REPORT';
 
 const { CancelToken } = axios;
+
+const feedBuffers = {
+  recent:    [],
+  popular:   [],
+  following: []
+};
+
 const feedFetchSources = {
   recent:    null,
   popular:   null,
   following: null
 };
+
 const feedFetchNewNumberSources = {
   recent:    null,
   popular:   null,
   following: null
 };
+
+const hiddenActionTypes = [constants.ACTION_TYPE_JOIN];
 
 /**
  * @returns {{type: string}}
@@ -165,15 +175,27 @@ export function activityFeedFetch(feedType, refresh = false) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const { activity } = getState();
 
-    if (feedFetchSources[feedType]) {
-      feedFetchSources[feedType].cancel();
+    if (refresh && feedBuffers[feedType].length > 0) {
+      const activities = objects.clone(feedBuffers[feedType]);
+      feedBuffers[feedType] = [];
+      dispatch({
+        type:    ACTIVITY_FEED_FETCH,
+        prepend: true,
+        activities,
+        feedType
+      });
+      return;
     }
-    feedFetchSources[feedType] = CancelToken.source();
 
     dispatch(activityIsFeedLoading(feedType, true));
     if (refresh) {
       dispatch(activityIsFeedRefreshing(feedType, true));
     }
+
+    if (feedFetchSources[feedType]) {
+      feedFetchSources[feedType].cancel();
+    }
+    feedFetchSources[feedType] = CancelToken.source();
 
     let url = '';
     const token = user.getToken();
@@ -293,16 +315,17 @@ export function activityFeedFetchNewNumber(feedType) {
     proxy.get(url, config)
       .then((data) => {
         if (data.code === 'OK') {
-          let newNumber = 0;
+          feedBuffers[feedType] = [];
           for (let i = 0; i < data.Activities.length; i++) {
-            if (data.Activities[i].ActionType !== constants.ACTION_TYPE_JOIN
+            if (hiddenActionTypes.indexOf(data.Activities[i].ActionType) === -1
               && data.Activities[i].ActivityID > firstActivityID) {
-              newNumber += 1;
+              feedBuffers[feedType].push(data.Activities[i]);
             }
           }
+
           dispatch({
-            type: ACTIVITY_FEED_NEW_NUMBER,
-            newNumber,
+            type:      ACTIVITY_FEED_NEW_NUMBER,
+            newNumber: feedBuffers[feedType].length,
             feedType
           });
           dispatch({
