@@ -49,6 +49,7 @@ class Poll extends React.PureComponent {
 
     onAnswer(e, checked);
     if (!e.defaultPrevented) {
+      e.preventDefault();
       this.setState({
         panel: 'results',
         checked
