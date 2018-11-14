@@ -50,17 +50,6 @@ class PostForm extends React.PureComponent {
   }
 
   /**
-   * @param {*} prevProps
-   */
-  componentDidUpdate = (prevProps) => {
-    const { forms, name } = this.props;
-
-    if (prevProps.forms[name].isSubmitting && !forms[name].isSubmitting) {
-      this.setState({ focused: false, photoSource: '' });
-    }
-  };
-
-  /**
    * @param {Event} e
    */
   handleUploadClick = (e) => {
@@ -84,6 +73,7 @@ class PostForm extends React.PureComponent {
       }
     }
 
+    this.setState({ focused: false, photoSource: '' });
     onSubmit(e, values);
   };
 
@@ -135,8 +125,9 @@ class PostForm extends React.PureComponent {
    */
   handleClickOutside = () => {
     const { forms, name } = this.props;
+    const { focused } = this.state;
 
-    if (!forms[name].message && !forms[name].photo) {
+    if (focused && !forms[name].message && !forms[name].photo) {
       this.setState({ focused: false });
     }
   };

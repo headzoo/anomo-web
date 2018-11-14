@@ -487,6 +487,7 @@ export function activitySubmitComment(formName, message, refID, actionType, topi
       'CreatedDate': moment().format(''),
       'Content':     message
     });
+    dispatch(formReset(formName));
     dispatch({
       type: ACTIVITY_COMMENT_PREPEND,
       comment
@@ -503,9 +504,7 @@ export function activitySubmitComment(formName, message, refID, actionType, topi
       'Content':     message,
       'IsAnonymous': isAnonymous
     }).then((resp) => {
-      if (resp.code === 'OK') {
-        dispatch(formReset(formName));
-      } else {
+      if (resp.code !== 'OK') {
         dispatch(formError(formName, 'There was an error.'));
       }
     }).finally(() => {
