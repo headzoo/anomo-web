@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import AnimateHeight from 'react-animate-height';
 import { objects, connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
@@ -165,6 +166,10 @@ class ActivityPage extends React.PureComponent {
   renderListList = () => {
     const { activity } = this.state;
 
+    if (!activity.LikeList) {
+      return null;
+    }
+
     return (
       <Card className="card-activity-like-list">
         <CardHeader>
@@ -218,13 +223,13 @@ class ActivityPage extends React.PureComponent {
         <TransitionGroup component={Row}>
           {this.renderComments()}
         </TransitionGroup>
-        {(activity.LikeList && activity.LikeList.length > 0) && (
+        <AnimateHeight duration={250} height={(activity.LikeList && activity.LikeList.length > 0) ? 'auto' : 0}>
           <Row>
             <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
               {this.renderListList()}
             </Column>
           </Row>
-        )}
+        </AnimateHeight>
       </Page>
     );
   }
