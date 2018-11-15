@@ -1,5 +1,5 @@
 import * as types from 'actions/profileActions';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 import anomo from 'anomo';
 
 /**
@@ -131,27 +131,12 @@ function postsReset(state) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function profileReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.PROFILE_SENDING:
-      return sending(state, action);
-    case types.PROFILE_POSTS_LOADING:
-      return postsLoading(state, action);
-    case types.PROFILE_FETCH:
-      return fetch(state, action);
-    case types.PROFILE_POSTS_FETCH:
-      return postsFetch(state, action);
-    case types.PROFILE_FOLLOWING:
-      return following(state, action);
-    case types.PROFILE_FOLLOWERS:
-      return followers(state, action);
-    case types.PROFILE_POSTS_RESET:
-      return postsReset(state);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.PROFILE_SENDING]:       sending,
+  [types.PROFILE_POSTS_LOADING]: postsLoading,
+  [types.PROFILE_FETCH]:         fetch,
+  [types.PROFILE_POSTS_FETCH]:   postsFetch,
+  [types.PROFILE_FOLLOWING]:     following,
+  [types.PROFILE_FOLLOWERS]:     followers,
+  [types.PROFILE_POSTS_RESET]:   postsReset
+});

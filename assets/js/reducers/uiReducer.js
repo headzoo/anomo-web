@@ -1,5 +1,5 @@
 import * as types from 'actions/uiActions';
-import objects from 'utils/objects';
+import { objects, redux } from 'utils';
 
 const BREAK_SM = 576;
 const BREAK_MD = 768;
@@ -94,25 +94,11 @@ function activeFeed(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function uiReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.UI_LOADING:
-      return loading(state, action);
-    case types.UI_ERROR_MESSAGE:
-      return errorMessage(state, action);
-    case types.UI_WINDOW_RESIZE:
-      return windowResize(state, action);
-    case types.UI_VISIBLE_MODAL:
-      return visibleModal(state, action);
-    case types.UI_VISIBLE_DRAWER:
-      return visibleDrawer(state, action);
-    case types.UI_ACTIVE_FEED:
-      return activeFeed(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.UI_LOADING]:        loading,
+  [types.UI_ACTIVE_FEED]:    activeFeed,
+  [types.UI_ERROR_MESSAGE]:  errorMessage,
+  [types.UI_WINDOW_RESIZE]:  windowResize,
+  [types.UI_VISIBLE_MODAL]:  visibleModal,
+  [types.UI_VISIBLE_DRAWER]: visibleDrawer
+});

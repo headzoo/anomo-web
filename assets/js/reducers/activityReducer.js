@@ -1,5 +1,5 @@
 import * as types from 'actions/activityActions';
-import { objects, feeds as feedUtils } from 'utils';
+import { objects, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
 
 /**
@@ -501,59 +501,28 @@ function deleteIsSending(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function activityReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.ACTIVITY_RESET:
-      return reset(state);
-    case types.ACTIVITY_SET:
-      return set(state, action);
-    case types.ACTIVITY_SUBMITTING:
-      return submitting(state, action);
-    case types.ACTIVITY_FEED_LOADING:
-      return feedLoading(state, action);
-    case types.ACTIVITY_FEED_REFRESHING:
-      return feedRefreshing(state, action);
-    case types.ACTIVITY_FEED_UPDATE:
-      return feedUpdate(state, action);
-    case types.ACTIVITY_FEED_PREPEND:
-      return feedPrepend(state, action);
-    case types.ACTIVITY_LIKE:
-      return like(state, action);
-    case types.ACTIVITY_LIKE_COMMENT:
-      return likeComment(state, action);
-    case types.ACTIVITY_LIKE_LOADING:
-      return likeLoading(state, action);
-    case types.ACTIVITY_LIKE_LIST_LOADING:
-      return likeListLoading(state, action);
-    case types.ACTIVITY_LIKE_LIST:
-      return likeList(state, action);
-    case types.ACTIVITY_LIKE_COMMENT_LOADING:
-      return likeCommentLoading(state, action);
-    case types.ACTIVITY_COMMENTS_LOADING:
-      return commentsLoading(state, action);
-    case types.ACTIVITY_COMMENT_SENDING:
-      return commentSending(state, action);
-    case types.ACTIVITY_COMMENT_PREPEND:
-      return commentPrepend(state, action);
-    case types.ACTIVITY_POLL_SENDING:
-      return pollSending(state, action);
-    case types.ACTIVITY_ACTIVITY_LOADING:
-      return activityLoading(state, action);
-    case types.ACTIVITY_FEED_NEW_NUMBER:
-      return feedNewNumber(state, action);
-    case types.ACTIVITY_FEED_FETCH:
-      return feedFetch(state, action);
-    case types.ACTIVITY_DELETE:
-      return deleteActivity(state, action);
-    case types.ACTIVITY_COMMENT_DELETE:
-      return deleteComment(state, action);
-    case types.ACTIVITY_DELETE_SENDING:
-      return deleteIsSending(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.ACTIVITY_RESET]:                reset,
+  [types.ACTIVITY_SET]:                  set,
+  [types.ACTIVITY_LIKE]:                 like,
+  [types.ACTIVITY_LIKE_LIST]:            likeList,
+  [types.ACTIVITY_DELETE]:               deleteActivity,
+  [types.ACTIVITY_COMMENT_DELETE]:       deleteComment,
+  [types.ACTIVITY_LIKE_COMMENT]:         likeComment,
+  [types.ACTIVITY_SUBMITTING]:           submitting,
+  [types.ACTIVITY_FEED_LOADING]:         feedLoading,
+  [types.ACTIVITY_FEED_REFRESHING]:      feedRefreshing,
+  [types.ACTIVITY_FEED_UPDATE]:          feedUpdate,
+  [types.ACTIVITY_FEED_PREPEND]:         feedPrepend,
+  [types.ACTIVITY_LIKE_LOADING]:         likeLoading,
+  [types.ACTIVITY_POLL_SENDING]:         pollSending,
+  [types.ACTIVITY_FEED_FETCH]:           feedFetch,
+  [types.ACTIVITY_FEED_NEW_NUMBER]:      feedNewNumber,
+  [types.ACTIVITY_ACTIVITY_LOADING]:     activityLoading,
+  [types.ACTIVITY_DELETE_SENDING]:       deleteIsSending,
+  [types.ACTIVITY_COMMENTS_LOADING]:     commentsLoading,
+  [types.ACTIVITY_COMMENT_SENDING]:      commentSending,
+  [types.ACTIVITY_COMMENT_PREPEND]:      commentPrepend,
+  [types.ACTIVITY_LIKE_LIST_LOADING]:    likeListLoading,
+  [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading
+});

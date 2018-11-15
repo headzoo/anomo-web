@@ -1,6 +1,6 @@
 import * as types from 'actions/userActions';
 import * as defaultState from 'store/defaultState';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 
 /**
  * @param {*} state
@@ -145,35 +145,16 @@ function searchResults(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function userReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.USER_ERROR:
-      return error(state, action);
-    case types.USER_SENDING:
-      return sending(state, action);
-    case types.USER_SETTINGS_SENDING:
-      return settingsSending(state, action);
-    case types.USER_SEARCH_SENDING:
-      return searchSending(state, action);
-    case types.USER_LOGIN:
-      return login(state, action);
-    case types.USER_LOGOUT:
-      return logout();
-    case types.USER_SET:
-      return set(state, action);
-    case types.USER_FOLLOWERS:
-      return followers(state, action);
-    case types.USER_FOLLOWING:
-      return following(state, action);
-    case types.USER_BLOCKED:
-      return blocked(state, action);
-    case types.USER_SEARCH_RESULTS:
-      return searchResults(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.USER_ERROR]:            error,
+  [types.USER_LOGIN]:            login,
+  [types.USER_LOGOUT]:           logout,
+  [types.USER_SET]:              set,
+  [types.USER_FOLLOWERS]:        followers,
+  [types.USER_FOLLOWING]:        following,
+  [types.USER_BLOCKED]:          blocked,
+  [types.USER_SENDING]:          sending,
+  [types.USER_SETTINGS_SENDING]: settingsSending,
+  [types.USER_SEARCH_SENDING]:   searchSending,
+  [types.USER_SEARCH_RESULTS]:   searchResults
+});

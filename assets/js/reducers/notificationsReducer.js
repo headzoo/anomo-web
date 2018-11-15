@@ -1,5 +1,5 @@
 import * as types from 'actions/notificationsActions';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 
 /**
  * @param {*} state
@@ -43,19 +43,8 @@ function readAll(state) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function notificationsReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.NOTIFICATIONS_FETCH:
-      return fetch(state, action);
-    case types.NOTIFICATIONS_READ:
-      return read(state, action);
-    case types.NOTIFICATIONS_READ_ALL:
-      return readAll(state);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.NOTIFICATIONS_FETCH]:    fetch,
+  [types.NOTIFICATIONS_READ]:     read,
+  [types.NOTIFICATIONS_READ_ALL]: readAll
+});
