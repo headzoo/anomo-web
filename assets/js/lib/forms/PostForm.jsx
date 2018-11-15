@@ -129,13 +129,14 @@ class PostForm extends React.PureComponent {
       });
     } else if (name === 'video') {
       const videoSource = window.URL.createObjectURL(this.video.current.files()[0]);
-      media.getVideoImage(videoSource, -1, (videoPoster) => {
-        this.setState({
-          focused: true,
-          videoPoster,
-          videoSource
+      media.getVideoImage(videoSource, -1)
+        .then((videoPoster) => {
+          this.setState({
+            focused: true,
+            videoPoster,
+            videoSource
+          });
         });
-      });
     } else if (name === 'message') {
       const charCount = maxChars - value.length;
       if (charCount < 1) {

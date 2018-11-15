@@ -2,32 +2,34 @@
  *
  * @param {string} src
  * @param {number} secs
- * @param {Function} cb
+ * @returns {Promise}
  */
-export function getVideoImage(src, secs, cb) {
-  const video = document.createElement('video');
+export function getVideoImage(src, secs) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
 
-  video.onloadedmetadata = () => {
-    if (secs === -1) {
-      secs = Math.round(video.duration / 2);
-    }
-    video.currentTime = Math.min(Math.max(0, (secs < 0 ? video.duration : 0) + secs), video.duration);
-  };
+    video.onloadedmetadata = () => {
+      if (secs === -1) {
+        secs = Math.round(video.duration / 2);
+      }
+      video.currentTime = Math.min(Math.max(0, (secs < 0 ? video.duration : 0) + secs), video.duration);
+    };
 
-  video.onseeked = () => {
-    const canvas  = document.createElement('canvas');
-    canvas.height = video.videoHeight;
-    canvas.width  = video.videoWidth;
-    const ctx     = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    cb(canvas.toDataURL());
-  };
+    video.onseeked = () => {
+      const canvas  = document.createElement('canvas');
+      canvas.height = video.videoHeight;
+      canvas.width  = video.videoWidth;
+      const ctx     = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL());
+    };
 
-  video.onerror = () => {
-    cb('');
-  };
+    video.onerror = (e) => {
+      reject(e);
+    };
 
-  video.src = src;
+    video.src = src;
+  });
 }
 
 /**
@@ -52,7 +54,26 @@ export function dataURItoBlob(dataURI) {
   });
 }
 
+/**
+ * @param {string} src
+ * @returns {Promise}
+ */
+export function getImageDimensions(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      resolve({
+        width:  img.width,
+        height: img.height,
+        src
+      });
+    };
+    img.src = src;
+  });
+}
+
 export default {
   getVideoImage,
-  dataURItoBlob
+  dataURItoBlob,
+  getImageDimensions
 };

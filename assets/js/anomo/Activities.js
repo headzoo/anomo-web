@@ -52,11 +52,9 @@ class Activities {
     if (!a.LikeList) {
       a.LikeList = [];
     }
-
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
-
     if (a.ListComment) {
       a.ListComment = a.ListComment.map((comment) => {
         comment.Content         = this.unescapeUnicode(comment.Content);
