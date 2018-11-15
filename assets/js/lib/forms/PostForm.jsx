@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import classNames from 'classnames';
 import AnimateHeight from 'react-animate-height';
 import enhanceWithClickOutside from 'react-click-outside';
 import { objects, media, connect, mapActionsToProps } from 'utils';
@@ -202,6 +203,10 @@ class PostForm extends React.PureComponent {
         message_tags: []
       }
     });
+    const charCountClasses = classNames('card-form-post-message-char-count', {
+      'text-warning': (charCount < 100 && charCount > 50),
+      'text-danger':  (charCount < 51)
+    });
 
     return (
       <div>
@@ -262,7 +267,7 @@ class PostForm extends React.PureComponent {
                     accept="video/*"
                   />
                   {focused && (
-                    <div className="card-form-post-message-char-count">
+                    <div className={charCountClasses}>
                       {charCount}
                     </div>
                   )}
