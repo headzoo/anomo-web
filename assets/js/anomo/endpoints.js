@@ -29,6 +29,7 @@ const urls = {
   activityGet:               `${base}/activity/detail/{token}/{refID}/{actionType}`,
   activityDelete:            `${base}/user/delete_activity/{token}/{activityID}`,
   activityLike:              `${base}/activity/like/{token}/{refID}/{actionType}/false`,
+  activityLikeList:          `${base}/activity/likelist/{token}/{refID}/{actionType}`,
   activityComment:           `${base}/activity/comment/{token}/{refID}/{actionType}`,
   activityCommentLike:       `${base}/comment/like/{token}/{commentID}/1`,
   activityCommentDelete:     `${base}/comment/delete/{token}/{commentID}`,

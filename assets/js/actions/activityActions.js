@@ -14,6 +14,8 @@ export const ACTIVITY_FEED_REFRESHING      = 'ACTIVITY_FEED_REFRESHING';
 export const ACTIVITY_LIKE                 = 'ACTIVITY_LIKE';
 export const ACTIVITY_LIKE_COMMENT         = 'ACTIVITY_LIKE_COMMENT';
 export const ACTIVITY_LIKE_LOADING         = 'ACTIVITY_LIKE_LOADING';
+export const ACTIVITY_LIKE_LIST            = 'ACTIVITY_LIKE_LIST';
+export const ACTIVITY_LIKE_LIST_LOADING    = 'ACTIVITY_LIKE_LIST_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
@@ -69,6 +71,17 @@ export function activityIsLikeLoading(isLoading, refID) {
     type: ACTIVITY_LIKE_LOADING,
     isLoading,
     refID
+  };
+}
+
+/**
+ * @param {boolean} isLikeListLoading
+ * @returns {{type: string, isLikeListLoading: *}}
+ */
+export function activityIsLikeListLoading(isLikeListLoading) {
+  return {
+    type: ACTIVITY_LIKE_LIST_LOADING,
+    isLikeListLoading
   };
 }
 
@@ -441,6 +454,37 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         }
       }).finally(() => {
         dispatch(activityIsSubmitting(false));
+      });
+  };
+}
+
+/**
+ * @param {number} refID
+ * @param {number} actionType
+ * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ */
+export function activityLikeList(refID, actionType) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(activityIsLikeListLoading(true));
+
+    const url = endpoints.create('activityLikeList', {
+      token: user.getToken(),
+      actionType,
+      refID
+    });
+    proxy.get(url)
+      .then((data) => {
+        if (data.code === 'OK') {
+          dispatch({
+            type:  ACTIVITY_LIKE_LIST,
+            likes: data.likes || [],
+            actionType,
+            refID
+          });
+        }
+      })
+      .finally(() => {
+        dispatch(activityIsLikeListLoading(false));
       });
   };
 }

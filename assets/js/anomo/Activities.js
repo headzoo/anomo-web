@@ -49,6 +49,10 @@ class Activities {
     a.DeleteIsSending = false;
     a.LikeIsLoading   = false;
 
+    if (!a.ListList) {
+      a.LikeList = [];
+    }
+
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }

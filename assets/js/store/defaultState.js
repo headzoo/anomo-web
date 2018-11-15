@@ -137,6 +137,7 @@ export const defaultActivity = {
   isRefreshing:      false,
   isCommentsLoading: false,
   isCommentSending:  false,
+  isLikeListLoading: false,
   isPollSending:     false
 };
 

@@ -76,6 +76,18 @@ function likeLoading(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function likeListLoading(state, action) {
+  return {
+    ...state,
+    isLikeListLoading: action.isLikeListLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function likeCommentLoading(state, action) {
   const activity = objects.clone(state.activity);
 
@@ -236,6 +248,29 @@ function likeComment(state, action) {
         }
       }
     }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeList(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    activity.LikeList = action.likes;
+  }
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    a.LikeList = action.likes;
   });
 
   return {
@@ -493,6 +528,10 @@ export default function activityReducer(state = {}, action = {}) {
       return likeComment(state, action);
     case types.ACTIVITY_LIKE_LOADING:
       return likeLoading(state, action);
+    case types.ACTIVITY_LIKE_LIST_LOADING:
+      return likeListLoading(state, action);
+    case types.ACTIVITY_LIKE_LIST:
+      return likeList(state, action);
     case types.ACTIVITY_LIKE_COMMENT_LOADING:
       return likeCommentLoading(state, action);
     case types.ACTIVITY_COMMENTS_LOADING:

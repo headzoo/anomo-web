@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { objects, connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
-import { Row, Column } from 'lib/bootstrap';
+import { Row, Column, Card, CardHeader, CardBody, CardText } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
-import { Page, Loading, withRouter } from 'lib';
+import { Page, Loading, Avatar, Link, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
@@ -15,17 +15,22 @@ import * as activityActions from 'actions/activityActions';
 class ActivityPage extends React.PureComponent {
   static propTypes = {
     activity:                  PropTypes.object.isRequired,
+    isActivityLoading:         PropTypes.bool,
+    isCommentsLoading:         PropTypes.bool.isRequired,
     match:                     PropTypes.object.isRequired,
     history:                   PropTypes.object.isRequired,
     location:                  PropTypes.object.isRequired,
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
+    activityLikeList:          PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
     activityIsCommentsLoading: PropTypes.func.isRequired,
     activityIsActivityLoading: PropTypes.func.isRequired,
   };
 
-  static defaultProps = {};
+  static defaultProps = {
+    isActivityLoading: false
+  };
 
   /**
    * @param {*} props
@@ -41,7 +46,7 @@ class ActivityPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { location, match, activityGet, activityIsCommentsLoading } = this.props;
+    const { location, match, activityGet, activityLikeList, activityIsCommentsLoading } = this.props;
     const { state } = location;
 
     if (state && state.activity) {
@@ -50,29 +55,29 @@ class ActivityPage extends React.PureComponent {
       }
       this.setState({ activity: state.activity }, () => {
         activityGet(match.params.refID, match.params.actionType);
+        activityLikeList(match.params.refID, match.params.actionType);
       });
     } else {
       activityIsCommentsLoading(true);
       activityGet(match.params.refID, match.params.actionType);
+      activityLikeList(match.params.refID, match.params.actionType);
     }
   };
 
   /**
    * @param {*} prevProps
-   * @param {*} prevState
    */
-  componentDidUpdate = (prevProps, prevState) => {
+  componentDidUpdate = (prevProps) => {
     const {
       match,
       location,
       history,
       activityGet,
       activityReset,
+      activityLikeList,
       activityIsActivityLoading,
       activityIsCommentsLoading
     } = this.props;
-
-    const { activity } = this.state;
     const { state } = location;
 
     if (match.params.refID !== prevProps.match.params.refID) {
@@ -82,24 +87,24 @@ class ActivityPage extends React.PureComponent {
         }
         this.setState({ activity: state.activity }, () => {
           activityGet(match.params.refID, match.params.actionType);
+          activityLikeList(match.params.refID, match.params.actionType);
         });
       } else {
         activityReset();
         activityIsActivityLoading(true);
         activityGet(match.params.refID, match.params.actionType);
+        activityLikeList(match.params.refID, match.params.actionType);
       }
       return;
     }
 
-    if (this.props.activity.activity.IsDeleted) {
+    if (this.props.activity.IsDeleted) {
       history.push(routes.route('home'));
       return;
     }
 
-    if (!objects.isEmpty(this.props.activity.activity)
-      && !objects.isEqual(this.props.activity.activity, activity)
-      && objects.isEqual(prevState.activity, activity)) {
-      this.setState({ activity: this.props.activity.activity });
+    if (!objects.isEqual(this.props.activity, prevProps.activity)) {
+      this.setState({ activity: this.props.activity });
     }
   };
 
@@ -125,13 +130,14 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderComments = () => {
+    const { isCommentsLoading } = this.props;
     const { activity } = this.state;
 
     if (!objects.isEmpty(activity) && !activity.ListComment) {
       activity.ListComment = [];
     }
 
-    if (this.props.activity.isCommentsLoading) {
+    if (isCommentsLoading) {
       return (
         <FadeAndSlideTransition key={0} duration={150}>
           <Column className="text-center" md={4} offsetMd={4} xs={12}>
@@ -156,10 +162,40 @@ class ActivityPage extends React.PureComponent {
   /**
    * @returns {*}
    */
-  render() {
+  renderListList = () => {
     const { activity } = this.state;
 
-    if (this.props.activity.isActivityLoading) {
+    return (
+      <Card className="card-activity-like-list">
+        <CardHeader>
+          Liked By
+        </CardHeader>
+        <CardBody>
+          <CardText>
+            <ul className="list-group">
+              {activity.LikeList.map(u => (
+                <li key={u.UserID} className="list-group-item">
+                  <Link name="profile" params={{ id: u.UserID }}>
+                    <Avatar src={u.Avatar} />
+                    {u.UserName}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </CardText>
+        </CardBody>
+      </Card>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  render() {
+    const { isActivityLoading } = this.props;
+    const { activity } = this.state;
+
+    if (isActivityLoading) {
       return <Loading middle />;
     }
 
@@ -182,12 +218,27 @@ class ActivityPage extends React.PureComponent {
         <TransitionGroup component={Row}>
           {this.renderComments()}
         </TransitionGroup>
+        {(activity.LikeList && activity.LikeList.length > 0) && (
+          <Row>
+            <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
+              {this.renderListList()}
+            </Column>
+          </Row>
+        )}
       </Page>
     );
   }
 }
 
+const mapStateToProps = state => (
+  {
+    activity:          state.activity.activity,
+    isActivityLoading: state.activity.isActivityLoading,
+    isCommentsLoading: state.activity.isCommentsLoading
+  }
+);
+
 export default connect(
-  mapStateToProps('activity'),
+  mapStateToProps,
   mapActionsToProps(activityActions)
 )(withRouter(ActivityPage));

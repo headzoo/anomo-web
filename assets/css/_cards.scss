@@ -215,6 +215,36 @@
   margin-bottom: 0;
 }
 
+.card-activity-like-list {
+  h4 {
+    font-size: 1rem;
+  }
+
+  a {
+    color: #000;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .list-group {
+    display: block;
+  }
+
+  .list-group-item {
+    width: 50%;
+    border: 0;
+    float: left;
+    display: inline;
+  }
+
+  .avatar {
+    height: 30px;
+    margin-right: $gutter-size;
+  }
+}
+
 .card-form-post {
   .card {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5);

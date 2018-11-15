@@ -106,51 +106,6 @@ class ActivityCard extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderBody = () => {
-    const { activity } = this.props;
-
-    if (objects.isEmpty(activity) || activity.isLoading) {
-      return (
-        <CardBody>
-          <CardText>
-            <Shimmer className="card-activity-shimmer" />
-            <Shimmer className="card-activity-shimmer-short" />
-          </CardText>
-        </CardBody>
-      );
-    }
-
-    return (
-      <CardBody onClick={this.handleBodyClick}>
-        <CardText>
-          {(activity.Message && activity.Message.message) && (
-            <Message text={activity.Message.message} tags={activity.Message.message_tags} />
-          )}
-          {activity.Poll && (
-            <Poll poll={activity.Poll} onAnswer={this.handlePollAnswer} />
-          )}
-          {activity.Image && (
-            <Image
-              data={{ src: activity.Image, alt: 'Image' }}
-              onClick={this.handleImageClick}
-            />
-          )}
-          {activity.VideoID && (
-            <YouTube
-              videoId={activity.VideoID}
-            />
-          )}
-          {activity.VideoURL && (
-            <Video source={activity.VideoURL} poster={activity.VideoThumbnail} />
-          )}
-        </CardText>
-      </CardBody>
-    );
-  };
-
-  /**
-   * @returns {*}
-   */
   render() {
     const { activity, followingUserNames, className } = this.props;
 
