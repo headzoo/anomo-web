@@ -508,22 +508,30 @@ export function activitySet(activity) {
 export function activityGet(refID, actionType) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     dispatch(activityReset());
+    dispatch(activityIsLikeListLoading(true));
 
-    const url = endpoints.create('activityGet', {
+    const urlGet = endpoints.create('activityGet', {
       token: user.getToken(),
       actionType,
       refID
     });
-    proxy.get(url)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(activitySet(data.Activity));
-          dispatch(activityLikeList(refID, actionType));
-        }
+    const urlLikes = endpoints.create('activityLikeList', {
+      token: user.getToken(),
+      actionType,
+      refID
+    });
+
+    const promises = [proxy.get(urlGet), proxy.get(urlLikes)];
+    Promise.all(promises)
+      .then((responses) => {
+        const activity    = responses[0].Activity;
+        activity.LikeList = responses[1].likes;
+        dispatch(activitySet(activity));
       })
       .finally(() => {
         dispatch(activityIsActivityLoading(false));
         dispatch(activityIsCommentsLoading(false));
+        dispatch(activityIsLikeListLoading(false));
       });
   };
 }

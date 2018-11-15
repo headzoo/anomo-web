@@ -49,7 +49,7 @@ class Activities {
     a.DeleteIsSending = false;
     a.LikeIsLoading   = false;
 
-    if (!a.ListList) {
+    if (!a.LikeList) {
       a.LikeList = [];
     }
 
