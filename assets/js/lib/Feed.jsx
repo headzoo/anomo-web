@@ -42,7 +42,7 @@ class Feed extends React.PureComponent {
         <TransitionGroup component={Row}>
           {activities.map(a => (
             (!a.IsDeleted && a.ActionType !== constants.ACTION_TYPE_JOIN) ? (
-              <FadeAndSlideTransition key={a.ActivityID} duration={150}>
+              <FadeAndSlideTransition key={a.ActivityID} duration={250}>
                 <Column sm={isPics ? 6 : 12}>
                   {isPics ? (
                     <ImageCard activity={a} />
