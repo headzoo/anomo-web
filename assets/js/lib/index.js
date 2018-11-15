@@ -32,3 +32,4 @@ export { default as GifPlayer } from './GifPlayer';
 export { default as Video } from './Video';
 export { default as Age } from './Age';
 export { default as Neighborhood } from './Neighborhood';
+export { default as UserBadge } from './UserBadge';

@@ -6,7 +6,7 @@ import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { Row, Column, Card, CardHeader, CardBody, CardText } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
-import { Page, Loading, Avatar, Link, withRouter } from 'lib';
+import { Page, Loading, UserBadge, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 
@@ -174,10 +174,7 @@ class ActivityPage extends React.PureComponent {
             <ul className="list-group">
               {activity.LikeList.map(u => (
                 <li key={u.UserID} className="list-group-item">
-                  <Link name="profile" params={{ id: u.UserID }}>
-                    <Avatar src={u.Avatar} />
-                    {u.UserName}
-                  </Link>
+                  <UserBadge user={u} />
                 </li>
               ))}
             </ul>

@@ -216,14 +216,6 @@
 }
 
 .card-activity-like-list {
-  a {
-    color: #000;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-
   .list-group {
     display: block;
   }
@@ -233,11 +225,6 @@
     border: 0;
     float: left;
     display: inline;
-  }
-
-  .avatar {
-    height: 30px;
-    margin-right: $gutter-size;
   }
 }
 
