@@ -23,7 +23,6 @@ class ActivityPage extends React.PureComponent {
     location:                  PropTypes.object.isRequired,
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
-    activityLikeList:          PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
     activityIsCommentsLoading: PropTypes.func.isRequired,
     activityIsActivityLoading: PropTypes.func.isRequired,
@@ -47,7 +46,7 @@ class ActivityPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { location, match, activityGet, activityLikeList, activityIsCommentsLoading } = this.props;
+    const { location, match, activityGet, activityIsCommentsLoading } = this.props;
     const { state } = location;
 
     if (state && state.activity) {
@@ -56,12 +55,10 @@ class ActivityPage extends React.PureComponent {
       }
       this.setState({ activity: state.activity }, () => {
         activityGet(match.params.refID, match.params.actionType);
-        activityLikeList(match.params.refID, match.params.actionType);
       });
     } else {
       activityIsCommentsLoading(true);
       activityGet(match.params.refID, match.params.actionType);
-      activityLikeList(match.params.refID, match.params.actionType);
     }
   };
 
@@ -75,7 +72,6 @@ class ActivityPage extends React.PureComponent {
       history,
       activityGet,
       activityReset,
-      activityLikeList,
       activityIsActivityLoading,
       activityIsCommentsLoading
     } = this.props;
@@ -88,13 +84,11 @@ class ActivityPage extends React.PureComponent {
         }
         this.setState({ activity: state.activity }, () => {
           activityGet(match.params.refID, match.params.actionType);
-          activityLikeList(match.params.refID, match.params.actionType);
         });
       } else {
         activityReset();
         activityIsActivityLoading(true);
         activityGet(match.params.refID, match.params.actionType);
-        activityLikeList(match.params.refID, match.params.actionType);
       }
       return;
     }
@@ -104,7 +98,7 @@ class ActivityPage extends React.PureComponent {
       return;
     }
 
-    if (!objects.isEqual(this.props.activity, prevProps.activity)) {
+    if (!objects.isEmpty(this.props.activity) && !objects.isEqual(this.props.activity, prevProps.activity)) {
       this.setState({ activity: this.props.activity });
     }
   };

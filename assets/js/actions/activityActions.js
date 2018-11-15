@@ -518,6 +518,7 @@ export function activityGet(refID, actionType) {
       .then((data) => {
         if (data.code === 'OK') {
           dispatch(activitySet(data.Activity));
+          dispatch(activityLikeList(refID, actionType));
         }
       })
       .finally(() => {
