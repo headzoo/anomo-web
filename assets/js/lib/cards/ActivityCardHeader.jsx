@@ -44,7 +44,7 @@ class ActivityCardHeader extends React.PureComponent {
             <Avatar
               src={activity.Avatar}
               following={isFollowing}
-              sm
+              md
             />
           )}
         </div>
