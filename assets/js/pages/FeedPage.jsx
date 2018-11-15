@@ -6,7 +6,6 @@ import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, LinkButton, Number, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
-import * as userActions from 'actions/userActions';
 import * as activityActions from 'actions/activityActions';
 
 /**
@@ -21,7 +20,7 @@ class FeedPage extends React.PureComponent {
     location:          PropTypes.object.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
-    userSubmitStatus:  PropTypes.func.isRequired
+    activitySubmit:    PropTypes.func.isRequired
   };
 
   /**
@@ -68,10 +67,10 @@ class FeedPage extends React.PureComponent {
    * @param {*} values
    */
   handlePostSubmit = (e, values) => {
-    const { userSubmitStatus } = this.props;
+    const { activitySubmit } = this.props;
 
     e.preventDefault();
-    userSubmitStatus('post', values.message, values.photo, values.video);
+    activitySubmit('post', values.message, values.photo, values.video);
   };
 
   /**
@@ -192,5 +191,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  mapActionsToProps(uiActions, activityActions, userActions)
+  mapActionsToProps(uiActions, activityActions)
 )(withRouter(FeedPage));

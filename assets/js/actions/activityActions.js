@@ -6,6 +6,7 @@ import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
+export const ACTIVITY_SUBMITTING           = 'ACTIVITY_SUBMITTING';
 export const ACTIVITY_ACTIVITY_LOADING     = 'ACTIVITY_ACTIVITY_LOADING';
 export const ACTIVITY_FEED_LOADING         = 'ACTIVITY_FEED_LOADING';
 export const ACTIVITY_FEED_UPDATE          = 'ACTIVITY_FEED_UPDATE';
@@ -116,6 +117,18 @@ export function activityIsCommentSending(isCommentSending) {
     isCommentSending
   };
 }
+
+/**
+ * @param {boolean} isSubmitting
+ * @returns {{type, isSending: *}}
+ */
+export function activityIsSubmitting(isSubmitting) {
+  return {
+    type: ACTIVITY_SUBMITTING,
+    isSubmitting
+  };
+}
+
 
 /**
  * @param {boolean} isPollSending
@@ -369,6 +382,66 @@ export function activityFeedPrepend(feedType, activity) {
     type: ACTIVITY_FEED_PREPEND,
     activity,
     feedType
+  };
+}
+
+/**
+ * @param {string} formName
+ * @param {string} message
+ * @param {*} photo
+ * @param {*} video
+ * @returns {function(*, *, {endpoints: *})}
+ */
+export function activitySubmit(formName, message, photo = '', video = '') {
+  return (dispatch, getState, { user, proxy, endpoints }) => {
+    dispatch(activityIsSubmitting(true));
+    dispatch(formSubmitting(formName, true));
+
+    let url  = '';
+    let body = {};
+    if (photo || video) {
+      url = endpoints.create('userPicture', {
+        token: user.getToken()
+      });
+      body = new FormData();
+      body.append('PictureCaption', JSON.stringify({
+        message,
+        message_tags: []
+      }));
+
+      if (video) {
+        body.append('Photo', photo, 'poster.png');
+        body.append('Video', video);
+      } else {
+        body.append('Photo', photo);
+      }
+    } else {
+      if (message === '') {
+        dispatch(formError(formName, 'There was an error.'));
+        return;
+      }
+
+      url = endpoints.create('userStatus', {
+        token: user.getToken()
+      });
+      body = {
+        'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
+        'IsAnonymous':   0,
+        'TopicID':       1
+      };
+    }
+
+    proxy.post(url, body)
+      .then((resp) => {
+        if (resp.code === 'OK') {
+          dispatch(formReset(formName));
+          dispatch(activityFeedFetch('recent', true, false));
+        } else {
+          dispatch(formError(formName, 'There was an error.'));
+        }
+      }).finally(() => {
+        dispatch(activityIsSubmitting(false));
+      });
   };
 }
 

@@ -41,6 +41,18 @@ function feedRefreshing(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function submitting(state, action) {
+  return {
+    ...state,
+    isSubmitting: action.isSubmitting
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function likeLoading(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
@@ -271,7 +283,7 @@ function feedFetch(state, action) {
   const feeds = objects.clone(state.feeds);
   const feed  = feeds[action.feedType];
 
-  const newActivities = action.activities.slice(0).map((a) => {
+  const newActivities = action.activities.map((a) => {
     return anomo.activities.sanitizeActivity(a);
   });
 
@@ -465,6 +477,8 @@ export default function activityReducer(state = {}, action = {}) {
       return reset(state);
     case types.ACTIVITY_SET:
       return set(state, action);
+    case types.ACTIVITY_SUBMITTING:
+      return submitting(state, action);
     case types.ACTIVITY_FEED_LOADING:
       return feedLoading(state, action);
     case types.ACTIVITY_FEED_REFRESHING:

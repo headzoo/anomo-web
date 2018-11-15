@@ -84,7 +84,6 @@ export const defaultUser = {
   searchResults:     [],
   isAuthenticated:   false,
   isSending:         false,
-  isStatusSending:   false,
   isSettingsSending: false,
   isSearchSending:   false,
   errorMessage:      ''
@@ -134,6 +133,7 @@ export const defaultActivity = {
   },
   activity:          {},
   isLoading:         false,
+  isSubmitting:      false,
   isRefreshing:      false,
   isCommentsLoading: false,
   isCommentSending:  false,

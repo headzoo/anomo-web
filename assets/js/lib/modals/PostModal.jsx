@@ -4,16 +4,16 @@ import { objects, connect, mapActionsToProps } from 'utils';
 import { Modal } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import * as uiActions from 'actions/uiActions';
-import * as userActions from 'actions/userActions';
+import * as activityActions from 'actions/activityActions';
 
 /**
  *
  */
 class PostModal extends React.PureComponent {
   static propTypes = {
-    isStatusSending:  PropTypes.bool.isRequired,
-    uiVisibleModal:   PropTypes.func.isRequired,
-    userSubmitStatus: PropTypes.func.isRequired
+    isSubmitting:   PropTypes.bool.isRequired,
+    uiVisibleModal: PropTypes.func.isRequired,
+    activitySubmit: PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -22,9 +22,9 @@ class PostModal extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { isStatusSending, uiVisibleModal } = this.props;
+    const { isSubmitting, uiVisibleModal } = this.props;
 
-    if (prevProps.isStatusSending && !isStatusSending) {
+    if (prevProps.isSubmitting && !isSubmitting) {
       uiVisibleModal('post', false);
     }
   };
@@ -43,10 +43,10 @@ class PostModal extends React.PureComponent {
    * @param {*} values
    */
   handleSubmit = (e, values) => {
-    const { userSubmitStatus } = this.props;
+    const { activitySubmit } = this.props;
 
     e.preventDefault();
-    userSubmitStatus('postModal', values.message, values.photo, values.video);
+    activitySubmit('postModal', values.message, values.photo, values.video);
   };
 
   /**
@@ -61,7 +61,7 @@ class PostModal extends React.PureComponent {
         centered={false}
         className="modal-post"
         onClosed={this.handleClose}
-        {...objects.propsFilter(rest, PostModal.propTypes, uiActions, userActions)}
+        {...objects.propsFilter(rest, PostModal.propTypes, uiActions, activityActions)}
       >
         <PostForm
           name="postModal"
@@ -76,11 +76,11 @@ class PostModal extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    isStatusSending: state.user.isStatusSending
+    isSubmitting: state.activity.isSubmitting
   }
 );
 
 export default connect(
   mapStateToProps,
-  mapActionsToProps(uiActions, userActions)
+  mapActionsToProps(uiActions, activityActions)
 )(PostModal);

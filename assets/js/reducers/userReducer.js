@@ -31,18 +31,6 @@ function sending(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function statusSending(state, action) {
-  return {
-    ...state,
-    isStatusSending: action.isStatusSending
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
 function settingsSending(state, action) {
   return {
     ...state,
@@ -168,8 +156,6 @@ export default function userReducer(state = {}, action = {}) {
       return error(state, action);
     case types.USER_SENDING:
       return sending(state, action);
-    case types.USER_STATUS_SENDING:
-      return statusSending(state, action);
     case types.USER_SETTINGS_SENDING:
       return settingsSending(state, action);
     case types.USER_SEARCH_SENDING:

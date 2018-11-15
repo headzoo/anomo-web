@@ -1,13 +1,12 @@
 import md5 from 'md5';
 import { objects, browser } from 'utils';
-import { formReset, formError, formSuccess, formSubmitting } from 'actions/formActions';
+import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFeedFetchAll, activityFeedFetch } from 'actions/activityActions';
+import { activityFeedFetchAll } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR            = 'USER_ERROR';
 export const USER_SENDING          = 'USER_SENDING';
-export const USER_STATUS_SENDING   = 'USER_STATUS_SENDING';
 export const USER_SETTINGS_SENDING = 'USER_SETTINGS_SENDING';
 export const USER_SEARCH_SENDING   = 'USER_SEARCH_SENDING';
 export const USER_LOGIN            = 'USER_LOGIN';
@@ -37,17 +36,6 @@ export function userIsSending(isSending) {
   return {
     type: USER_SENDING,
     isSending
-  };
-}
-
-/**
- * @param {boolean} isStatusSending
- * @returns {{type, isSending: *}}
- */
-export function userIsStatusSending(isStatusSending) {
-  return {
-    type: USER_STATUS_SENDING,
-    isStatusSending
   };
 }
 
@@ -376,70 +364,6 @@ export function userUpdatePrivacy(values) {
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
-      });
-  };
-}
-
-/**
- * @param {string} formName
- * @param {string} message
- * @param {*} photo
- * @param {*} video
- * @returns {function(*, *, {endpoints: *})}
- */
-export function userSubmitStatus(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
-    dispatch(userIsStatusSending(true));
-    dispatch(formSubmitting(formName, true));
-/*    setTimeout(() => {
-      dispatch(formReset(formName));
-      dispatch(userIsStatusSending(false));
-    });*/
-
-    let url  = '';
-    let body = {};
-    if (photo || video) {
-      url = endpoints.create('userPicture', {
-        token: user.getToken()
-      });
-      body = new FormData();
-      body.append('PictureCaption', JSON.stringify({
-        message,
-        message_tags: []
-      }));
-
-      if (video) {
-        body.append('Photo', photo, 'poster.png');
-        body.append('Video', video);
-      } else {
-        body.append('Photo', photo);
-      }
-    } else {
-      if (message === '') {
-        dispatch(formError(formName, 'There was an error.'));
-        return;
-      }
-
-      url = endpoints.create('userStatus', {
-        token: user.getToken()
-      });
-      body = {
-        'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
-        'IsAnonymous':   0,
-        'TopicID':       1
-      };
-    }
-
-    proxy.post(url, body)
-      .then((resp) => {
-        if (resp.code === 'OK') {
-          dispatch(formReset(formName));
-          dispatch(activityFeedFetch('recent', true, false));
-        } else {
-          dispatch(formError(formName, 'There was an error.'));
-        }
-      }).finally(() => {
-        dispatch(userIsStatusSending(false));
       });
   };
 }
