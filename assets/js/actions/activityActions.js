@@ -200,7 +200,7 @@ export function activityIsFeedRefreshing(feedType, isRefreshing) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityFeedFetch(feedType, refresh = false, buffered = true) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const { activity } = getState();
 
     if (buffered && refresh && feedBuffers[feedType].length > 0) {
@@ -226,24 +226,20 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
     feedFetchSources[feedType] = CancelToken.source();
 
     let url = '';
-    const token = user.getToken();
     switch (feedType) {
       case 'recent':
         url = endpoints.create('activityFeedRecent', {
-          lastActivityID: refresh ? 0 : activity.feeds.recent.lastActivityID,
-          token
+          lastActivityID: refresh ? 0 : activity.feeds.recent.lastActivityID
         });
         break;
       case 'popular':
         url = endpoints.create('activityFeedPopular', {
-          lastActivityID: refresh ? 0 : activity.feeds.popular.lastActivityID,
-          token
+          lastActivityID: refresh ? 0 : activity.feeds.popular.lastActivityID
         });
         break;
       case 'following':
         url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: refresh ? 0 : activity.feeds.following.lastActivityID,
-          token
+          lastActivityID: refresh ? 0 : activity.feeds.following.lastActivityID
         });
         break;
     }
@@ -298,7 +294,7 @@ export function activityFeedFetchAll(refresh = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityFeedFetchNewNumber(feedType) {
-  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+  return (dispatch, getState, { endpoints, proxy, batch }) => {
     const { activity } = getState();
     const { firstActivityID } = activity.feeds[feedType];
 
@@ -317,24 +313,20 @@ export function activityFeedFetchNewNumber(feedType) {
     feedFetchNewNumberSources[feedType] = CancelToken.source();
 
     let url = '';
-    const token = user.getToken();
     switch (feedType) {
       case 'recent':
         url = endpoints.create('activityFeedRecent', {
-          lastActivityID: 0,
-          token
+          lastActivityID: 0
         });
         break;
       case 'popular':
         url = endpoints.create('activityFeedPopular', {
-          lastActivityID: 0,
-          token
+          lastActivityID: 0
         });
         break;
       case 'following':
         url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: 0,
-          token
+          lastActivityID: 0
         });
         break;
     }
@@ -412,7 +404,7 @@ export function activityFeedPrepend(feedType, activity) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { user, proxy, endpoints, batch }) => {
+  return (dispatch, getState, { proxy, endpoints, batch }) => {
     dispatch(batch(
       activityIsSubmitting(true),
       formSubmitting(formName, true)
@@ -421,9 +413,7 @@ export function activitySubmit(formName, message, photo = '', video = '') {
     let url  = '';
     let body = {};
     if (photo || video) {
-      url = endpoints.create('userPicture', {
-        token: user.getToken()
-      });
+      url = endpoints.create('userPicture');
       body = new FormData();
       body.append('PictureCaption', JSON.stringify({
         message,
@@ -442,9 +432,7 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         return;
       }
 
-      url = endpoints.create('userStatus', {
-        token: user.getToken()
-      });
+      url = endpoints.create('userStatus');
       body = {
         'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
         'IsAnonymous':   0,
@@ -474,11 +462,10 @@ export function activitySubmit(formName, message, photo = '', video = '') {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityLikeList(refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     dispatch(activityIsLikeListLoading(true));
 
     const url = endpoints.create('activityLikeList', {
-      token: user.getToken(),
       actionType,
       refID
     });
@@ -516,19 +503,17 @@ export function activitySet(activity) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityGet(refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+  return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityReset(),
       activityIsLikeListLoading(true)
     ));
 
     const urlGet = endpoints.create('activityGet', {
-      token: user.getToken(),
       actionType,
       refID
     });
     const urlLikes = endpoints.create('activityLikeList', {
-      token: user.getToken(),
       actionType,
       refID
     });
@@ -555,11 +540,10 @@ export function activityGet(refID, actionType) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityDelete(activityID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     dispatch(activityIsDeleteSending(true, activityID));
 
     const url = endpoints.create('activityDelete', {
-      token: user.getToken(),
       activityID
     });
     proxy.get(url)
@@ -583,7 +567,7 @@ export function activityDelete(activityID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityLike(refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+  return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityIsLikeLoading(true, refID),
       {
@@ -596,7 +580,6 @@ export function activityLike(refID, actionType) {
     }, 1000);
 
     const url = endpoints.create('activityLike', {
-      token: user.getToken(),
       actionType,
       refID
     });
@@ -616,7 +599,7 @@ export function activityLike(refID, actionType) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityLikeComment(commentID, refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+  return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityIsLikeCommentLoading(true, commentID),
       {
@@ -631,7 +614,6 @@ export function activityLikeComment(commentID, refID, actionType) {
     }, 1000);
 
     const url = endpoints.create('activityCommentLike', {
-      token: user.getToken(),
       commentID
     });
     proxy.get(url)
@@ -665,7 +647,7 @@ export function activityReport(refID, actionType) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmitComment(formName, message, refID, actionType, topicID, isAnonymous = 0) {
-  return (dispatch, getState, { user, proxy, endpoints, batch }) => {
+  return (dispatch, getState, { proxy, endpoints, batch }) => {
     const comment = objects.merge(getState().user, {
       'ID':          10,
       'CreatedDate': moment().format(''),
@@ -681,7 +663,6 @@ export function activitySubmitComment(formName, message, refID, actionType, topi
     ));
 
     const url = endpoints.create('activityComment', {
-      token: user.getToken(),
       actionType,
       refID
     });
@@ -703,14 +684,13 @@ export function activitySubmitComment(formName, message, refID, actionType, topi
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function activityDeleteComment(commentID) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch({
       type: ACTIVITY_COMMENT_DELETE,
       commentID
     });
 
     const url = endpoints.create('activityCommentDelete', {
-      token: user.getToken(),
       commentID
     });
     proxy.get(url);
@@ -723,9 +703,8 @@ export function activityDeleteComment(commentID) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function activityCommentStopNotify(refID, actionType) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     const url = endpoints.create('activityCommentStopNotify', {
-      token: user.getToken(),
       actionType,
       refID
     });
@@ -739,11 +718,10 @@ export function activityCommentStopNotify(refID, actionType) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function activityAnswerPoll(pollID, answerID) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(activityIsPollSending(true));
 
     const url = endpoints.create('activityAnswerPoll', {
-      token: user.getToken(),
       answerID,
       pollID
     });

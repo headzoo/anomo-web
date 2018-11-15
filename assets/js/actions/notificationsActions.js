@@ -14,17 +14,11 @@ const favicon = new Favico({
  */
 export function notificationsFetch() {
   return (dispatch, getState, { user, endpoints, proxy }) => {
-    if (isClearing) {
-      return;
-    }
-    const token = user.getToken();
-    if (!token) {
+    if (isClearing || !user.hasToken()) {
       return;
     }
 
-    const url = endpoints.create('notificationsHistory', {
-      token
-    });
+    const url = endpoints.create('notificationsHistory');
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
@@ -45,7 +39,7 @@ export function notificationsFetch() {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsRead(notificationID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const { notifications } = getState();
     const { newNumber } = notifications;
 
@@ -57,7 +51,6 @@ export function notificationsRead(notificationID) {
     });
 
     const url = endpoints.create('notificationsRead', {
-      token: user.getToken(),
       notificationID
     });
     proxy.get(url)
@@ -72,7 +65,7 @@ export function notificationsRead(notificationID) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsReadAll() {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const { notifications } = getState();
 
     isClearing = true;
@@ -84,7 +77,6 @@ export function notificationsReadAll() {
     const promises = [];
     notifications.notifications.forEach((n) => {
       const url = endpoints.create('notificationsRead', {
-        token:          user.getToken(),
         notificationID: n.ID
       });
       promises.push(proxy.get(url));

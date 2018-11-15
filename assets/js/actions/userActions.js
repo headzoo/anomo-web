@@ -68,9 +68,8 @@ export function userIsSearchSending(isSearchSending) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowers', {
-      token: user.getToken(),
       userID,
       page
     });
@@ -97,9 +96,8 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowing', {
-      token: user.getToken(),
       userID,
       page
     });
@@ -126,7 +124,6 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
 export function userFollow(userID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userFollow', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
@@ -141,9 +138,8 @@ export function userFollow(userID) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userBlocked(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userBlocked', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
@@ -165,7 +161,6 @@ export function userBlocked(userID) {
 export function userBlock(userID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userBlock', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
@@ -181,7 +176,7 @@ export function userBlock(userID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { user, batch }) => {
+  return (dispatch, getState, { user, endpoints, batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
@@ -193,6 +188,7 @@ export function userLogin(username, password) {
           dispatch(userError('Username or password is incorrect.'));
           user.logout(true);
         } else {
+          endpoints.addDefaultParam('token', user.getToken());
           dispatch(batch(
             {
               type: USER_LOGIN,
@@ -216,7 +212,7 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {user: *})}
  */
 export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
-  return (dispatch, getState, { user, batch }) => {
+  return (dispatch, getState, { user, endpoints, batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
@@ -224,6 +220,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
 
     user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
+        endpoints.addDefaultParam('token', user.getToken());
         dispatch(batch(
           {
             type: USER_LOGIN,
@@ -255,7 +252,7 @@ export function userLogout() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userRefresh() {
-  return (dispatch, getState, { user, batch }) => {
+  return (dispatch, getState, { user, endpoints, batch }) => {
     const id = user.getID();
     if (id && user.hasToken()) {
       dispatch(batch(
@@ -266,6 +263,7 @@ export function userRefresh() {
       user.info(id)
         .then((data) => {
           if (data.code === 'OK') {
+            endpoints.addDefaultParam('token', user.getToken());
             dispatch({
               type: USER_LOGIN,
               user: objects.merge(user.getDetails(), data.results)
@@ -308,12 +306,10 @@ export function userSet(user) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userUpdatePassword(oldPassword, newPassword) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdatePassword', {
-      token: user.getToken()
-    });
+    const url = endpoints.create('userUpdatePassword');
     const body = {
       OldPassword: md5(oldPassword),
       NewPassword: md5(newPassword)
@@ -335,12 +331,10 @@ export function userUpdatePassword(oldPassword, newPassword) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userUpdateSettings(values) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdate', {
-      token: user.getToken()
-    });
+    const url = endpoints.create('userUpdate');
     proxy.post(url, values)
       .then((data) => {
         if (data.code === 'OK') {
@@ -362,7 +356,6 @@ export function userUpdatePrivacy(values) {
     dispatch(userIsSettingsSending(true));
 
     const url = endpoints.create('userUpdatePrivacy', {
-      token:  user.getToken(),
       userID: user.getID()
     });
     proxy.post(url, values)
@@ -392,7 +385,6 @@ export function userSearch() {
       dispatch(userIsSearchSending(true));
 
       const url = endpoints.create('userSearch', {
-        token:  user.getToken(),
         userID: user.getID(),
         latitude,
         longitude

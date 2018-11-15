@@ -1,8 +1,7 @@
 import { objects, strings } from 'utils';
 
-const base = 'https://ws.anomo.com/v101/index.php/webservice';
-
 // https://github.com/unofficial-anomo-api/open/wiki/New-Anomo-2.11-Update-API-End-Points
+const base = 'https://ws.anomo.com/v101/index.php/webservice';
 const urls = {
   userLogin:                 `${base}/user/login`,
   userFBLogin:               `${base}/user/login_with_fb`,
@@ -39,80 +38,96 @@ const urls = {
   notificationsRead:         `${base}/push_notification/read/{token}/{notificationID}/46/33`
 };
 
-/**
- * @param {string} url
- * @param {*} values
- * @returns {string}
- */
-const appendEndpointValues = (url, values) => {
-  if (!objects.isEmpty(values)) {
-    url = `${url}${url.indexOf('?') === -1 ? '?' : '&'}`;
-    Object.keys(values).forEach((key) => {
-      url = `${url}${key}=${strings.encodeURI(values[key])}&`;
+class Endpoints {
+  /**
+   * @param {*} endpoints
+   */
+  constructor(endpoints) {
+    this.endpoints     = endpoints;
+    this.defaultParams = {};
+  }
+
+  /**
+   * @param {string} name
+   * @param {*} value
+   * @returns {Endpoints}
+   */
+  addDefaultParam = (name, value) => {
+    this.defaultParams[name] = value;
+    return this;
+  };
+
+  /**
+   * @param {string} name
+   * @param {*} params
+   * @returns {string}
+   */
+  create = (name, params = {}) => {
+    let url = urls[name];
+    const values = {};
+    const combinedParams = objects.merge(this.defaultParams, params);
+
+    Object.keys(combinedParams).forEach((key) => {
+      const value = combinedParams[key];
+      const type  = typeof value;
+      const regex = new RegExp(`{${key}}`);
+
+      if (url.match(regex)) {
+        url = url.replace(regex, this.encodeEndpointValue(value));
+      } else if (type === 'object') {
+        Object.keys(value).forEach((k) => {
+          if (value[k]) {
+            values[k] = this.encodeEndpointValue(value[k]);
+          }
+        });
+      } else if (type !== 'undefined') {
+        values[key] = this.encodeEndpointValue(value);
+      }
     });
-    url = url.substring(0, url.length - 1);
-  }
 
-  return url;
-};
+    return this.appendEndpointValues(url, values);
+  };
 
-/**
- * @param {*} obj
- * @returns {string}
- */
-const encodeEndpointObject = (obj) => {
-  const str = [];
-  Object.keys(obj).forEach((key) => {
-    str.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
-  });
-
-  return str.join('&');
-};
-
-/**
- * @param {*} value
- * @returns {string}
- */
-const encodeEndpointValue = (value) => {
-  if (typeof value === 'object') {
-    return encodeEndpointObject(value);
-  }
-  return encodeURIComponent(value.toString().replace('+', ' '));
-};
-
-/**
- * @param {string} name
- * @param {*} params
- * @returns {string}
- */
-const create = (name, params = {}) => {
-  let url = urls[name];
-  const values = {};
-
-  Object.keys(params).forEach((key) => {
-    const value = params[key];
-    const type  = typeof value;
-    const regex = new RegExp(`{${key}}`);
-
-    if (url.match(regex)) {
-      url = url.replace(regex, encodeEndpointValue(value));
-    } else if (type === 'object') {
-      Object.keys(value).forEach((k) => {
-        if (value[k]) {
-          values[k] = encodeEndpointValue(value[k]);
-        }
+  /**
+   * @param {string} url
+   * @param {*} values
+   * @returns {string}
+   */
+  appendEndpointValues = (url, values) => {
+    if (!objects.isEmpty(values)) {
+      url = `${url}${url.indexOf('?') === -1 ? '?' : '&'}`;
+      Object.keys(values).forEach((key) => {
+        url = `${url}${key}=${strings.encodeURI(values[key])}&`;
       });
-    } else if (type !== 'undefined') {
-      values[key] = encodeEndpointValue(value);
+      url = url.substring(0, url.length - 1);
     }
-  });
 
-  return appendEndpointValues(url, values);
-};
+    return url;
+  };
 
-export default {
-  create,
-  appendEndpointValues,
-  encodeEndpointObject,
-  encodeEndpointValue
-};
+  /**
+   * @param {*} obj
+   * @returns {string}
+   */
+  encodeEndpointObject = (obj) => {
+    const str = [];
+    Object.keys(obj).forEach((key) => {
+      str.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
+    });
+
+    return str.join('&');
+  };
+
+  /**
+   * @param {*} value
+   * @returns {string}
+   */
+  encodeEndpointValue = (value) => {
+    if (typeof value === 'object') {
+      return this.encodeEndpointObject(value);
+    }
+    return encodeURIComponent(value.toString().replace('+', ' '));
+  };
+}
+
+export default new Endpoints(urls);

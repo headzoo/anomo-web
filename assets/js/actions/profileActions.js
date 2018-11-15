@@ -65,7 +65,7 @@ export function profileFetch(userID) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function profilePosts(userID, refresh = false) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(profileIsPostsLoading(true));
 
     let lastActivityID = 0;
@@ -74,7 +74,6 @@ export function profilePosts(userID, refresh = false) {
     }
 
     const url = endpoints.create('profilePosts', {
-      token: user.getToken(),
       lastActivityID,
       userID
     });
@@ -102,9 +101,8 @@ export function profilePosts(userID, refresh = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function profileFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowers', {
-      token: user.getToken(),
       userID,
       page
     });
@@ -131,9 +129,8 @@ export function profileFollowers(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function profileFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowing', {
-      token: user.getToken(),
       userID,
       page
     });
