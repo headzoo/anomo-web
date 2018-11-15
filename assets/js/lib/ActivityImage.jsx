@@ -11,10 +11,7 @@ import { Image } from 'lib';
  */
 class ActivityImage extends React.PureComponent {
   static propTypes = {
-    data: PropTypes.shape({
-      alt: PropTypes.string,
-      src: PropTypes.string
-    }).isRequired,
+    activity:  PropTypes.object.isRequired,
     maxHeight: PropTypes.number,
     className: PropTypes.string
   };
@@ -33,7 +30,7 @@ class ActivityImage extends React.PureComponent {
       expanded:   false,
       showButton: false
     };
-    this.img = React.createRef();
+    this.img     = React.createRef();
     this.wrapper = React.createRef();
   }
 
@@ -67,7 +64,7 @@ class ActivityImage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { data, maxHeight, className, ...props } = this.props;
+    const { activity, maxHeight, className, ...props } = this.props;
     const { showButton, expanded } = this.state;
 
     const animateHeight = showButton ? maxHeight : 'auto';
@@ -85,7 +82,11 @@ class ActivityImage extends React.PureComponent {
         height={expanded ? 'auto' : animateHeight}
         {...objects.propsFilter(props, ActivityImage.propTypes, 'dispatch')}
       >
-        <Image ref={this.img} data={data} onLoad={this.handleUpdate} />
+        <Image
+          ref={this.img}
+          data={{ src: activity.Image, alt: '' }}
+          onLoad={this.handleUpdate}
+        />
         {(showButton && !expanded) && (
           <div className="activity-image-btn">
             <Button type="button" onClick={this.handleButtonClick}>

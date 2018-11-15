@@ -333,9 +333,9 @@ export function activityFeedFetchNewNumber(feedType) {
         if (data.code === 'OK') {
           feedBuffers[feedType] = [];
           for (let i = 0; i < data.Activities.length; i++) {
-            if (hiddenActionTypes.indexOf(data.Activities[i].ActionType) === -1
-              && data.Activities[i].ActivityID > firstActivityID) {
-              feedBuffers[feedType].push(data.Activities[i]);
+            const a = data.Activities[i];
+            if (hiddenActionTypes.indexOf(a.ActionType) === -1 && a.ActivityID > firstActivityID) {
+              feedBuffers[feedType].push(a);
             }
           }
 

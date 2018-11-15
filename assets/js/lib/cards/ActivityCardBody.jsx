@@ -56,8 +56,8 @@ class ActivityCardBody extends React.PureComponent {
           )}
           {activity.Image && (
             <ActivityImage
+              activity={activity}
               onClick={onImageClick}
-              data={{ src: activity.Image, alt: 'Image' }}
             />
           )}
           {(activity.VideoID && activity.VideoSource === 'youtube') && (
