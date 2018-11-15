@@ -181,9 +181,11 @@ export function userBlock(userID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { user }) => {
-    dispatch(userIsSending(true));
-    dispatch(userError(''));
+  return (dispatch, getState, { user, batch }) => {
+    dispatch(batch(
+      userError(''),
+      userIsSending(true)
+    ));
 
     user.login(username, password)
       .then((u) => {
@@ -191,13 +193,14 @@ export function userLogin(username, password) {
           dispatch(userError('Username or password is incorrect.'));
           user.logout(true);
         } else {
-          dispatch({
-            type: USER_LOGIN,
-            user: u
-          });
-
-          dispatch(activityFeedFetchAll());
-          dispatch(userFollowing(u.UserID), 1, true);
+          dispatch(batch(
+            {
+              type: USER_LOGIN,
+              user: u
+            },
+            activityFeedFetchAll(),
+            userFollowing(u.UserID, 1, true)
+          ));
         }
       })
       .finally(() => {
@@ -213,19 +216,22 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {user: *})}
  */
 export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
-  return (dispatch, getState, { user }) => {
-    dispatch(userIsSending(true));
-    dispatch(userError(''));
+  return (dispatch, getState, { user, batch }) => {
+    dispatch(batch(
+      userError(''),
+      userIsSending(true)
+    ));
 
     user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
-        dispatch({
-          type: USER_LOGIN,
-          user: u
-        });
-
-        dispatch(activityFeedFetchAll());
-        dispatch(userFollowing(u.UserID), 1, true);
+        dispatch(batch(
+          {
+            type: USER_LOGIN,
+            user: u
+          },
+          activityFeedFetchAll(),
+          userFollowing(u.UserID, 1, true)
+        ));
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -249,11 +255,13 @@ export function userLogout() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userRefresh() {
-  return (dispatch, getState, { user }) => {
+  return (dispatch, getState, { user, batch }) => {
     const id = user.getID();
     if (id && user.hasToken()) {
-      dispatch(userIsSending(true));
-      dispatch(userError(''));
+      dispatch(batch(
+        userError('test'),
+        userIsSending(true)
+      ));
 
       user.info(id)
         .then((data) => {
@@ -262,17 +270,20 @@ export function userRefresh() {
               type: USER_LOGIN,
               user: objects.merge(user.getDetails(), data.results)
             });
-
-            dispatch(activityFeedFetchAll());
-            dispatch(notificationsFetch());
-            dispatch(userFollowing(id, 1, true));
+            dispatch(batch(
+              notificationsFetch(),
+              activityFeedFetchAll(),
+              userFollowing(id, 1, true)
+            ));
           } else {
             user.logout(true);
           }
         })
         .finally(() => {
-          dispatch(userIsSending(false));
-          dispatch(uiIsLoading(false));
+          dispatch(batch(
+            uiIsLoading(false),
+            userIsSending(false)
+          ));
         });
     } else {
       dispatch(uiIsLoading(false));

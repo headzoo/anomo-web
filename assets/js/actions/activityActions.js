@@ -281,13 +281,15 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
 
 /**
  * @param {boolean} refresh
- * @returns {function(*)}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityFeedFetchAll(refresh = false) {
-  return (dispatch) => {
-    dispatch(activityFeedFetch('recent', refresh));
-    dispatch(activityFeedFetch('popular', refresh));
-    dispatch(activityFeedFetch('following', refresh));
+  return (dispatch, getState, { batch }) => {
+    dispatch(batch(
+      activityFeedFetch('recent', refresh),
+      activityFeedFetch('popular', refresh),
+      activityFeedFetch('following', refresh)
+    ));
   };
 }
 
@@ -296,7 +298,7 @@ export function activityFeedFetchAll(refresh = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityFeedFetchNewNumber(feedType) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
     const { activity } = getState();
     const { firstActivityID } = activity.feeds[feedType];
 
@@ -352,15 +354,17 @@ export function activityFeedFetchNewNumber(feedType) {
             }
           }
 
-          dispatch({
-            type:      ACTIVITY_FEED_NEW_NUMBER,
-            newNumber: feedBuffers[feedType].length,
-            feedType
-          });
-          dispatch({
-            type:       ACTIVITY_FEED_UPDATE,
-            activities: data.Activities
-          });
+          dispatch(batch(
+            {
+              type:      ACTIVITY_FEED_NEW_NUMBER,
+              newNumber: feedBuffers[feedType].length,
+              feedType
+            },
+            {
+              type:       ACTIVITY_FEED_UPDATE,
+              activities: data.Activities
+            }
+          ));
         }
       })
       .catch((err) => {
@@ -375,13 +379,15 @@ export function activityFeedFetchNewNumber(feedType) {
 }
 
 /**
- * @returns {function(*)}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityFeedFetchAllNewNumbers() {
-  return (dispatch) => {
-    dispatch(activityFeedFetchNewNumber('recent'));
-    // dispatch(activityFeedFetchNewNumber('popular'));
-    dispatch(activityFeedFetchNewNumber('following'));
+  return (dispatch, getState, { batch }) => {
+    dispatch(batch(
+      activityFeedFetchNewNumber('recent'),
+      // activityFeedFetchNewNumber('popular'),
+      activityFeedFetchNewNumber('following')
+    ));
   };
 }
 
@@ -406,9 +412,11 @@ export function activityFeedPrepend(feedType, activity) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
-    dispatch(activityIsSubmitting(true));
-    dispatch(formSubmitting(formName, true));
+  return (dispatch, getState, { user, proxy, endpoints, batch }) => {
+    dispatch(batch(
+      activityIsSubmitting(true),
+      formSubmitting(formName, true)
+    ));
 
     let url  = '';
     let body = {};
@@ -447,8 +455,10 @@ export function activitySubmit(formName, message, photo = '', video = '') {
     proxy.post(url, body)
       .then((resp) => {
         if (resp.code === 'OK') {
-          dispatch(formReset(formName));
-          dispatch(activityFeedFetch('recent', true, false));
+          dispatch(batch(
+            formReset(formName),
+            activityFeedFetch('recent', true, false)
+          ));
         } else {
           dispatch(formError(formName, 'There was an error.'));
         }
@@ -506,9 +516,11 @@ export function activitySet(activity) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityGet(refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    dispatch(activityReset());
-    dispatch(activityIsLikeListLoading(true));
+  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+    dispatch(batch(
+      activityReset(),
+      activityIsLikeListLoading(true)
+    ));
 
     const urlGet = endpoints.create('activityGet', {
       token: user.getToken(),
@@ -529,9 +541,11 @@ export function activityGet(refID, actionType) {
         dispatch(activitySet(activity));
       })
       .finally(() => {
-        dispatch(activityIsActivityLoading(false));
-        dispatch(activityIsCommentsLoading(false));
-        dispatch(activityIsLikeListLoading(false));
+        dispatch(batch(
+          activityIsActivityLoading(false),
+          activityIsCommentsLoading(false),
+          activityIsLikeListLoading(false)
+        ));
       });
   };
 }
@@ -569,12 +583,14 @@ export function activityDelete(activityID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function activityLike(refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    dispatch(activityIsLikeLoading(true, refID));
-    dispatch({
-      type: ACTIVITY_LIKE,
-      refID
-    });
+  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+    dispatch(batch(
+      activityIsLikeLoading(true, refID),
+      {
+        type: ACTIVITY_LIKE,
+        refID
+      }
+    ));
     setTimeout(() => {
       dispatch(activityIsLikeLoading(false, refID));
     }, 1000);
@@ -600,14 +616,16 @@ export function activityLike(refID, actionType) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityLikeComment(commentID, refID, actionType) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    dispatch(activityIsLikeCommentLoading(true, commentID));
-    dispatch({
-      type: ACTIVITY_LIKE_COMMENT,
-      commentID,
-      refID,
-      actionType
-    });
+  return (dispatch, getState, { user, endpoints, proxy, batch }) => {
+    dispatch(batch(
+      activityIsLikeCommentLoading(true, commentID),
+      {
+        type: ACTIVITY_LIKE_COMMENT,
+        commentID,
+        refID,
+        actionType
+      }
+    ));
     setTimeout(() => {
       dispatch(activityIsLikeCommentLoading(false, commentID));
     }, 1000);
@@ -647,19 +665,20 @@ export function activityReport(refID, actionType) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmitComment(formName, message, refID, actionType, topicID, isAnonymous = 0) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { user, proxy, endpoints, batch }) => {
     const comment = objects.merge(getState().user, {
       'ID':          10,
       'CreatedDate': moment().format(''),
       'Content':     message
     });
-    dispatch(formReset(formName));
-    dispatch({
-      type: ACTIVITY_COMMENT_PREPEND,
-      comment
-    });
-
-    dispatch(formSubmitting(formName, true));
+    dispatch(batch(
+      formReset(formName),
+      formSubmitting(formName, true),
+      {
+        type: ACTIVITY_COMMENT_PREPEND,
+        comment
+      }
+    ));
 
     const url = endpoints.create('activityComment', {
       token: user.getToken(),

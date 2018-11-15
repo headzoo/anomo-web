@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { batchActions, batchDispatchMiddleware } from 'redux-batched-actions';
 import createRootReducer from 'reducers';
 import thunk from 'redux-thunk';
 import deepmerge from 'deepmerge';
@@ -6,6 +7,10 @@ import defaultState from 'store/defaultState';
 import anomo from 'anomo';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+anomo.batch = (...actions) => {
+  return batchActions(actions);
+};
 
 /**
  * @param {*} initialState
@@ -16,7 +21,7 @@ export default function configureStore(initialState = {}) {
     createRootReducer(),
     deepmerge(defaultState, initialState),
     composeEnhancers(
-      applyMiddleware(thunk.withExtraArgument(anomo))
+      applyMiddleware(batchDispatchMiddleware, thunk.withExtraArgument(anomo))
     )
   );
 }
