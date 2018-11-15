@@ -216,7 +216,7 @@ class ActivityPage extends React.PureComponent {
         </TransitionGroup>
         <AnimateHeight duration={250} height={(activity.LikeList && activity.LikeList.length > 0) ? 'auto' : 0}>
           <Row>
-            <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
+            <Column md={4} offsetMd={4} xs={12}>
               {this.renderListList()}
             </Column>
           </Row>
