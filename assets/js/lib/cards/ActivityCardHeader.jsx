@@ -41,11 +41,11 @@ class ActivityCardHeader extends React.PureComponent {
           {isLoading ? (
             <Shimmer className="card-activity-shimmer-avatar" />
           ) : (
-            <span className={isFollowing ? 'avatar-following' : ''}>
-              <Avatar
-                src={activity.Avatar}
-              />
-            </span>
+            <Avatar
+              src={activity.Avatar}
+              following={isFollowing}
+              sm
+            />
           )}
         </div>
         <div className="card-activity-user">

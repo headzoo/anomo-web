@@ -106,9 +106,7 @@ class ProfilePage extends React.PureComponent {
             <div className="card-profile-ellipsis">
               <Icon name="ellipsis-h" onClick={this.handleEllipsisClick} />
             </div>
-            <span className={isFollowing ? 'avatar-following lg' : ''}>
-              <Avatar src={profile.Avatar} />
-            </span>
+            <Avatar src={profile.Avatar} following={isFollowing} lg />
             <h1>{profile.UserName}</h1>
             <div className="card-profile-location">
               <Age date={profile.BirthDate} /> &middot; {profile.NeighborhoodName || 'Earth'}

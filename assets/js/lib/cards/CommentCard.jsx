@@ -79,11 +79,8 @@ class CommentCard extends React.PureComponent {
 
     return (
       <CardHeader>
-        <div
-          onClick={this.handleUserClick}
-          className={isFollowing ? 'card-comment-avatar avatar-following' : 'card-comment-avatar'}
-        >
-          <Avatar src={comment.Avatar} />
+        <div onClick={this.handleUserClick} className="card-comment-avatar">
+          <Avatar src={comment.Avatar} following={isFollowing} sm />
         </div>
         <div className="card-comment-user">
           <div className="card-comment-username" onClick={this.handleUserClick}>

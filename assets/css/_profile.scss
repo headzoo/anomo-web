@@ -27,28 +27,6 @@
   }
 }
 
-.avatar-following {
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: "\F005";
-    color: gold;
-    top: -5px;
-    left: -5px;
-    font-weight: 900;
-    font-size: 0.8rem;
-    position: absolute;
-    font-family: "Font Awesome 5 Free";
-  }
-
-  &.lg::after {
-    top: -10px;
-    left: -10px;
-    font-size: 1.5rem;
-  }
-}
-
 .user-badge {
   color: #000;
   position: relative;
@@ -59,16 +37,50 @@
   }
 
   .avatar {
-    height: 30px;
     margin-right: $gutter-size;
   }
+}
 
-  .icon {
+.avatar-container {
+  position: relative;
+  display: inline-block;
+
+  .icon-following {
     top: -8px;
     left: -4px;
     color: gold;
     position: absolute;
     font-size: 0.8rem;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  }
+
+  &.sm {
+    height: 30px;
+    width: 30px;
+
+    .icon-following {
+      top: -4px;
+      font-size: 0.6rem;
+    }
+  }
+
+  &.md {
+    height: 44px;
+    width: 44px;
+  }
+
+  &.lg {
+    width: 150px;
+    height: 150px;
+
+    .icon-following {
+      top: -4px;
+      font-size: 0.6rem;
+    }
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
   }
 }

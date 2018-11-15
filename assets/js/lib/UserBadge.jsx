@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { objects, connect } from 'utils';
-import { Link, Avatar, Icon } from 'lib';
+import { Link, Avatar } from 'lib';
 
 /**
  *
@@ -33,11 +33,8 @@ class UserBadge extends React.PureComponent {
         className={classNames('user-badge', className)}
         {...objects.propsFilter(props, UserBadge.propTypes, 'dispatch')}
       >
-        <Avatar src={user.Avatar} />
+        <Avatar src={user.Avatar} following={isFollowing} sm />
         <span>{user.UserName}</span>
-        {isFollowing && (
-          <Icon name="star" />
-        )}
       </Link>
     );
   }

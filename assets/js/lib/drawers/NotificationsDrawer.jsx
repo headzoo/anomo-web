@@ -95,7 +95,7 @@ class NotificationsDrawer extends React.PureComponent {
     return (
       <div className="drawer-header">
         <Link name="profile" params={{ id: user.UserID }} onClick={this.close}>
-          <Avatar src={user.Avatar} />
+          <Avatar src={user.Avatar} md />
         </Link>
         <h3>{user.UserName}</h3>
         <Icon
@@ -111,7 +111,8 @@ class NotificationsDrawer extends React.PureComponent {
    * @returns {*}
    */
   renderNotifications = () => {
-    const { notifications } = this.props;
+    const { user, notifications } = this.props;
+    const { UserName, followingUserNames } = user;
 
     if (notifications.notifications.length === 0) {
       return (
@@ -161,7 +162,7 @@ class NotificationsDrawer extends React.PureComponent {
               onClick={e => this.handleNotificationClick(e, n)}
             >
               <div className="drawer-notifications-avatar">
-                <Avatar src={n.Avatar} />
+                <Avatar src={n.Avatar} following={followingUserNames.indexOf(UserName) !== -1} sm />
               </div>
               <div className="drawer-notifications-message">
                 <Icon name={icon} />

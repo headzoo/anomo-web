@@ -26,11 +26,8 @@
     margin-bottom: 0;
   }
 
-  .avatar {
-    width: 40px;
-    height: 40px;
+  .avatar-container {
     margin-right: $gutter-size;
-    border: 1px solid rgba(255, 255, 255, 0.35);
   }
 
   .icon {
@@ -56,9 +53,7 @@
   .list-group {
     color: #FFF;
 
-    .avatar {
-      width: 30px;
-      height: 30px;
+    .avatar-container {
       margin-right: $gutter-size;
     }
   }
