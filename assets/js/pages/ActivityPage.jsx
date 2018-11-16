@@ -12,6 +12,9 @@ import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
 
+const FADE_DURATION  = 150;
+const COMMENT_PREFIX = '#comment-';
+
 /**
  *
  */
@@ -25,11 +28,7 @@ class ActivityPage extends React.PureComponent {
     location:                  PropTypes.object.isRequired,
     visibleModals:             PropTypes.object.isRequired,
     uiVisibleModal:            PropTypes.func.isRequired,
-    activityGet:               PropTypes.func.isRequired,
-    activityReset:             PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
-    activityIsCommentsLoading: PropTypes.func.isRequired,
-    activityIsActivityLoading: PropTypes.func.isRequired,
     activitySetupActivityPage: PropTypes.func.isRequired,
   };
 
@@ -43,7 +42,8 @@ class ActivityPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      activity: {}
+      activity:      {},
+      activeComment: ''
     };
   }
 
@@ -58,7 +58,7 @@ class ActivityPage extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { match, history } = this.props;
+    const { isCommentsLoading, match, history, location } = this.props;
 
     if (match.params.refID !== prevProps.match.params.refID) {
       this.handleUpdate();
@@ -66,7 +66,28 @@ class ActivityPage extends React.PureComponent {
       history.push(routes.route('home'));
     } else if (!objects.isEmpty(this.props.activity) && !objects.isEqual(this.props.activity, prevProps.activity)) {
       this.setState({ activity: this.props.activity });
+    } else if (location.hash && location.hash.indexOf(COMMENT_PREFIX) === 0) {
+      if (isCommentsLoading !== prevProps.isCommentsLoading && prevProps.isCommentsLoading) {
+        this.scrollToComment(location.hash);
+      } else if (location.hash !== prevProps.location.hash) {
+        this.scrollToComment(location.hash);
+      }
     }
+  };
+
+  /**
+   * @param {string} hash
+   */
+  scrollToComment = (hash) => {
+    const activeComment = hash.replace(COMMENT_PREFIX, '');
+    this.setState({ activeComment }, () => {
+      const comment = document.querySelector(hash);
+      if (comment) {
+        comment.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }
+    });
   };
 
   /**
@@ -119,7 +140,7 @@ class ActivityPage extends React.PureComponent {
    */
   renderComments = () => {
     const { isCommentsLoading } = this.props;
-    const { activity } = this.state;
+    const { activity, activeComment } = this.state;
 
     if (!objects.isEmpty(activity) && !activity.ListComment) {
       activity.ListComment = [];
@@ -127,7 +148,7 @@ class ActivityPage extends React.PureComponent {
 
     if (isCommentsLoading) {
       return (
-        <FadeAndSlideTransition key={0} duration={150}>
+        <FadeAndSlideTransition key={0} duration={FADE_DURATION}>
           <Column className="text-center" md={4} offsetMd={4} xs={12}>
             <Loading />
           </Column>
@@ -136,12 +157,14 @@ class ActivityPage extends React.PureComponent {
     }
 
     return (activity.ListComment || []).map(comment => (
-      <FadeAndSlideTransition key={comment.ID} duration={150}>
+      <FadeAndSlideTransition key={comment.ID} duration={FADE_DURATION}>
         <Column md={4} offsetMd={4} xs={12}>
           <CommentCard
             comment={comment}
             activity={activity}
             onReplyClick={this.handleReplyClick}
+            active={activeComment === comment.ID}
+            id={`${COMMENT_PREFIX.replace('#', '')}${comment.ID}`}
           />
         </Column>
       </FadeAndSlideTransition>

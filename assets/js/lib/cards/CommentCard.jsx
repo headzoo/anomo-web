@@ -16,10 +16,12 @@ import * as activityActions from 'actions/activityActions';
  */
 class CommentCard extends React.PureComponent {
   static propTypes = {
+    id:                  PropTypes.string.isRequired,
     comment:             PropTypes.object.isRequired,
     activity:            PropTypes.object.isRequired,
     followingUserNames:  PropTypes.array.isRequired,
     className:           PropTypes.string,
+    active:              PropTypes.bool,
     history:             PropTypes.object.isRequired,
     uiVisibleModal:      PropTypes.func.isRequired,
     activityLikeComment: PropTypes.func.isRequired,
@@ -27,6 +29,7 @@ class CommentCard extends React.PureComponent {
   };
 
   static defaultProps = {
+    active:       false,
     className:    '',
     onReplyClick: () => {}
   };
@@ -158,12 +161,14 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { comment, className } = this.props;
+    const { id, active, className } = this.props;
 
-    const classes = classNames('card-comment', className);
+    const classes = classNames('card-comment', className, {
+      'active': active
+    });
 
     return (
-      <Card id={`comment-${comment.ID}`} className={classes}>
+      <Card id={id} className={classes}>
         {this.renderHeader()}
         {this.renderBody()}
         {this.renderFooter()}

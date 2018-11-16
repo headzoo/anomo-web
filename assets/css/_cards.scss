@@ -158,6 +158,10 @@
       text-decoration: none;
     }
   }
+
+  &.active {
+    margin: 0 (-$gutter-size) $gutter-size (-$gutter-size);
+  }
 }
 
 .card-activity-clickable {
