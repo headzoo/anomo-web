@@ -210,7 +210,8 @@ class Message extends React.Component {
   };
 
   /**
-   *
+   * @param {Array} tokens
+   * @returns {Array}
    */
   parseMarkdown = (tokens) => {
     const newTokens = [];
