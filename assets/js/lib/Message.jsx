@@ -49,10 +49,11 @@ class Message extends React.PureComponent {
    * @returns {Array}
    */
   parseText = (text) => {
-    let tokens = text.split(/\b/g);
-    tokens = this.parseEmoji(tokens);
-    tokens = this.parseMentions(tokens);
-    tokens = this.parseHashtags(tokens);
+    let tokens = this.tokenize(text);
+    tokens     = this.parseEmoji(tokens);
+    tokens     = this.parseMentions(tokens);
+    tokens     = this.parseHashtags(tokens);
+    tokens     = this.parseMarkdown(tokens);
 
     let buffer = '';
     const parsed = [];
@@ -73,6 +74,31 @@ class Message extends React.PureComponent {
     }
 
     return parsed;
+  };
+
+  /**
+   * @param {string} text
+   * @returns {Array}
+   */
+  tokenize = (text) => {
+    const tokens  = [];
+    const okChars = ['*', '_'];
+    let buffer    = [];
+
+    [...text].forEach((char) => {
+      if (char.match(/[a-zA-Z0-9]/) || okChars.indexOf(char) !== -1) {
+        buffer.push(char);
+      } else {
+        tokens.push(buffer.join(''));
+        tokens.push(char);
+        buffer = [];
+      }
+    });
+    if (buffer.length > 0) {
+      tokens.push(buffer.join(''));
+    }
+
+    return tokens;
   };
 
   /**
@@ -165,11 +191,39 @@ class Message extends React.PureComponent {
           'href':      routes.route('hashtag', { text: nextToken }),
         }, `#${nextToken}`);
         keyIndex += 1;
-
         i += 1;
         newTokens.push(anchor);
       } else {
         newTokens.push(tokens[i]);
+      }
+    }
+
+    return newTokens;
+  };
+
+  /**
+   *
+   */
+  parseMarkdown = (tokens) => {
+    const newTokens = [];
+    let keyIndex = 0;
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (token[0] === '_' && token[token.length - 1] === '_') {
+        const italic = React.createElement('i', {
+          'key': `markdown_${keyIndex}`,
+        }, token.slice(1, token.length - 1));
+        keyIndex += 1;
+        newTokens.push(italic);
+      } else if (token[0] === '*' && token[token.length - 1] === '*') {
+        const bold = React.createElement('strong', {
+          'key': `markdown_${keyIndex}`,
+        }, token.slice(1, token.length - 1));
+        keyIndex += 1;
+        newTokens.push(bold);
+      } else {
+        newTokens.push(token);
       }
     }
 
