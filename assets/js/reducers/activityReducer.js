@@ -173,6 +173,32 @@ function commentPrepend(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function commentAppend(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (!activity.ListComment) {
+    activity.ListComment = [];
+  }
+  activity.ListComment.push(action.comment);
+  activity.Comment = parseInt(activity.Comment || 0, 10) + 1;
+
+  feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
+    a.Comment = activity.Comment;
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function like(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
@@ -523,6 +549,7 @@ export default redux.createReducer({
   [types.ACTIVITY_COMMENTS_LOADING]:     commentsLoading,
   [types.ACTIVITY_COMMENT_SENDING]:      commentSending,
   [types.ACTIVITY_COMMENT_PREPEND]:      commentPrepend,
+  [types.ACTIVITY_COMMENT_APPEND]:       commentAppend,
   [types.ACTIVITY_LIKE_LIST_LOADING]:    likeListLoading,
   [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading
 });

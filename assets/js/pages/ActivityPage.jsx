@@ -116,13 +116,13 @@ class ActivityPage extends React.PureComponent {
     const { activity } = this.state;
 
     e.preventDefault();
-    activitySubmitComment(
-      'post',
-      values.message,
-      activity.RefID,
-      activity.ActionType,
-      activity.TopicID
-    );
+    activitySubmitComment({
+      formName:   values.reply === '1' ? 'reply' : 'post',
+      message:    values.message,
+      reply:      values.reply,
+      refID:      activity.RefID,
+      actionType: activity.ActionType
+    });
     uiVisibleModal('reply', false);
   };
 

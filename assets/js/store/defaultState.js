@@ -170,15 +170,18 @@ export const defaultForms = {
   post: {
     message: '',
     photo:   '',
+    reply:   '0',
     ...commonFormElements
   },
   postModal: {
     message: '',
     photo:   '',
+    reply:   '0',
     ...commonFormElements
   },
   reply: {
     message: '',
+    reply:   '0',
     ...commonFormElements
   },
   search: {

@@ -20,6 +20,7 @@ export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
 export const ACTIVITY_COMMENT_PREPEND      = 'ACTIVITY_COMMENT_PREPEND';
+export const ACTIVITY_COMMENT_APPEND       = 'ACTIVITY_COMMENT_APPEND';
 export const ACTIVITY_COMMENT_DELETE       = 'ACTIVITY_COMMENT_DELETE';
 export const ACTIVITY_POLL_SENDING         = 'ACTIVITY_POLL_SENDING';
 export const ACTIVITY_FEED_NEW_NUMBER      = 'ACTIVITY_FEED_NEW_NUMBER';
@@ -638,43 +639,53 @@ export function activityReport(refID, actionType) {
 }
 
 /**
- * @param {string} formName
- * @param {string} message
- * @param {number} refID
- * @param {number} actionType
- * @param {number} topicID
- * @param {number} isAnonymous
+ * @param {*} options
  * @returns {function(*, *, {endpoints: *})}
  */
-export function activitySubmitComment(formName, message, refID, actionType, topicID, isAnonymous = 0) {
+export function activitySubmitComment(options) {
   return (dispatch, getState, { proxy, endpoints, batch }) => {
+    const values = objects.merge({
+      formName:    '',
+      message:     '',
+      reply:       '0',
+      refID:       '',
+      actionType:  '',
+      isAnonymous: 0
+    }, options);
+
+    if (!values.formName || !values.message || !values.refID || !values.actionType) {
+      dispatch(formError(values.formName || 'comment', 'Missing values.'));
+      return;
+    }
+
+    const type    = values.reply === '1' ? ACTIVITY_COMMENT_APPEND : ACTIVITY_COMMENT_PREPEND;
     const comment = objects.merge(getState().user, {
       'ID':          10,
       'CreatedDate': moment().format(''),
-      'Content':     message
+      'Content':     values.message
     });
     dispatch(batch(
-      formReset(formName),
-      formSubmitting(formName, true),
+      formReset(values.formName),
+      formSubmitting(values.formName, true),
       {
-        type: ACTIVITY_COMMENT_PREPEND,
+        type,
         comment
       }
     ));
 
     const url = endpoints.create('activityComment', {
-      actionType,
-      refID
+      actionType: values.actionType,
+      refID:      values.refID
     });
     proxy.post(url, {
-      'Content':     message,
-      'IsAnonymous': isAnonymous
+      'Content':     values.message,
+      'IsAnonymous': values.isAnonymous
     }).then((resp) => {
       if (resp.code !== 'OK') {
-        dispatch(formError(formName, 'There was an error.'));
+        dispatch(formError(values.formName, 'There was an error.'));
       }
     }).finally(() => {
-      dispatch(formSubmitting(formName, false));
+      dispatch(formSubmitting(values.formName, false));
     });
   };
 }

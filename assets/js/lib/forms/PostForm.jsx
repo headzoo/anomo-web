@@ -24,6 +24,7 @@ class PostForm extends React.PureComponent {
     config:         PropTypes.object.isRequired,
     deviceSize:     PropTypes.string.isRequired,
     value:          PropTypes.string,
+    reply:          PropTypes.bool,
     comment:        PropTypes.bool,
     withUpload:     PropTypes.bool,
     withMobileForm: PropTypes.bool,
@@ -34,6 +35,7 @@ class PostForm extends React.PureComponent {
   static defaultProps = {
     id:             '',
     value:          '',
+    reply:          false,
     comment:        false,
     withUpload:     false,
     withMobileForm: false,
@@ -62,8 +64,9 @@ class PostForm extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { name, value, formChange } = this.props;
+    const { name, value, reply, formChange } = this.props;
 
+    formChange(name, 'reply', reply ? '1' : '0');
     if (value) {
       formChange(name, 'message', value);
       this.message.current.focus();
@@ -74,8 +77,11 @@ class PostForm extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { name, value, formChange } = this.props;
+    const { name, value, reply, formChange } = this.props;
 
+    if (reply !== prevProps.reply) {
+      formChange(name, 'reply', reply ? '1' : '0');
+    }
     if (value !== prevProps.value) {
       formChange(name, 'message', value);
       this.message.current.focus();
@@ -248,6 +254,11 @@ class PostForm extends React.PureComponent {
               onChange={this.handleChange}
               disabled={forms[name].isSubmitting}
             >
+              <Input
+                type="hidden"
+                name="reply"
+                id="form-post-reply"
+              />
               <div className="card-form-post-inputs">
                 {(withUpload && !isXs) && (
                   <div className="card-form-post-upload">

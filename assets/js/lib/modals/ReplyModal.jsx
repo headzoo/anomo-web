@@ -67,6 +67,7 @@ class ReplyModal extends React.PureComponent {
           onSubmit={onSubmit}
           withMobileForm
           comment
+          reply
         />
       </Modal>
     );
