@@ -34,7 +34,7 @@ const urls = {
   activityCommentDelete:     `${base}/comment/delete/{token}/{commentID}`,
   activityCommentStopNotify: `${base}/comment/stop_receive_notify/{token}/{refID}/{actionType}`,
   activityAnswerPoll:        `${base}/poll/answer_poll/{token}/{pollID}/{answerID}`,
-  notificationsHistory:      `${base}/push_notification/get_notification_history/{token}/1/1`,
+  notificationsHistory:      `${base}/push_notification/get_notification_history/{token}/{status}/{page}`,
   notificationsRead:         `${base}/push_notification/read/{token}/{notificationID}/46/33`
 };
 

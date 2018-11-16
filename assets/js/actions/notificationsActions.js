@@ -1,4 +1,5 @@
 import Favico from 'favico.js';
+import * as constants from 'anomo/constants';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
 export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
@@ -18,7 +19,10 @@ export function notificationsFetch() {
       return;
     }
 
-    const url = endpoints.create('notificationsHistory');
+    const url = endpoints.create('notificationsHistory', {
+      status: constants.NOTIFICATION_STATUS_UNREAD,
+      page:   1
+    });
     proxy.get(url)
       .then((data) => {
         if (data.code === 'OK') {
@@ -66,25 +70,19 @@ export function notificationsRead(notificationID) {
  */
 export function notificationsReadAll() {
   return (dispatch, getState, { endpoints, proxy }) => {
-    const { notifications } = getState();
-
     isClearing = true;
     favicon.badge(0);
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });
 
-    const promises = [];
-    notifications.notifications.forEach((n) => {
-      const url = endpoints.create('notificationsRead', {
-        notificationID: n.ID
-      });
-      promises.push(proxy.get(url));
+    const url = endpoints.create('notificationsHistory', {
+      status: constants.NOTIFICATION_STATUS_READ,
+      page:   1
     });
-    Promise.all(promises)
-      .then(() => {
+    proxy.get(url)
+      .finally(() => {
         isClearing = false;
-        dispatch(notificationsFetch());
       });
   };
 }
