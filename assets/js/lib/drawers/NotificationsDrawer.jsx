@@ -44,7 +44,7 @@ class NotificationsDrawer extends React.PureComponent {
    */
   handleNotificationClick = (e, notification) => {
     const { history, notificationsRead } = this.props;
-    const { ID, ContentID, ContentType, SendUserID } = notification;
+    const { ID, RefID, ContentID, ContentType, SendUserID } = notification;
 
     this.close();
     notificationsRead(ID);
@@ -62,7 +62,7 @@ class NotificationsDrawer extends React.PureComponent {
       case constants.NOTIFICATION_COMMENT:
         console.log(notification);
         history.push({
-          hash:     `#comment-${ID}`,
+          hash:     `#comment-${RefID}`,
           pathname: routes.route('activity', {
             refID:      ContentID,
             actionType: ContentType
