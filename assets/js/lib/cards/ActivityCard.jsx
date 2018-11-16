@@ -84,9 +84,8 @@ class ActivityCard extends React.PureComponent {
   handleBodyClick = (e) => {
     const { activity, clickable, history } = this.props;
 
-    if (clickable) {
+    if (clickable && e.target.tagName !== 'A') {
       e.preventDefault();
-
       const route = routes.route('activity', { refID: activity.RefID, actionType: activity.ActionType });
       history.push(route, { activity });
     }
