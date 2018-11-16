@@ -19,6 +19,7 @@ class FeedPage extends React.PureComponent {
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
+    uiContentWidth:    PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     activitySubmit:    PropTypes.func.isRequired
   };
@@ -43,13 +44,25 @@ class FeedPage extends React.PureComponent {
   }
 
   /**
+   *
+   */
+  componentDidMount = () => {
+    const { uiContentWidth } = this.props;
+
+    const form = document.querySelector('#feed-post-card form');
+    if (form) {
+      uiContentWidth(form.getBoundingClientRect().width);
+    }
+  };
+
+  /**
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
     const { feeds, activeFeed } = this.props;
 
     if (feeds[activeFeed].isRefreshing && !prevProps.feeds[activeFeed].isRefreshing) {
-      browser.scroll(0, 'auto');
+      browser.scroll();
     }
   };
 
@@ -147,6 +160,7 @@ class FeedPage extends React.PureComponent {
           <Row>
             <Column md={4} offsetMd={4} xs={12}>
               <PostForm
+                id="feed-post-card"
                 name="post"
                 onSubmit={this.handlePostSubmit}
                 withUpload

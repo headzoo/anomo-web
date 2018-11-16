@@ -61,6 +61,18 @@ function windowResize(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function contentWidth(state, action) {
+  return {
+    ...state,
+    contentWidth: action.contentWidth
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function visibleModal(state, action) {
   const newState = objects.clone(state);
 
@@ -99,6 +111,7 @@ export default redux.createReducer({
   [types.UI_ACTIVE_FEED]:    activeFeed,
   [types.UI_ERROR_MESSAGE]:  errorMessage,
   [types.UI_WINDOW_RESIZE]:  windowResize,
+  [types.UI_CONTENT_WIDTH]:  contentWidth,
   [types.UI_VISIBLE_MODAL]:  visibleModal,
   [types.UI_VISIBLE_DRAWER]: visibleDrawer
 });

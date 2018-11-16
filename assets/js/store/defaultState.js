@@ -16,6 +16,7 @@ export const defaultAnomo = {
  */
 export const defaultUi = {
   deviceSize:    'xs',
+  contentWidth:  551,
   activeFeed:    'recent',
   isLoading:     true,
   errorMessage:  '',

@@ -17,6 +17,7 @@ import * as formActions from 'actions/formActions';
  */
 class PostForm extends React.PureComponent {
   static propTypes = {
+    id:             PropTypes.string,
     name:           PropTypes.string.isRequired,
     user:           PropTypes.object.isRequired,
     forms:          PropTypes.object.isRequired,
@@ -31,6 +32,7 @@ class PostForm extends React.PureComponent {
   };
 
   static defaultProps = {
+    id:             '',
     value:          '',
     comment:        false,
     withUpload:     false,
@@ -215,7 +217,7 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, forms, name, comment, deviceSize, config, withUpload, withMobileForm } = this.props;
+    const { id, user, forms, name, comment, deviceSize, config, withUpload, withMobileForm } = this.props;
     const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
     const isXs = deviceSize === 'xs' && withMobileForm;
@@ -237,7 +239,7 @@ class PostForm extends React.PureComponent {
     });
 
     return (
-      <div>
+      <div id={id}>
         <Card className="card-form-post">
           <CardBody>
             <Form

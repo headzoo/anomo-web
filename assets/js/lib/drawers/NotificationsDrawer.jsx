@@ -51,7 +51,9 @@ class NotificationsDrawer extends React.PureComponent {
 
     switch (notification.Type) {
       case constants.NOTIFICATION_FOLLOW:
-        history.push(routes.route('profile', { id: SendUserID }));
+        history.push(routes.route('profile', {
+          id: SendUserID
+        }));
         break;
       case constants.NOTIFICATION_LIKE_POST:
         history.push(routes.route('activity', {
@@ -60,7 +62,6 @@ class NotificationsDrawer extends React.PureComponent {
         }));
         break;
       case constants.NOTIFICATION_COMMENT:
-        console.log(notification);
         history.push({
           hash:     `#comment-${RefID}`,
           pathname: routes.route('activity', {

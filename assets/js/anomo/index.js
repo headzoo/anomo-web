@@ -1,3 +1,3 @@
 import Client from './Client';
 
-export default new Client(__DEV__);
+export default new Client();

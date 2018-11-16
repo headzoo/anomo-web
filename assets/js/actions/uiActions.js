@@ -1,5 +1,6 @@
 export const UI_LOADING        = 'UI_LOADING';
 export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
+export const UI_CONTENT_WIDTH  = 'UI_CONTENT_WIDTH';
 export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
 export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
 export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
@@ -37,6 +38,17 @@ export function windowResize(width) {
   return {
     type: UI_WINDOW_RESIZE,
     width
+  };
+}
+
+/**
+ * @param {number} contentWidth
+ * @returns {{type: string, contentWidth: *}}
+ */
+export function uiContentWidth(contentWidth) {
+  return {
+    type: UI_CONTENT_WIDTH,
+    contentWidth
   };
 }
 
