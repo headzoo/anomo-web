@@ -263,6 +263,7 @@ export function userRefresh() {
       user.info(id)
         .then((data) => {
           if (data.code === 'OK') {
+            user.isAuthenticated = true;
             endpoints.addDefaultParam('token', user.getToken());
             dispatch({
               type: USER_LOGIN,
