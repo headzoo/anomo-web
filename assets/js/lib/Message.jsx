@@ -7,7 +7,7 @@ import routes from 'store/routes';
 /**
  *
  */
-class Message extends React.PureComponent {
+class Message extends React.Component {
   static propTypes = {
     text: PropTypes.string,
     tags: PropTypes.array
@@ -27,6 +27,14 @@ class Message extends React.PureComponent {
       parsed: this.parseText(props.text)
     };
   }
+
+  /**
+   * @param {*} nextProps
+   * @returns {boolean}
+   */
+  shouldComponentUpdate = (nextProps) => {
+    return this.props.text !== nextProps.text;
+  };
 
   /**
    * @param {string} mention
