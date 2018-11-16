@@ -9,6 +9,9 @@ import anomo from 'anomo';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 anomo.batch = (...actions) => {
+  if (Array.isArray(actions[0])) {
+    return batchActions(actions[0]);
+  }
   return batchActions(actions);
 };
 

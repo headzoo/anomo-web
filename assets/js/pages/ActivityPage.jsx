@@ -30,6 +30,7 @@ class ActivityPage extends React.PureComponent {
     activitySubmitComment:     PropTypes.func.isRequired,
     activityIsCommentsLoading: PropTypes.func.isRequired,
     activityIsActivityLoading: PropTypes.func.isRequired,
+    activitySetupActivityPage: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -50,60 +51,37 @@ class ActivityPage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { location, match, activityGet, activityIsCommentsLoading } = this.props;
-    const { state } = location;
-
-    if (state && state.activity) {
-      if (state.activity.Comment !== '0') {
-        activityIsCommentsLoading(true);
-      }
-      this.setState({ activity: state.activity }, () => {
-        activityGet(match.params.refID, match.params.actionType);
-      });
-    } else {
-      activityIsCommentsLoading(true);
-      activityGet(match.params.refID, match.params.actionType);
-    }
+    this.handleUpdate();
   };
 
   /**
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const {
-      match,
-      location,
-      history,
-      activityGet,
-      activityReset,
-      activityIsActivityLoading,
-      activityIsCommentsLoading
-    } = this.props;
-    const { state } = location;
+    const { match, history } = this.props;
 
     if (match.params.refID !== prevProps.match.params.refID) {
-      if (state && state.activity) {
-        if (state.activity.Comment !== '0') {
-          activityIsCommentsLoading(true);
-        }
-        this.setState({ activity: state.activity }, () => {
-          activityGet(match.params.refID, match.params.actionType);
-        });
-      } else {
-        activityReset();
-        activityIsActivityLoading(true);
-        activityGet(match.params.refID, match.params.actionType);
-      }
-      return;
-    }
-
-    if (this.props.activity.IsDeleted) {
+      this.handleUpdate();
+    } else if (this.props.activity.IsDeleted) {
       history.push(routes.route('home'));
-      return;
-    }
-
-    if (!objects.isEmpty(this.props.activity) && !objects.isEqual(this.props.activity, prevProps.activity)) {
+    } else if (!objects.isEmpty(this.props.activity) && !objects.isEqual(this.props.activity, prevProps.activity)) {
       this.setState({ activity: this.props.activity });
+    }
+  };
+
+  /**
+   *
+   */
+  handleUpdate = () => {
+    const { location, match, activitySetupActivityPage } = this.props;
+    const { state } = location;
+
+    if (state && state.activity) {
+      this.setState({ activity: state.activity }, () => {
+        activitySetupActivityPage(0, 0, state.activity);
+      });
+    } else {
+      activitySetupActivityPage(match.params.refID, match.params.actionType);
     }
   };
 

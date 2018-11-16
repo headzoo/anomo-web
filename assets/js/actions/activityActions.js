@@ -733,6 +733,32 @@ export function activityAnswerPoll(pollID, answerID) {
 }
 
 /**
+ * @param {number} refID
+ * @param {string} actionType
+ * @param {*} stateActivity
+ * @returns {function(*, *, {batch: *})}
+ */
+export function activitySetupActivityPage(refID, actionType, stateActivity = null) {
+  return (dispatch, getState, { batch }) => {
+    if (stateActivity !== null) {
+      const actions = [];
+      if (stateActivity.Comment !== '0') {
+        actions.push(activityIsCommentsLoading(true));
+      }
+      actions.push(activityGet(stateActivity.RefID, stateActivity.ActionType));
+      dispatch(batch(actions));
+    } else {
+      dispatch(batch(
+        activityReset(),
+        activityIsActivityLoading(true),
+        activityIsCommentsLoading(true),
+        activityGet(refID, actionType)
+      ));
+    }
+  };
+}
+
+/**
  * @returns {function(*)}
  */
 export function activityIntervalStart() {
