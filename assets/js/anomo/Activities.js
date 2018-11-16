@@ -1,4 +1,4 @@
-import { objects } from 'utils';
+import { objects, media } from 'utils';
 
 /**
  *
@@ -103,6 +103,33 @@ class Activities {
     };
 
     return JSON.stringify(content);
+  };
+
+  /**
+   * @param {Array} activities
+   * @returns {Promise}
+   */
+  setImageDimensions = (activities) => {
+    const promises = [];
+    activities.forEach((a) => {
+      if (a.Image) {
+        promises.push(media.getImageDimensions(a.Image));
+      }
+    });
+
+    return Promise.all(promises)
+      .then((dims) => {
+        dims.forEach((dim) => {
+          activities.forEach((a) => {
+            if (a.Image === dim.src) {
+              a.ImageHeight = dim.height;
+              a.ImageWidth  = dim.width;
+            }
+          });
+        });
+
+        return activities;
+      });
   };
 }
 

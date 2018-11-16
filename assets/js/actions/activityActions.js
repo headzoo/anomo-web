@@ -1,7 +1,8 @@
 import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
-import { objects } from 'utils';
+import { objects, media } from 'utils';
+import anomo from 'anomo';
 import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
@@ -251,14 +252,19 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
 
     proxy.get(url, config)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:       ACTIVITY_FEED_FETCH,
-            activities: data.Activities,
-            feedType,
-            refresh
-          });
+        if (data.code !== 'OK') {
+          return null;
         }
+
+        return anomo.activities.setImageDimensions(data.Activities)
+          .then((activities) => {
+            dispatch({
+              type: ACTIVITY_FEED_FETCH,
+              activities,
+              feedType,
+              refresh
+            });
+          });
       })
       .catch((err) => {
         if (!axios.isCancel(err)) {
@@ -287,6 +293,30 @@ export function activityFeedFetchAll(refresh = false) {
       activityFeedFetch('popular', refresh),
       activityFeedFetch('following', refresh)
     ));
+  };
+}
+
+/**
+ * @param {Array} activities
+ * @returns {{type: string, activities: *}}
+ */
+export function activityFeedUpdate(activities) {
+  return               {
+    type: ACTIVITY_FEED_UPDATE,
+    activities
+  };
+}
+
+/**
+ * @param {string} feedType
+ * @param {number} newNumber
+ * @returns {{type: string, newNumber: *, feedType: *}}
+ */
+export function activityFeedNewNumber(feedType, newNumber) {
+  return {
+    type: ACTIVITY_FEED_NEW_NUMBER,
+    newNumber,
+    feedType
   };
 }
 
@@ -338,27 +368,25 @@ export function activityFeedFetchNewNumber(feedType) {
 
     proxy.get(url, config)
       .then((data) => {
-        if (data.code === 'OK') {
-          feedBuffers[feedType] = [];
-          for (let i = 0; i < data.Activities.length; i++) {
-            const a = data.Activities[i];
-            if (hiddenActionTypes.indexOf(a.ActionType) === -1 && a.ActivityID > firstActivityID) {
-              feedBuffers[feedType].push(a);
-            }
-          }
-
-          dispatch(batch(
-            {
-              type:      ACTIVITY_FEED_NEW_NUMBER,
-              newNumber: feedBuffers[feedType].length,
-              feedType
-            },
-            {
-              type:       ACTIVITY_FEED_UPDATE,
-              activities: data.Activities
-            }
-          ));
+        if (data.code !== 'OK') {
+          return null;
         }
+
+        feedBuffers[feedType] = [];
+        for (let i = 0; i < data.Activities.length; i++) {
+          const a = data.Activities[i];
+          if (hiddenActionTypes.indexOf(a.ActionType) === -1 && a.ActivityID > firstActivityID) {
+            feedBuffers[feedType].push(a);
+          }
+        }
+
+        return anomo.activities.setImageDimensions(feedBuffers[feedType])
+          .then((activities) => {
+            dispatch(batch(
+              activityFeedNewNumber(feedType, feedBuffers[feedType].length),
+              activityFeedUpdate(activities)
+            ));
+          });
       })
       .catch((err) => {
         if (!axios.isCancel(err)) {

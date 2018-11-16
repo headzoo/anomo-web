@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import AnimateHeight from 'react-animate-height';
-import { objects, connect, mapStateToProps } from 'utils';
+import { objects, connect } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Image } from 'lib';
 
@@ -11,9 +11,10 @@ import { Image } from 'lib';
  */
 class ActivityImage extends React.PureComponent {
   static propTypes = {
-    activity:  PropTypes.object.isRequired,
-    maxHeight: PropTypes.number,
-    className: PropTypes.string
+    activity:     PropTypes.object.isRequired,
+    maxHeight:    PropTypes.number,
+    className:    PropTypes.string,
+    contentWidth: PropTypes.number.isRequired
   };
 
   static defaultProps = {
@@ -63,20 +64,39 @@ class ActivityImage extends React.PureComponent {
   /**
    * @returns {*}
    */
+  getImageStyles = () => {
+    const { activity, contentWidth } = this.props;
+
+    if (!activity.ImageWidth || !activity.ImageHeight) {
+      return {};
+    }
+
+    const ratio  = activity.ImageWidth / contentWidth;
+    const height = Math.round(activity.ImageHeight / ratio);
+
+    return {
+      height
+    };
+  };
+
+  /**
+   * @returns {*}
+   */
   render() {
     const { activity, maxHeight, className, ...props } = this.props;
     const { showButton, expanded } = this.state;
 
-    const animateHeight = showButton ? maxHeight : 'auto';
-    const classes = classNames('activity-image', className);
-    const styles  = {};
+    const animateHeight   = showButton ? maxHeight : 'auto';
+    const classes         = classNames('activity-image', className);
+    const stylesImage     = this.getImageStyles();
+    const stylesContainer = {};
     if (!expanded) {
-      styles.maxHeight = maxHeight;
+      stylesContainer.maxHeight = maxHeight;
     }
 
     return (
       <AnimateHeight
-        style={styles}
+        style={stylesContainer}
         ref={this.wrapper}
         className={classes}
         height={expanded ? 'auto' : animateHeight}
@@ -84,6 +104,7 @@ class ActivityImage extends React.PureComponent {
       >
         <Image
           ref={this.img}
+          style={stylesImage}
           data={{ src: activity.Image, alt: '' }}
           onLoad={this.handleUpdate}
         />
@@ -99,4 +120,10 @@ class ActivityImage extends React.PureComponent {
   }
 }
 
-export default connect(mapStateToProps())(ActivityImage);
+const mapStateToProps = state => (
+  {
+    contentWidth: state.ui.contentWidth
+  }
+);
+
+export default connect(mapStateToProps)(ActivityImage);
