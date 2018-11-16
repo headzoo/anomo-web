@@ -48,10 +48,15 @@ class NotificationsDrawer extends React.PureComponent {
 
     this.close();
     notificationsRead(ID);
-    history.push(routes.route('activity', {
+
+    const pathname = routes.route('activity', {
       refID:      ContentID,
       actionType: ContentType
-    }));
+    });
+    history.push({
+      hash: `#comment-${ID}`,
+      pathname
+    });
   };
 
   /**
