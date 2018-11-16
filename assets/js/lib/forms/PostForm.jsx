@@ -22,6 +22,7 @@ class PostForm extends React.PureComponent {
     forms:          PropTypes.object.isRequired,
     config:         PropTypes.object.isRequired,
     deviceSize:     PropTypes.string.isRequired,
+    value:          PropTypes.string,
     comment:        PropTypes.bool,
     withUpload:     PropTypes.bool,
     withMobileForm: PropTypes.bool,
@@ -30,6 +31,7 @@ class PostForm extends React.PureComponent {
   };
 
   static defaultProps = {
+    value:          '',
     comment:        false,
     withUpload:     false,
     withMobileForm: false,
@@ -49,9 +51,34 @@ class PostForm extends React.PureComponent {
       videoSource: '',
       videoPoster: ''
     };
-    this.photo = React.createRef();
-    this.video = React.createRef();
+    this.photo   = React.createRef();
+    this.video   = React.createRef();
+    this.message = React.createRef();
   }
+
+  /**
+   *
+   */
+  componentDidMount = () => {
+    const { name, value, formChange } = this.props;
+
+    if (value) {
+      formChange(name, 'message', value);
+      this.message.current.focus();
+    }
+  };
+
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { name, value, formChange } = this.props;
+
+    if (value !== prevProps.value) {
+      formChange(name, 'message', value);
+      this.message.current.focus();
+    }
+  };
 
   /**
    * @param {Event} e
@@ -246,6 +273,7 @@ class PostForm extends React.PureComponent {
                 <div className="card-form-post-message no-gutter">
                   <Textarea
                     name="message"
+                    ref={this.message}
                     id="form-post-message"
                     onFocus={this.handleMessageFocus}
                     placeholder="Add to conversation"

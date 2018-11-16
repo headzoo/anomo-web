@@ -4,10 +4,12 @@ import AnimateHeight from 'react-animate-height';
 import { objects, connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
+import { ReplyModal } from 'lib/modals';
 import { Row, Column, Card, CardHeader, CardBody, CardText } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
 import { Page, Loading, UserBadge, withRouter } from 'lib';
 import routes from 'store/routes';
+import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
 
 /**
@@ -21,6 +23,8 @@ class ActivityPage extends React.PureComponent {
     match:                     PropTypes.object.isRequired,
     history:                   PropTypes.object.isRequired,
     location:                  PropTypes.object.isRequired,
+    visibleModals:             PropTypes.object.isRequired,
+    uiVisibleModal:            PropTypes.func.isRequired,
     activityGet:               PropTypes.func.isRequired,
     activityReset:             PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
@@ -108,7 +112,7 @@ class ActivityPage extends React.PureComponent {
    * @param {*} values
    */
   handleCommentSubmit = (e, values) => {
-    const { activitySubmitComment } = this.props;
+    const { activitySubmitComment, uiVisibleModal } = this.props;
     const { activity } = this.state;
 
     e.preventDefault();
@@ -119,6 +123,17 @@ class ActivityPage extends React.PureComponent {
       activity.ActionType,
       activity.TopicID
     );
+    uiVisibleModal('reply', false);
+  };
+
+  /**
+   * @param {Event} e
+   * @param {*} comment
+   */
+  handleReplyClick = (e, comment) => {
+    const { uiVisibleModal } = this.props;
+
+    uiVisibleModal('reply', comment);
   };
 
   /**
@@ -148,6 +163,7 @@ class ActivityPage extends React.PureComponent {
           <CommentCard
             comment={comment}
             activity={activity}
+            onReplyClick={this.handleReplyClick}
           />
         </Column>
       </FadeAndSlideTransition>
@@ -157,7 +173,7 @@ class ActivityPage extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderListList = () => {
+  renderLikeList = () => {
     const { activity } = this.state;
 
     if (!activity.LikeList) {
@@ -188,7 +204,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isActivityLoading } = this.props;
+    const { isActivityLoading, visibleModals } = this.props;
     const { activity } = this.state;
 
     if (isActivityLoading) {
@@ -208,19 +224,30 @@ class ActivityPage extends React.PureComponent {
         </Row>
         <Row>
           <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
-            <PostForm name="post" onSubmit={this.handleCommentSubmit} comment />
+            <PostForm
+              name="post"
+              onSubmit={this.handleCommentSubmit}
+              comment
+            />
           </Column>
         </Row>
         <TransitionGroup component={Row}>
           {this.renderComments()}
         </TransitionGroup>
-        <AnimateHeight duration={250} height={(activity.LikeList && activity.LikeList.length > 0) ? 'auto' : 0}>
+        <AnimateHeight
+          duration={250}
+          height={(activity.LikeList && activity.LikeList.length > 0) ? 'auto' : 0}
+        >
           <Row>
             <Column md={4} offsetMd={4} xs={12}>
-              {this.renderListList()}
+              {this.renderLikeList()}
             </Column>
           </Row>
         </AnimateHeight>
+        <ReplyModal
+          onSubmit={this.handleCommentSubmit}
+          open={visibleModals.reply !== false}
+        />
       </Page>
     );
   }
@@ -229,6 +256,7 @@ class ActivityPage extends React.PureComponent {
 const mapStateToProps = state => (
   {
     activity:          state.activity.activity,
+    visibleModals:     state.ui.visibleModals,
     isActivityLoading: state.activity.isActivityLoading,
     isCommentsLoading: state.activity.isCommentsLoading
   }
@@ -236,5 +264,5 @@ const mapStateToProps = state => (
 
 export default connect(
   mapStateToProps,
-  mapActionsToProps(activityActions)
+  mapActionsToProps(uiActions, activityActions)
 )(withRouter(ActivityPage));

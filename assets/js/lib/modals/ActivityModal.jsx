@@ -62,15 +62,6 @@ class ActivityModal extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('activity', false);
-  };
-
-  /**
    * @param {Event} e
    * @param {string} item
    */
@@ -129,8 +120,8 @@ class ActivityModal extends React.PureComponent {
 
     return (
       <Modal
+        name="activity"
         className="modal-activity modal-list"
-        onClosed={this.handleClose}
         withHeader={false}
         {...rest}
       >

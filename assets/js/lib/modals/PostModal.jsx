@@ -30,15 +30,6 @@ class PostModal extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('post', false);
-  };
-
-  /**
    * @param {Event} e
    * @param {*} values
    */
@@ -57,10 +48,10 @@ class PostModal extends React.PureComponent {
 
     return (
       <Modal
-        withHeader={false}
+        name="post"
         centered={false}
+        withHeader={false}
         className="modal-post"
-        onClosed={this.handleClose}
         {...objects.propsFilter(rest, PostModal.propTypes, uiActions, activityActions)}
       >
         <PostForm

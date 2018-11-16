@@ -22,11 +22,13 @@ class CommentCard extends React.PureComponent {
     className:           PropTypes.string,
     history:             PropTypes.object.isRequired,
     uiVisibleModal:      PropTypes.func.isRequired,
-    activityLikeComment: PropTypes.func.isRequired
+    activityLikeComment: PropTypes.func.isRequired,
+    onReplyClick:        PropTypes.func
   };
 
   static defaultProps = {
-    className: ''
+    className:    '',
+    onReplyClick: () => {}
   };
 
   /**
@@ -129,7 +131,7 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   renderFooter = () => {
-    const { comment } = this.props;
+    const { comment, onReplyClick } = this.props;
 
     const likes   = parseInt(comment.NumberOfLike || 0, 10);
     const isLiked = (comment.IsLike && comment.IsLike === '1');
@@ -144,6 +146,9 @@ class CommentCard extends React.PureComponent {
           />&nbsp;
           {likes}&nbsp;
           <Pluralize number={likes} singular="Like" plural="Likes" />
+        </div>
+        <div className="clickable" onClick={e => onReplyClick(e, comment)}>
+          Reply
         </div>
       </CardFooter>
     );

@@ -42,6 +42,21 @@ class Textarea extends React.PureComponent {
   static unityFormType = 'textarea';
 
   /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+    this.textarea = React.createRef();
+  }
+
+  /**
+   *
+   */
+  focus = () => {
+    this.textarea.current.focus();
+  };
+
+  /**
    * @param {Event} e
    * @param {*} context
    */
@@ -49,7 +64,7 @@ class Textarea extends React.PureComponent {
     const { id, name, parse, onChange } = this.props;
 
     const inputName = name || id;
-    const inputValue = parse(this.textarea.value);
+    const inputValue = parse(this.textarea.current.value);
 
     if (context.onChange) context.onChange(e, inputValue, inputName);
     onChange(e, inputValue, inputName);
@@ -87,8 +102,8 @@ class Textarea extends React.PureComponent {
             <textarea
               id={id}
               name={inputName}
+              ref={this.textarea}
               placeholder={placeholder}
-              ref={ref => this.textarea = ref}
               required={context.required || required}
               disabled={context.disabled || disabled}
               onChange={e => this.handleChange(e, context)}

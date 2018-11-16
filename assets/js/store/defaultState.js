@@ -24,6 +24,7 @@ export const defaultUi = {
     user:     false,
     tags:     false,
     post:     false,
+    reply:    false,
     intents:  false,
     activity: false,
     comment:  false
@@ -173,6 +174,10 @@ export const defaultForms = {
   postModal: {
     message: '',
     photo:   '',
+    ...commonFormElements
+  },
+  reply: {
+    message: '',
     ...commonFormElements
   },
   search: {
