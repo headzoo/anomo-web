@@ -44,19 +44,38 @@ class NotificationsDrawer extends React.PureComponent {
    */
   handleNotificationClick = (e, notification) => {
     const { history, notificationsRead } = this.props;
-    const { ID, ContentID, ContentType } = notification;
+    const { ID, ContentID, ContentType, SendUserID } = notification;
 
     this.close();
     notificationsRead(ID);
 
-    const pathname = routes.route('activity', {
-      refID:      ContentID,
-      actionType: ContentType
-    });
-    history.push({
-      hash: `#comment-${ID}`,
-      pathname
-    });
+    switch (notification.Type) {
+      case constants.NOTIFICATION_FOLLOW:
+        history.push(routes.route('profile', { id: SendUserID }));
+        break;
+      case constants.NOTIFICATION_LIKE_POST:
+        history.push(routes.route('activity', {
+          refID:      ContentID,
+          actionType: ContentType
+        }));
+        break;
+      case constants.NOTIFICATION_COMMENT:
+        console.log(notification);
+        history.push({
+          hash:     `#comment-${ID}`,
+          pathname: routes.route('activity', {
+            refID:      ContentID,
+            actionType: ContentType
+          })
+        });
+        break;
+      case constants.NOTIFICATION_LIKE_COMMENT:
+        history.push(routes.route('activity', {
+          refID:      ContentID,
+          actionType: ContentType
+        }));
+        break;
+    }
   };
 
   /**

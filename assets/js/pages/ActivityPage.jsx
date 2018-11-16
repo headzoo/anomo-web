@@ -11,6 +11,7 @@ import { Page, Loading, UserBadge, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
+import { activityCommentStopNotify } from '../actions/activityActions';
 
 const FADE_DURATION  = 150;
 const COMMENT_PREFIX = '#comment-';
