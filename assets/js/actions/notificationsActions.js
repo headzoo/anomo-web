@@ -14,7 +14,7 @@ const favicon = new Favico({
  */
 export function notificationsFetch() {
   return (dispatch, getState, { user, endpoints, proxy }) => {
-    if (isClearing || !user.hasToken()) {
+    if (isClearing || !user.isAuthenticated) {
       return;
     }
 

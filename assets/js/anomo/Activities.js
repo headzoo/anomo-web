@@ -5,6 +5,13 @@ import { objects } from 'utils';
  */
 class Activities {
   /**
+   * @param {boolean} debug
+   */
+  constructor(debug = false) {
+    this.debug = debug;
+  }
+
+  /**
    * @param {string} str
    */
   unescape = (str) => {
