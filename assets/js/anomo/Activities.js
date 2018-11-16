@@ -12,24 +12,13 @@ class Activities {
   }
 
   /**
-   * @param {string} str
-   */
-  unescape = (str) => {
-    return str
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r');
-  };
-
-  /**
    * @param {string} message
    * @returns {string}
    */
   unescapeUnicode = (message) => {
-    try {
-      return JSON.parse(`"${this.unescape(message).replace(/"/g, '\\"')}"`);
-    } catch (error) {
-      return message;
-    }
+    return unescape(message.replace(/\\u([\d\w]{4})/gi, (match, grp) => {
+      return String.fromCharCode(parseInt(grp, 16));
+    }));
   };
 
   /**
