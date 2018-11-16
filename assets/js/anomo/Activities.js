@@ -46,6 +46,34 @@ class Activities {
   };
 
   /**
+   * @param {string} string
+   * @returns {string}
+   */
+  padWithLeadingZeros = (string) => {
+    return new Array(5 - string.length).join('0') + string;
+  };
+
+  /**
+   * @param {number} charCode
+   * @returns {string}
+   */
+  unicodeCharEscape = (charCode) => {
+    return `\\u${this.padWithLeadingZeros(charCode.toString(16))}`;
+  };
+
+  /**
+   * @param {string} string
+   */
+  unicodeEscape = (string) => {
+    return string.split('')
+      .map((char) => {
+        const charCode = char.charCodeAt(0);
+        return charCode > 127 ? this.unicodeCharEscape(charCode) : char;
+      })
+      .join('');
+  };
+
+  /**
    * @param {*} activity
    * @returns {*}
    */
@@ -73,6 +101,19 @@ class Activities {
     }
 
     return a;
+  };
+
+  /**
+   * @param {string} message
+   * @returns {string}
+   */
+  createMessage = (message) => {
+    const content = {
+      message:      this.unicodeEscape(message),
+      message_tags: []
+    };
+
+    return JSON.stringify(content);
   };
 }
 

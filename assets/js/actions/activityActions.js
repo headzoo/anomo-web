@@ -405,7 +405,7 @@ export function activityFeedPrepend(feedType, activity) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { proxy, endpoints, batch }) => {
+  return (dispatch, getState, { proxy, endpoints, activities, batch }) => {
     dispatch(batch(
       activityIsSubmitting(true),
       formSubmitting(formName, true)
@@ -414,13 +414,9 @@ export function activitySubmit(formName, message, photo = '', video = '') {
     let url  = '';
     let body = {};
     if (photo || video) {
-      url = endpoints.create('userPicture');
+      url  = endpoints.create('userPicture');
       body = new FormData();
-      body.append('PictureCaption', JSON.stringify({
-        message,
-        message_tags: []
-      }));
-
+      body.append('PictureCaption', activities.createMessage(message));
       if (video) {
         body.append('Photo', photo, 'poster.png');
         body.append('Video', video);
@@ -433,9 +429,9 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         return;
       }
 
-      url = endpoints.create('userStatus');
+      url  = endpoints.create('userStatus');
       body = {
-        'ProfileStatus': JSON.stringify({ message, message_tags: [] }),
+        'ProfileStatus': activities.createMessage(message),
         'IsAnonymous':   0,
         'TopicID':       1
       };
