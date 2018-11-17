@@ -5,7 +5,7 @@ import { userRefresh } from 'actions/userActions';
 import { errorMessage, windowResize, uiSidebarDocked, uiContentWidth } from 'actions/uiActions';
 import { activityIntervalStart } from 'actions/activityActions';
 import { notificationsIntervalStart } from 'actions/notificationsActions';
-import { connect, mapStateToProps } from 'utils/state';
+import { connect } from 'utils/state';
 import { browser } from 'utils';
 import { NotificationsDrawer } from 'lib/drawers';
 import { PrivateRoute, ScrollToTop, Nav, Sidebar, Mask, Loading } from 'lib';
@@ -27,8 +27,12 @@ import NotFoundPage from 'pages/NotFoundPage';
  */
 class App extends React.PureComponent {
   static propTypes = {
-    ui:       PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+    error:          PropTypes.string.isRequired,
+    device:         PropTypes.object.isRequired,
+    isLoading:      PropTypes.bool.isRequired,
+    sidebarDocked:  PropTypes.bool.isRequired,
+    visibleDrawers: PropTypes.object.isRequired,
+    dispatch:       PropTypes.func.isRequired
   };
 
   /**
@@ -67,10 +71,10 @@ class App extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { ui, dispatch } = this.props;
+    const { device, dispatch } = this.props;
 
-    if (ui.device.size !== prevProps.ui.device.size) {
-      if (ui.device.isMobile) {
+    if (device.size !== prevProps.device.size) {
+      if (device.isMobile) {
         dispatch(uiContentWidth(window.innerWidth - 44));
       } else {
         const navbar = document.querySelector('#navbar');
@@ -111,15 +115,14 @@ class App extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { ui } = this.props;
-    const { visibleDrawers } = ui;
+    const { isLoading, error, sidebarDocked, visibleDrawers } = this.props;
 
-    if (ui.errorMessage) {
+    if (error) {
       return (
-        <div>{ui.errorMessage}</div>
+        <div>{error}</div>
       );
     }
-    if (ui.isLoading) {
+    if (isLoading) {
       return (
         <Mask visible>
           <Loading middle />
@@ -131,7 +134,7 @@ class App extends React.PureComponent {
       <Router history={history}>
         <ScrollToTop>
           <Nav />
-          {ui.sidebarDocked ? (
+          {sidebarDocked ? (
             <div className="sidebar-docker">
               <Sidebar />
             </div>
@@ -158,4 +161,14 @@ class App extends React.PureComponent {
   }
 }
 
-export default connect(mapStateToProps('ui'))(App);
+const mapStateToProps = state => (
+  {
+    error:          state.ui.errorMessage,
+    device:         state.ui.device,
+    isLoading:      state.ui.isLoading,
+    sidebarDocked:  state.ui.sidebarDocked,
+    visibleDrawers: state.ui.visibleDrawers
+  }
+);
+
+export default connect(mapStateToProps)(App);
