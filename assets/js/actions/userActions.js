@@ -29,6 +29,17 @@ export function userError(errorMessage) {
 }
 
 /**
+ * @param {*} user
+ * @returns {{type: string, user: *}}
+ */
+export function userSet(user) {
+  return {
+    type: USER_SET,
+    user
+  };
+}
+
+/**
  * @param {boolean} isSending
  * @returns {{type, isSending: *}}
  */
@@ -75,16 +86,17 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      USER_FOLLOWERS,
-            followers: data.ListFollower,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(userFollowers(userID, page + 1, false));
-          }
+        dispatch({
+          type:      USER_FOLLOWERS,
+          followers: data.ListFollower,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(userFollowers(userID, page + 1, false));
         }
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -103,16 +115,17 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      USER_FOLLOWING,
-            following: data.ListFollowing,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(userFollowing(userID, page + 1, true));
-          }
+        dispatch({
+          type:      USER_FOLLOWING,
+          following: data.ListFollowing,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(userFollowing(userID, page + 1, true));
         }
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -129,6 +142,9 @@ export function userFollow(userID) {
     proxy.get(url)
       .then(() => {
         dispatch(userFollowing(user.getID(), 1, true));
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -144,12 +160,13 @@ export function userBlocked(userID) {
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:    USER_BLOCKED,
-            blocked: data.results
-          });
-        }
+        dispatch({
+          type:    USER_BLOCKED,
+          blocked: data.results
+        });
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -166,6 +183,9 @@ export function userBlock(userID) {
     proxy.get(url)
       .then(() => {
         dispatch(userBlocked(user.getID()));
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -184,20 +204,21 @@ export function userLogin(username, password) {
 
     user.login(username, password)
       .then((u) => {
-        if (u.code && u.code === 'FAIL') {
-          dispatch(userError('Username or password is incorrect.'));
-          user.logout(true);
-        } else {
-          endpoints.addDefaultParam('token', user.getToken());
-          dispatch(batch(
-            {
-              type: USER_LOGIN,
-              user: u
-            },
-            activityFeedFetchAll(),
-            userFollowing(u.UserID, 1, true)
-          ));
-        }
+        user.isAuthenticated = true;
+        endpoints.addDefaultParam('token', user.getToken());
+        dispatch(batch(
+          {
+            type: USER_LOGIN,
+            user: u
+          },
+          activityFeedFetchAll(),
+          userFollowing(u.UserID, 1, true)
+        ));
+      })
+      .catch((error) => {
+        console.warn(error);
+        dispatch(userError('Username or password is incorrect.'));
+        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -220,6 +241,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
 
     user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
+        user.isAuthenticated = true;
         endpoints.addDefaultParam('token', user.getToken());
         dispatch(batch(
           {
@@ -229,6 +251,11 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
           activityFeedFetchAll(),
           userFollowing(u.UserID, 1, true)
         ));
+      })
+      .catch((error) => {
+        console.warn(error);
+        dispatch(userError('Username or password is incorrect.'));
+        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -262,21 +289,21 @@ export function userRefresh() {
 
       user.info(id)
         .then((data) => {
-          if (data.code === 'OK') {
-            user.isAuthenticated = true;
-            endpoints.addDefaultParam('token', user.getToken());
-            dispatch({
-              type: USER_LOGIN,
-              user: objects.merge(user.getDetails(), data.results)
-            });
-            dispatch(batch(
-              notificationsFetch(),
-              activityFeedFetchAll(),
-              userFollowing(id, 1, true)
-            ));
-          } else {
-            user.logout(true);
-          }
+          user.isAuthenticated = true;
+          endpoints.addDefaultParam('token', user.getToken());
+          dispatch({
+            type: USER_LOGIN,
+            user: objects.merge(user.getDetails(), data.results)
+          });
+          dispatch(batch(
+            notificationsFetch(),
+            activityFeedFetchAll(),
+            userFollowing(id, 1, true)
+          ));
+        })
+        .catch((error) => {
+          console.warn(error);
+          user.logout(true);
         })
         .finally(() => {
           dispatch(batch(
@@ -287,17 +314,6 @@ export function userRefresh() {
     } else {
       dispatch(uiIsLoading(false));
     }
-  };
-}
-
-/**
- * @param {*} user
- * @returns {{type: string, user: *}}
- */
-export function userSet(user) {
-  return {
-    type: USER_SET,
-    user
   };
 }
 
@@ -316,10 +332,11 @@ export function userUpdatePassword(oldPassword, newPassword) {
       NewPassword: md5(newPassword)
     };
     proxy.post(url, body)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(formSuccess('password', 'Password updated successfully.'));
-        }
+      .then(() => {
+        dispatch(formSuccess('password', 'Password updated successfully.'));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -338,9 +355,10 @@ export function userUpdateSettings(values) {
     const url = endpoints.create('userUpdate');
     proxy.post(url, values)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(userSet(data));
-        }
+        dispatch(userSet(data));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -360,12 +378,13 @@ export function userUpdatePrivacy(values) {
       userID: user.getID()
     });
     proxy.post(url, values)
-      .then((data) => {
-        if (data.code === 'OK') {
-          const details = objects.merge(user.getDetails(), values);
-          user.setDetails(details);
-          dispatch(userSet(details));
-        }
+      .then(() => {
+        const details = objects.merge(user.getDetails(), values);
+        user.setDetails(details);
+        dispatch(userSet(details));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -392,12 +411,13 @@ export function userSearch() {
       });
       proxy.get(url)
         .then((data) => {
-          if (data.code === 'OK') {
-            dispatch({
-              type:          USER_SEARCH_RESULTS,
-              searchResults: data.results.ListUser || []
-            });
-          }
+          dispatch({
+            type:          USER_SEARCH_RESULTS,
+            searchResults: data.results.ListUser || []
+          });
+        })
+        .catch((error) => {
+          console.warn(error);
         })
         .finally(() => {
           dispatch(userIsSearchSending(false));

@@ -25,15 +25,16 @@ export function notificationsFetch() {
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          const newNumber = parseInt(data.NewNotificationsNumber, 10);
-          favicon.badge(newNumber);
-          dispatch({
-            type:          NOTIFICATIONS_FETCH,
-            notifications: data.NotificationHistory,
-            newNumber
-          });
-        }
+        const newNumber = parseInt(data.NewNotificationsNumber, 10);
+        favicon.badge(newNumber);
+        dispatch({
+          type:          NOTIFICATIONS_FETCH,
+          notifications: data.NotificationHistory,
+          newNumber
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
@@ -58,6 +59,9 @@ export function notificationsRead(notificationID) {
       notificationID
     });
     proxy.get(url)
+      .catch((error) => {
+        console.warn(error);
+      })
       .finally(() => {
         isClearing = false;
         dispatch(notificationsFetch());
@@ -81,6 +85,9 @@ export function notificationsReadAll() {
       page:   1
     });
     proxy.get(url)
+      .catch((error) => {
+        console.warn(error);
+      })
       .finally(() => {
         isClearing = false;
       });

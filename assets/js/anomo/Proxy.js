@@ -11,7 +11,7 @@ class Proxy {
   /**
    * @param {string} url
    * @param {*} config
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise}
    */
   get = (url, config = {}) => {
     if (this.debug) {
@@ -23,16 +23,21 @@ class Proxy {
     return axios.post('/proxy', {
       method: 'GET',
       url
-    }, config).then((resp) => {
-      return resp.data;
-    });
+    }, config)
+      .then(resp => resp.data)
+      .then((data) => {
+        if (data.code !== 'OK') {
+          throw new Error(data.code);
+        }
+        return data;
+      });
   };
 
   /**
    * @param {string} url
    * @param {*} body
    * @param {*} config
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise}
    */
   post = (url, body, config = {}) => {
     if (this.debug) {
@@ -46,8 +51,12 @@ class Proxy {
       body.append('method', 'POST');
       body.append('url', url);
       return axios.post('/proxy', body)
-        .then((resp) => {
-          return resp.data;
+        .then(resp => resp.data)
+        .then((data) => {
+          if (data.code !== 'OK') {
+            throw new Error(data.code);
+          }
+          return data;
         });
     }
 
@@ -55,9 +64,14 @@ class Proxy {
       method: 'POST',
       url,
       body
-    }, config).then((resp) => {
-      return resp.data;
-    });
+    }, config)
+      .then(resp => resp.data)
+      .then((data) => {
+        if (data.code !== 'OK') {
+          throw new Error(data.code);
+        }
+        return data;
+      });
   };
 }
 

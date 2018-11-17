@@ -301,7 +301,7 @@ export function activityFeedFetchAll(refresh = false) {
  * @returns {{type: string, activities: *}}
  */
 export function activityFeedUpdate(activities) {
-  return               {
+  return {
     type: ACTIVITY_FEED_UPDATE,
     activities
   };
@@ -343,6 +343,10 @@ export function activityFeedFetchNewNumber(feedType) {
     }
     feedFetchNewNumberSources[feedType] = CancelToken.source();
 
+    const config = {
+      cancelToken: feedFetchNewNumberSources[feedType].token
+    };
+
     let url = '';
     switch (feedType) {
       case 'recent':
@@ -361,10 +365,6 @@ export function activityFeedFetchNewNumber(feedType) {
         });
         break;
     }
-
-    const config = {
-      cancelToken: feedFetchNewNumberSources[feedType].token
-    };
 
     proxy.get(url, config)
       .then((data) => {
