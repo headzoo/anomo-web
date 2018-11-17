@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapActionsToProps } from 'utils';
+import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { Button } from 'lib/bootstrap';
 import { Avatar, Icon, Link, LinkButton, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
 import * as notificationActions from 'actions/notificationsActions';
+import { Row } from './bootstrap';
 
 /**
  *
@@ -185,7 +187,7 @@ class Sidebar extends React.PureComponent {
     }
 
     return (
-      <ul className="list-group drawer-notifications-list-group">
+      <TransitionGroup className="list-group drawer-notifications-list-group">
         {notifications.notifications.map((n) => {
           let icon    = 'comment';
           let message = '';
@@ -218,25 +220,27 @@ class Sidebar extends React.PureComponent {
           }
 
           return (
-            <li
-              key={n.ID}
-              className="list-group-item"
-              onClick={e => this.handleNotificationClick(e, n)}
-            >
-              <div className="drawer-notifications-avatar">
-                <Avatar src={n.Avatar} following={followingUserNames.indexOf(UserName) !== -1} sm />
+            <FadeAndSlideTransition key={n.ID} duration={250}>
+              <div
+                key={n.ID}
+                className="list-group-item"
+                onClick={e => this.handleNotificationClick(e, n)}
+              >
+                <div className="drawer-notifications-avatar">
+                  <Avatar src={n.Avatar} following={followingUserNames.indexOf(UserName) !== -1} sm />
+                </div>
+                <div className="drawer-notifications-message">
+                  <Icon name={icon} />
+                  {message}
+                </div>
+                <div className="drawer-notifications-buttons">
+                  <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
+                </div>
               </div>
-              <div className="drawer-notifications-message">
-                <Icon name={icon} />
-                {message}
-              </div>
-              <div className="drawer-notifications-buttons">
-                <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
-              </div>
-            </li>
+            </FadeAndSlideTransition>
           );
         })}
-      </ul>
+      </TransitionGroup>
     );
   };
 

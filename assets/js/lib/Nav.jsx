@@ -64,6 +64,7 @@ class Nav extends React.PureComponent {
     if (feedRoutes.indexOf(location.pathname) === -1) {
       history.push(routes.route(activeFeed));
     } else {
+      console.log('scroll');
       browser.scroll();
     }
   };
