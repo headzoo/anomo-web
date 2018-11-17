@@ -37,9 +37,13 @@ class App extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    props.dispatch(uiSidebarDocked(
-      browser.storage.get(browser.storage.KEY_SIDEBAR_DOCKED, false)
-    ));
+    if (window.innerWidth < 576) {
+      props.dispatch(uiSidebarDocked(false));
+    } else {
+      props.dispatch(uiSidebarDocked(
+        browser.storage.get(browser.storage.KEY_SIDEBAR_DOCKED, false)
+      ));
+    }
   }
 
   /**

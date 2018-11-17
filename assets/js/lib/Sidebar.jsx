@@ -14,6 +14,7 @@ import * as notificationActions from 'actions/notificationsActions';
 class Sidebar extends React.PureComponent {
   static propTypes = {
     user:                 PropTypes.object.isRequired,
+    deviceSize:           PropTypes.string.isRequired,
     sidebarDocked:        PropTypes.bool.isRequired,
     notifications:        PropTypes.object.isRequired,
     history:              PropTypes.object.isRequired,
@@ -109,9 +110,11 @@ class Sidebar extends React.PureComponent {
    *
    */
   handleDockClick = () => {
-    const { uiSidebarDocked, sidebarDocked } = this.props;
+    const { deviceSize, uiSidebarDocked, sidebarDocked } = this.props;
 
-    uiSidebarDocked(!sidebarDocked);
+    if (deviceSize !== 'xs') {
+      uiSidebarDocked(!sidebarDocked);
+    }
   };
 
   /**
@@ -140,21 +143,23 @@ class Sidebar extends React.PureComponent {
    * @returns {*}
    */
   renderFooter = () => {
-    const { sidebarDocked } = this.props;
+    const { deviceSize, sidebarDocked } = this.props;
 
     const title = sidebarDocked ? 'Undock Sidebar' : 'Dock Sidebar';
     const icon = sidebarDocked ? 'angle-double-left docked' : 'angle-double-right undocked';
 
     return (
       <div className="drawer-footer">
-        <div className="drawer-dock-icon">
-          <Icon
-            name={icon}
-            title={title}
-            className="icon-dock drawer-icon clickable"
-            onClick={this.handleDockClick}
-          />
-        </div>
+        {deviceSize !== 'xs' && (
+          <div className="drawer-dock-icon">
+            <Icon
+              name={icon}
+              title={title}
+              className="icon-dock drawer-icon clickable"
+              onClick={this.handleDockClick}
+            />
+          </div>
+        )}
         <div className="drawer-links">
           <Link name="about">
             About
@@ -266,6 +271,7 @@ class Sidebar extends React.PureComponent {
 const mapStateToProps = state => (
   {
     user:          state.user,
+    deviceSize:    state.ui.deviceSize,
     sidebarDocked: state.ui.sidebarDocked,
     notifications: state.notifications
   }
