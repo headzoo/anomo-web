@@ -69,8 +69,8 @@ class App extends React.PureComponent {
   componentDidUpdate = (prevProps) => {
     const { ui, dispatch } = this.props;
 
-    if (ui.deviceSize !== prevProps.ui.deviceSize) {
-      if (ui.deviceSize === 'xs') {
+    if (ui.device.size !== prevProps.ui.device.size) {
+      if (ui.device.isMobile) {
         dispatch(uiContentWidth(window.innerWidth - 44));
       } else {
         const navbar = document.querySelector('#navbar');

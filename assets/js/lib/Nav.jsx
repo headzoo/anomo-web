@@ -14,7 +14,7 @@ import * as activityActions from 'actions/activityActions';
  */
 class Nav extends React.PureComponent {
   static propTypes = {
-    deviceSize:        PropTypes.string.isRequired,
+    isMobile:          PropTypes.bool.isRequired,
     isAuthenticated:   PropTypes.bool.isRequired,
     activeFeed:        PropTypes.string.isRequired,
     sidebarDocked:     PropTypes.bool.isRequired,
@@ -31,9 +31,9 @@ class Nav extends React.PureComponent {
    *
    */
   handleMenuClick = () => {
-    const { deviceSize, sidebarDocked, visibleDrawers, uiVisibleDrawer } = this.props;
+    const { isMobile, sidebarDocked, visibleDrawers, uiVisibleDrawer } = this.props;
 
-    if (deviceSize === 'xs' || !sidebarDocked) {
+    if (isMobile || !sidebarDocked) {
       uiVisibleDrawer('notifications', !visibleDrawers.notifications);
     }
   };
@@ -159,7 +159,7 @@ class Nav extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    deviceSize:      state.ui.deviceSize,
+    isMobile:        state.ui.device.isMobile,
     activeFeed:      state.ui.activeFeed,
     sidebarDocked:   state.ui.sidebarDocked,
     visibleDrawers:  state.ui.visibleDrawers,

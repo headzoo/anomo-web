@@ -14,7 +14,7 @@ import * as notificationActions from 'actions/notificationsActions';
 class Sidebar extends React.PureComponent {
   static propTypes = {
     user:                 PropTypes.object.isRequired,
-    deviceSize:           PropTypes.string.isRequired,
+    isMobile:             PropTypes.bool.isRequired,
     sidebarDocked:        PropTypes.bool.isRequired,
     notifications:        PropTypes.object.isRequired,
     history:              PropTypes.object.isRequired,
@@ -110,9 +110,9 @@ class Sidebar extends React.PureComponent {
    *
    */
   handleDockClick = () => {
-    const { deviceSize, uiSidebarDocked, sidebarDocked } = this.props;
+    const { isMobile, uiSidebarDocked, sidebarDocked } = this.props;
 
-    if (deviceSize !== 'xs') {
+    if (!isMobile) {
       uiSidebarDocked(!sidebarDocked);
     }
   };
@@ -143,14 +143,14 @@ class Sidebar extends React.PureComponent {
    * @returns {*}
    */
   renderFooter = () => {
-    const { deviceSize, sidebarDocked } = this.props;
+    const { isMobile, sidebarDocked } = this.props;
 
     const title = sidebarDocked ? 'Undock Sidebar' : 'Dock Sidebar';
     const icon = sidebarDocked ? 'angle-double-left docked' : 'angle-double-right undocked';
 
     return (
       <div className="drawer-footer">
-        {deviceSize !== 'xs' && (
+        {!isMobile && (
           <div className="drawer-dock-icon">
             <Icon
               name={icon}
@@ -271,7 +271,7 @@ class Sidebar extends React.PureComponent {
 const mapStateToProps = state => (
   {
     user:          state.user,
-    deviceSize:    state.ui.deviceSize,
+    isMobile:      state.ui.device.isMobile,
     sidebarDocked: state.ui.sidebarDocked,
     notifications: state.notifications
   }

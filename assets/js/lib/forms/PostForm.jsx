@@ -22,7 +22,7 @@ class PostForm extends React.PureComponent {
     user:           PropTypes.object.isRequired,
     forms:          PropTypes.object.isRequired,
     config:         PropTypes.object.isRequired,
-    deviceSize:     PropTypes.string.isRequired,
+    isMobile:       PropTypes.bool.isRequired,
     value:          PropTypes.string,
     reply:          PropTypes.bool,
     comment:        PropTypes.bool,
@@ -223,10 +223,10 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { id, user, forms, name, comment, deviceSize, config, withUpload, withMobileForm } = this.props;
+    const { id, user, forms, name, comment, isMobile, config, withUpload, withMobileForm } = this.props;
     const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
-    const isXs = deviceSize === 'xs' && withMobileForm;
+    const isXs = isMobile && withMobileForm;
     const placeholder = (photoSource || videoSource) ? '' : '...';
     const previewActivity = objects.merge(user, {
       FromUserName:   user.UserName,
@@ -367,9 +367,9 @@ class PostForm extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    forms:      state.forms,
-    user:       state.user,
-    deviceSize: state.ui.deviceSize
+    forms:    state.forms,
+    user:     state.user,
+    isMobile: state.ui.device.isMobile
   }
 );
 

@@ -11,7 +11,7 @@ import * as uiActions from 'actions/uiActions';
 class NotificationsDrawer extends React.PureComponent {
   static propTypes = {
     open:            PropTypes.bool,
-    deviceSize:      PropTypes.string.isRequired,
+    isMobile:        PropTypes.bool.isRequired,
     uiVisibleDrawer: PropTypes.func.isRequired
   };
 
@@ -32,7 +32,7 @@ class NotificationsDrawer extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { deviceSize, open, ...props } = this.props;
+    const { isMobile, open, ...props } = this.props;
 
     return (
       <Drawer
@@ -41,7 +41,7 @@ class NotificationsDrawer extends React.PureComponent {
         handler={false}
         onMaskClick={this.close}
         className="drawer-notifications"
-        width={deviceSize === 'xs' ? '75vw' : '15vw'}
+        width={isMobile ? '75vw' : '15vw'}
         {...props}
       >
         <Sidebar />
@@ -52,7 +52,7 @@ class NotificationsDrawer extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    deviceSize: state.ui.deviceSize
+    isMobile: state.ui.device.isMobile
   }
 );
 

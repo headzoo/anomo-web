@@ -37,22 +37,30 @@ function errorMessage(state, action) {
  * @returns {*}
  */
 function windowResize(state, action) {
+  const device = objects.clone(state.device);
   const { width } = action;
 
-  let deviceSize = 'xs';
+  device.width = width;
   if (width >= BREAK_XL) {
-    deviceSize = 'xl';
+    device.size     = 'xl';
+    device.isMobile = false;
   } else if (width >= BREAK_LG) {
-    deviceSize = 'lg';
+    device.size     = 'lg';
+    device.isMobile = false;
   } else if (width >= BREAK_MD) {
-    deviceSize = 'md';
+    device.size     = 'md';
+    device.isMobile = false;
   } else if (width >= BREAK_SM) {
-    deviceSize = 'sm';
+    device.size = 'sm';
+    device.isMobile = true;
+  } else {
+    device.size     = 'xs';
+    device.isMobile = true;
   }
 
   return {
     ...state,
-    deviceSize
+    device
   };
 }
 

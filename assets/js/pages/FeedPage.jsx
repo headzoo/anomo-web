@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { browser, strings, connect, mapActionsToProps } from 'utils';
 import { Row, Column, ButtonGroup, Badge } from 'lib/bootstrap';
-import { PostForm } from 'lib/forms';
 import { Page, Feed, Loading, LinkButton, Number, withRouter } from 'lib';
+import { PostForm } from 'lib/forms';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -14,7 +14,7 @@ import * as activityActions from 'actions/activityActions';
 class FeedPage extends React.PureComponent {
   static propTypes = {
     feeds:             PropTypes.object.isRequired,
-    deviceSize:        PropTypes.string.isRequired,
+    isMobile:          PropTypes.bool.isRequired,
     activeFeed:        PropTypes.string.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
@@ -90,10 +90,10 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   renderNav = () => {
-    const { activeFeed, deviceSize, feeds } = this.props;
+    const { activeFeed, isMobile, feeds } = this.props;
 
     return (
-      <div className={deviceSize !== 'xs' ? 'gutter-top' : ''}>
+      <div className={isMobile ? '' : 'gutter-top'}>
         <ButtonGroup className="page-feed-nav-btn-group" theme="none" stretch>
           <LinkButton
             name="recent"
@@ -134,7 +134,7 @@ class FeedPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { feeds, deviceSize, activeFeed } = this.props;
+    const { feeds, isMobile, activeFeed } = this.props;
 
     let title = 'scnstr';
     if (activeFeed !== 'recent') {
@@ -143,7 +143,7 @@ class FeedPage extends React.PureComponent {
 
     return (
       <Page title={title}>
-        {deviceSize !== 'xs' && (
+        {!isMobile && (
           <Row>
             <Column md={4} offsetMd={4} xs={12}>
               <PostForm
@@ -185,7 +185,7 @@ class FeedPage extends React.PureComponent {
 const mapStateToProps = (state) => {
   return {
     feeds:      state.activity.feeds,
-    deviceSize: state.ui.deviceSize,
+    isMobile:   state.ui.device.isMobile,
     activeFeed: state.ui.activeFeed
   };
 };
