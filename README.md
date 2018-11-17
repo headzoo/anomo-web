@@ -1,6 +1,8 @@
 Anomo Web Client
 ================
 
+[![Build Status](https://travis-ci.org/headzoo/anomo-web.svg?branch=master)](https://travis-ci.org/headzoo/anomo-web)
+
 ## Installation
 
 ```
