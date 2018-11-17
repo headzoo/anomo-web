@@ -381,10 +381,10 @@ export function activityFeedFetchNewNumber(feedType) {
         }
 
         return anomo.activities.setImageDimensions(feedBuffers[feedType])
-          .then((activities) => {
+          .then(() => {
             dispatch(batch(
               activityFeedNewNumber(feedType, feedBuffers[feedType].length),
-              activityFeedUpdate(activities)
+              activityFeedUpdate(data.Activities)
             ));
           });
       })
