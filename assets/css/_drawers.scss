@@ -89,13 +89,11 @@
 /**
  * Notifications
  */
-.drawer-notifications {
-  .list-group {
-    color: #FFF;
+.drawer-notifications-list-group {
+  color: #FFF;
 
-    .avatar-container {
-      margin-right: $gutter-size;
-    }
+  .avatar-container {
+    margin-right: $gutter-size;
   }
 
   .list-group-item {
@@ -109,11 +107,6 @@
     border-top: 1px solid rgba(255, 255, 255, 0.125);
     border-bottom: 1px solid rgba(255, 255, 255, 0.125);
     background-color: transparent;
-  }
-}
-
-.drawer-notifications-list-group {
-  .list-group-item {
     padding: 0.75rem 1rem 0.75rem 0.5rem;
   }
 }
@@ -130,4 +123,8 @@
   .icon {
     margin-right: 0.5rem;
   }
+}
+
+.drawer-notifications-buttons {
+  padding-left: $gutter-size;
 }

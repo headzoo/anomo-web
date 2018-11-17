@@ -230,7 +230,7 @@ class Sidebar extends React.PureComponent {
                 <Icon name={icon} />
                 {message}
               </div>
-              <div>
+              <div className="drawer-notifications-buttons">
                 <Icon name="times" onClick={e => this.handleClearClick(e, n)} />
               </div>
             </li>
