@@ -61,7 +61,7 @@ class Message extends React.Component {
     tokens     = this.parseEmoji(tokens);
     tokens     = this.parseMentions(tokens);
     tokens     = this.parseHashtags(tokens);
-    tokens     = this.parseMarkdown(tokens);
+    // tokens     = this.parseMarkdown(tokens);
 
     let buffer = '';
     const parsed = [];
