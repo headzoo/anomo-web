@@ -15,16 +15,7 @@ export function numberAddCommas(number) {
  * @param {number} max
  */
 export function numberRandom(min, max) {
-  return Math.floor(Math.random() * (max - min) ) + min;
-}
-
-/**
- * @param {number|string} number
- * @param {number}radix
- * @returns {number}
- */
-export function numberClean(number, radix = 10) {
-  return parseInt(number.toString().replace(/[^\d.]/g, ''), radix);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 /**
@@ -32,7 +23,7 @@ export function numberClean(number, radix = 10) {
  * @returns {string}
  */
 export function numberMoney(number) {
-  return `$${numberAddCommas(Math.round(number))}`;
+  return `$${numberAddCommas(number)}`;
 }
 
 /**
@@ -62,7 +53,8 @@ export function numberIsInt(value, strict = false) {
   if (strict && Number(value) !== value) {
     return false;
   }
-  return value % 1 === 0;
+  const mod = value % 1;
+  return mod === 0 && !isNaN(mod);
 }
 
 /**
@@ -74,7 +66,8 @@ export function numberIsFloat(value, strict = false) {
   if (strict && Number(value) !== value) {
     return false;
   }
-  return value % 1 !== 0;
+  const mod = value % 1;
+  return mod !== 0 && !isNaN(mod);
 }
 
 /**
@@ -98,7 +91,6 @@ export default {
   isFloat:     numberIsFloat,
   addCommas:   numberAddCommas,
   random:      numberRandom,
-  clean:       numberClean,
   money:       numberMoney,
   percent:     numberPercent,
   toPrecision: numberToPrecision
