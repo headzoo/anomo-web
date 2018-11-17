@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Switch, Route } from 'react-router-dom';
 import { userRefresh } from 'actions/userActions';
-import { errorMessage, windowResize, uiSidebarDocked } from 'actions/uiActions';
+import { errorMessage, windowResize, uiSidebarDocked, uiContentWidth } from 'actions/uiActions';
 import { activityIntervalStart } from 'actions/activityActions';
 import { notificationsIntervalStart } from 'actions/notificationsActions';
 import { connect, mapStateToProps } from 'utils/state';
@@ -37,10 +37,14 @@ class App extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    if (window.innerWidth < 576) {
-      props.dispatch(uiSidebarDocked(false));
+    const { dispatch } = props;
+    const { innerWidth } = window;
+
+    if (innerWidth < 576) {
+      dispatch(uiContentWidth(innerWidth - 44));
+      dispatch(uiSidebarDocked(false));
     } else {
-      props.dispatch(uiSidebarDocked(
+      dispatch(uiSidebarDocked(
         browser.storage.get(browser.storage.KEY_SIDEBAR_DOCKED, false)
       ));
     }
@@ -58,6 +62,24 @@ class App extends React.PureComponent {
     dispatch(windowResize(window.innerWidth));
     this.resizeOff = browser.on('resize', this.handleResize);
   }
+
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { ui, dispatch } = this.props;
+
+    if (ui.deviceSize !== prevProps.ui.deviceSize) {
+      if (ui.deviceSize === 'xs') {
+        dispatch(uiContentWidth(window.innerWidth - 44));
+      } else {
+        const navbar = document.querySelector('#navbar');
+        if (navbar) {
+          dispatch(uiContentWidth(navbar.width || 551));
+        }
+      }
+    }
+  };
 
   /**
    *

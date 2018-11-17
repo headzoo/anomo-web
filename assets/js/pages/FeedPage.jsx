@@ -19,7 +19,6 @@ class FeedPage extends React.PureComponent {
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
-    uiContentWidth:    PropTypes.func.isRequired,
     activityFeedFetch: PropTypes.func.isRequired,
     activitySubmit:    PropTypes.func.isRequired
   };
@@ -42,18 +41,6 @@ class FeedPage extends React.PureComponent {
         break;
     }
   }
-
-  /**
-   *
-   */
-  componentDidMount = () => {
-    const { uiContentWidth } = this.props;
-
-    const form = document.querySelector('#feed-post-card form');
-    if (form) {
-      uiContentWidth(form.getBoundingClientRect().width);
-    }
-  };
 
   /**
    * @param {*} prevProps
