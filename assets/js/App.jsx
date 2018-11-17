@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Switch, Route } from 'react-router-dom';
 import { userRefresh } from 'actions/userActions';
-import { errorMessage, windowResize } from 'actions/uiActions';
+import { errorMessage, windowResize, uiSidebarDocked } from 'actions/uiActions';
 import { activityIntervalStart } from 'actions/activityActions';
 import { notificationsIntervalStart } from 'actions/notificationsActions';
 import { connect, mapStateToProps } from 'utils/state';
 import { browser } from 'utils';
 import { NotificationsDrawer } from 'lib/drawers';
-import { PrivateRoute, ScrollToTop, Nav, Mask, Loading } from 'lib';
+import { PrivateRoute, ScrollToTop, Nav, Sidebar, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
@@ -30,6 +30,17 @@ class App extends React.PureComponent {
     ui:       PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
   };
+
+  /**
+   * @param {*} props
+   */
+  constructor(props) {
+    super(props);
+
+    props.dispatch(uiSidebarDocked(
+      browser.storage.get(browser.storage.KEY_SIDEBAR_DOCKED, false)
+    ));
+  }
 
   /**
    *
@@ -94,6 +105,13 @@ class App extends React.PureComponent {
       <Router history={history}>
         <ScrollToTop>
           <Nav />
+          {ui.sidebarDocked ? (
+            <div className="sidebar-docker">
+              <Sidebar />
+            </div>
+          ) : (
+            <NotificationsDrawer open={visibleDrawers.notifications !== false} />
+          )}
           <Switch>
             <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
@@ -108,7 +126,6 @@ class App extends React.PureComponent {
             <Route exact path={routes.path('about')} component={AboutPage} />
             <Route exact path="*" component={NotFoundPage} />
           </Switch>
-          <NotificationsDrawer open={visibleDrawers.notifications !== false} />
         </ScrollToTop>
       </Router>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { browser, connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { browser, connect, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
 import { MenuIcon } from 'lib/icons';
@@ -14,9 +14,10 @@ import * as activityActions from 'actions/activityActions';
  */
 class Nav extends React.PureComponent {
   static propTypes = {
-    ui:                PropTypes.object.isRequired,
-    user:              PropTypes.object.isRequired,
-    forms:             PropTypes.object.isRequired,
+    isAuthenticated:   PropTypes.bool.isRequired,
+    activeFeed:        PropTypes.string.isRequired,
+    sidebarDocked:     PropTypes.bool.isRequired,
+    visibleDrawers:    PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     history:           PropTypes.object.isRequired,
     notifications:     PropTypes.object.isRequired,
@@ -28,10 +29,12 @@ class Nav extends React.PureComponent {
   /**
    *
    */
-  handleNotificationsClick = () => {
-    const { uiVisibleDrawer } = this.props;
+  handleMenuClick = () => {
+    const { sidebarDocked, visibleDrawers, uiVisibleDrawer } = this.props;
 
-    uiVisibleDrawer('notifications', true);
+    if (!sidebarDocked) {
+      uiVisibleDrawer('notifications', !visibleDrawers.notifications);
+    }
   };
 
   /**
@@ -49,7 +52,7 @@ class Nav extends React.PureComponent {
    *
    */
   handleBrandClick = () => {
-    const { ui, history, location } = this.props;
+    const { activeFeed, history, location } = this.props;
 
     const feedRoutes = [
       routes.route('recent'),
@@ -58,7 +61,7 @@ class Nav extends React.PureComponent {
     ];
 
     if (feedRoutes.indexOf(location.pathname) === -1) {
-      history.push(routes.route(ui.activeFeed));
+      history.push(routes.route(activeFeed));
     } else {
       browser.scroll();
     }
@@ -119,7 +122,7 @@ class Nav extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { user, notifications } = this.props;
+    const { isAuthenticated, notifications } = this.props;
 
     if (notifications.newNumber > 99) {
       notifications.newNumber = '99+';
@@ -127,7 +130,7 @@ class Nav extends React.PureComponent {
 
     return (
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
-        <MenuIcon onClick={this.handleNotificationsClick} />
+        <MenuIcon onClick={this.handleMenuClick} />
 
         <ul className="nav navbar-nav mx-auto">
           <li className="nav-item" style={{ margin: '-15px 0' }}>
@@ -137,7 +140,7 @@ class Nav extends React.PureComponent {
           </li>
         </ul>
         <ul className="navbar-nav">
-          {user.isAuthenticated && (
+          {isAuthenticated && (
             <li className="nav-item">
               <Icon
                 name="edit"
@@ -153,7 +156,17 @@ class Nav extends React.PureComponent {
   }
 }
 
+const mapStateToProps = state => (
+  {
+    activeFeed:      state.ui.activeFeed,
+    sidebarDocked:   state.ui.sidebarDocked,
+    visibleDrawers:  state.ui.visibleDrawers,
+    notifications:   state.notifications,
+    isAuthenticated: state.user.isAuthenticated
+  }
+);
+
 export default connect(
-  mapStateToProps('ui', 'user', 'forms', 'notifications'),
+  mapStateToProps,
   mapActionsToProps(uiActions, activityActions)
 )(withRouter(Nav));

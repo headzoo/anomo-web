@@ -1,3 +1,5 @@
+import { browser } from 'utils';
+
 export const UI_LOADING        = 'UI_LOADING';
 export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
 export const UI_CONTENT_WIDTH  = 'UI_CONTENT_WIDTH';
@@ -5,6 +7,7 @@ export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
 export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
 export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
 export const UI_ACTIVE_FEED    = 'UI_ACTIVE_FEED';
+export const UI_SIDEBAR_DOCKED = 'UI_SIDEBAR_DOCKED';
 
 /**
  * @param {boolean} isLoading
@@ -87,5 +90,17 @@ export function uiActiveFeed(activeFeed) {
   return {
     type: UI_ACTIVE_FEED,
     activeFeed
+  };
+}
+
+/**
+ * @param {boolean} sidebarDocked
+ * @returns {{type: string, sidebarDocked: *}}
+ */
+export function uiSidebarDocked(sidebarDocked) {
+  browser.storage.set(browser.storage.KEY_SIDEBAR_DOCKED, sidebarDocked);
+  return {
+    type: UI_SIDEBAR_DOCKED,
+    sidebarDocked
   };
 }

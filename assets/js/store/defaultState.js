@@ -19,6 +19,7 @@ export const defaultUi = {
   contentWidth:  551,
   activeFeed:    'recent',
   isLoading:     true,
+  sidebarDocked: false,
   errorMessage:  '',
   errorInfo:     {},
   visibleModals: {

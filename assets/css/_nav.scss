@@ -23,7 +23,7 @@
   opacity: 0.9;
   margin-top: -4px;
   align-items: center;
-  height: $header-height - 7px;
+  height: $header-height + 4px;
   transition: all 0.1s ease-in-out;
 
   &:hover {

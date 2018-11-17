@@ -106,6 +106,21 @@ function activeFeed(state, action) {
   };
 }
 
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function sidebarDocked(state, action) {
+  return {
+    ...state,
+    visibleDrawers: {
+      notifications: false
+    },
+    sidebarDocked: action.sidebarDocked
+  };
+}
+
 export default redux.createReducer({
   [types.UI_LOADING]:        loading,
   [types.UI_ACTIVE_FEED]:    activeFeed,
@@ -113,5 +128,6 @@ export default redux.createReducer({
   [types.UI_WINDOW_RESIZE]:  windowResize,
   [types.UI_CONTENT_WIDTH]:  contentWidth,
   [types.UI_VISIBLE_MODAL]:  visibleModal,
-  [types.UI_VISIBLE_DRAWER]: visibleDrawer
+  [types.UI_VISIBLE_DRAWER]: visibleDrawer,
+  [types.UI_SIDEBAR_DOCKED]: sidebarDocked
 });
