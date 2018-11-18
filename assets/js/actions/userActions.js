@@ -2,7 +2,7 @@ import md5 from 'md5';
 import { objects, browser } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFeedFetchAll } from 'actions/activityActions';
+import { activityFeedFetchAll, activityTrendingHashtags } from 'actions/activityActions';
 import { notificationsFetch } from 'actions/notificationsActions';
 
 export const USER_ERROR            = 'USER_ERROR';
@@ -212,6 +212,7 @@ export function userLogin(username, password) {
             user: u
           },
           activityFeedFetchAll(),
+          activityTrendingHashtags(),
           userFollowing(u.UserID, 1, true)
         ));
       })
@@ -249,6 +250,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
             user: u
           },
           activityFeedFetchAll(),
+          activityTrendingHashtags(),
           userFollowing(u.UserID, 1, true)
         ));
       })
@@ -298,6 +300,7 @@ export function userRefresh() {
           dispatch(batch(
             notificationsFetch(),
             activityFeedFetchAll(),
+            activityTrendingHashtags(),
             userFollowing(id, 1, true)
           ));
         })

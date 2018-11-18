@@ -144,6 +144,7 @@ export const defaultActivity = {
     }
   },
   activity:          {},
+  trendingHashtags:  [],
   isLoading:         false,
   isSubmitting:      false,
   isRefreshing:      false,

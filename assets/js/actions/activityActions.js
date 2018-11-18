@@ -31,6 +31,7 @@ export const ACTIVITY_DELETE               = 'ACTIVITY_DELETE';
 export const ACTIVITY_DELETE_SENDING       = 'ACTIVITY_DELETE_SENDING';
 export const ACTIVITY_SHARE                = 'ACTIVITY_SHARE';
 export const ACTIVITY_REPORT               = 'ACTIVITY_REPORT';
+export const ACTIVITY_TRENDING_HASHTAGS    = 'ACTIVITY_TRENDING_HASHTAGS';
 
 const { CancelToken } = axios;
 
@@ -331,6 +332,28 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
         if (refresh) {
           dispatch(activityIsFeedRefreshing(feedType, false));
         }
+      });
+  };
+}
+
+/**
+ * @returns {function(*, *, {endpoints: *, proxy: *})}
+ */
+export function activityTrendingHashtags() {
+  return (dispatch, getState, { endpoints, proxy }) => {
+    const url = endpoints.create('activityTrendingHashtags');
+    proxy.get(url)
+      .then((resp) => {
+        const trendingHashtags = resp.ListTrending.map((h) => {
+          return h.HashTag;
+        });
+        dispatch({
+          type: ACTIVITY_TRENDING_HASHTAGS,
+          trendingHashtags
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
@@ -861,6 +884,7 @@ export function activityIntervalStart() {
   return (dispatch) => {
     setInterval(() => {
       dispatch(activityFeedFetchAllNewNumbers());
+      dispatch(activityTrendingHashtags());
     }, 30000);
   };
 }

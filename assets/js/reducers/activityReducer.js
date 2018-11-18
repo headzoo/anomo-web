@@ -1,6 +1,7 @@
 import * as types from 'actions/activityActions';
 import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
+import { ACTIVITY_TRENDING_HASHTAGS } from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -538,6 +539,18 @@ function deleteIsSending(state, action) {
   };
 }
 
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function trendingHashtags(state, action) {
+  return {
+    ...state,
+    trendingHashtags: action.trendingHashtags
+  };
+}
+
 export default redux.createReducer({
   [types.ACTIVITY_RESET]:                reset,
   [types.ACTIVITY_SET]:                  set,
@@ -562,5 +575,6 @@ export default redux.createReducer({
   [types.ACTIVITY_COMMENT_PREPEND]:      commentPrepend,
   [types.ACTIVITY_COMMENT_APPEND]:       commentAppend,
   [types.ACTIVITY_LIKE_LIST_LOADING]:    likeListLoading,
-  [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading
+  [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading,
+  [types.ACTIVITY_TRENDING_HASHTAGS]:    trendingHashtags
 });

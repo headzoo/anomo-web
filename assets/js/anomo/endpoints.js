@@ -30,6 +30,7 @@ const urls = {
   activityDelete:            `${base}/user/delete_activity/{token}/{activityID}`,
   activityLike:              `${base}/activity/like/{token}/{refID}/{actionType}/false`,
   activityLikeList:          `${base}/activity/likelist/{token}/{refID}/{actionType}`,
+  activityTrendingHashtags:  `${base}/activity/trending_hashtag/{token}/0`,
   activityComment:           `${base}/activity/comment/{token}/{refID}/{actionType}`,
   activityCommentLike:       `${base}/comment/like/{token}/{commentID}/{actionType}`,
   activityCommentDelete:     `${base}/comment/delete/{token}/{commentID}`,
