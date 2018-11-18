@@ -25,6 +25,7 @@ const urls = {
   activityFeedRecent:        `${base}/activity/get_activities/{token}/1/0/-1/0/18/100/{lastActivityID}/0`,
   activityFeedPopular:       `${base}/activity/get_activities/{token}/1/2/-1/0/18/100/{lastActivityID}/0`,
   activityFeedFollowing:     `${base}/activity/get_activities/{token}/1/3/-1/0/18/100/{lastActivityID}/0`,
+  activityFeedHashtag:       `${base}/activity/get_activities/{token}/{page}/0/-1/0/18/100/0/0`,
   activityGet:               `${base}/activity/detail/{token}/{refID}/{actionType}`,
   activityDelete:            `${base}/user/delete_activity/{token}/{activityID}`,
   activityLike:              `${base}/activity/like/{token}/{refID}/{actionType}/false`,

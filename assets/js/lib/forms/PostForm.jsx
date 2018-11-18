@@ -29,6 +29,7 @@ class PostForm extends React.PureComponent {
     withUpload:     PropTypes.bool,
     withMobileForm: PropTypes.bool,
     onSubmit:       PropTypes.func,
+    onFocus:        PropTypes.func,
     formChange:     PropTypes.func
   };
 
@@ -39,7 +40,8 @@ class PostForm extends React.PureComponent {
     comment:        false,
     withUpload:     false,
     withMobileForm: false,
-    onSubmit:       () => {}
+    onSubmit:       () => {},
+    onFocus:        () => {}
   };
 
   /**
@@ -117,7 +119,7 @@ class PostForm extends React.PureComponent {
    * @param {*} values
    */
   handleSubmit = (e, values) => {
-    const { onSubmit } = this.props;
+    const { onSubmit, onFocus } = this.props;
     const { videoPoster } = this.state;
 
     if (values.photo) {
@@ -145,6 +147,7 @@ class PostForm extends React.PureComponent {
       videoPoster: ''
     });
     onSubmit(e, values);
+    onFocus(e, false);
   };
 
   /**
@@ -153,7 +156,7 @@ class PostForm extends React.PureComponent {
    * @param {string} name
    */
   handleChange = (e, value, name) => {
-    const { config } = this.props;
+    const { config, onFocus } = this.props;
     const { maxChars } = config.anomo;
 
     if (name === 'photo') {
@@ -162,6 +165,7 @@ class PostForm extends React.PureComponent {
         focused: true,
         photoSource
       });
+      onFocus(e, true);
     } else if (name === 'video') {
       const videoSource = window.URL.createObjectURL(this.video.current.files()[0]);
       media.getVideoImage(videoSource, -1)
@@ -171,6 +175,7 @@ class PostForm extends React.PureComponent {
             videoPoster,
             videoSource
           });
+          onFocus(e, true);
         });
     } else if (name === 'message') {
       const charCount = maxChars - value.length;
@@ -201,22 +206,26 @@ class PostForm extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleClickOutside = () => {
-    const { forms, name } = this.props;
+  handleClickOutside = (e) => {
+    const { forms, name, onFocus } = this.props;
     const { focused } = this.state;
 
     if (focused && !forms[name].message && !forms[name].photo) {
       this.setState({ focused: false });
+      onFocus(e, false);
     }
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleMessageFocus = () => {
+  handleMessageFocus = (e) => {
+    const { onFocus } = this.props;
+
     this.setState({ focused: true });
+    onFocus(e, true);
   };
 
   /**

@@ -368,6 +368,17 @@ function feedFetch(state, action) {
 
   feed.newNumber = 0;
 
+  if (feed.page !== undefined) {
+    if (action.refresh) {
+      feed.page = 1;
+    } else {
+      feed.page += 1;
+    }
+  }
+  if (feed.hasMore !== undefined && action.hasMore !== undefined) {
+    feed.hasMore = action.hasMore;
+  }
+
   return {
     ...state,
     feeds

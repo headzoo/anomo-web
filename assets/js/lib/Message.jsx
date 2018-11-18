@@ -196,7 +196,7 @@ class Message extends React.Component {
         const anchor = React.createElement('a', {
           'key':       `hashtag_${keyIndex}`,
           'className': 'anchor anchor-hashtag',
-          'href':      routes.route('hashtag', { text: nextToken }),
+          'href':      routes.route('hashtag', { hashtag: nextToken.replace('#', '') }),
         }, `#${nextToken}`);
         keyIndex += 1;
         i += 1;

@@ -136,6 +136,11 @@ export const defaultActivity = {
     },
     following: {
       ...commonFeed
+    },
+    hashtag: {
+      page:    1,
+      hasMore: true,
+      ...commonFeed
     }
   },
   activity:          {},

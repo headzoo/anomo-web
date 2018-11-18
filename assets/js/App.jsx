@@ -12,6 +12,7 @@ import { PrivateRoute, ScrollToTop, Nav, Sidebar, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
 import FeedPage from 'pages/FeedPage';
+import HashtagPage from 'pages/HashtagPage';
 import ActivityPage from 'pages/ActivityPage';
 import ProfilePage from 'pages/ProfilePage';
 import EditProfilePage from 'pages/EditProfilePage';
@@ -146,6 +147,7 @@ class App extends React.PureComponent {
             <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('following')} component={FeedPage} />
             <PrivateRoute exact path={routes.path('activity')} component={ActivityPage} />
+            <PrivateRoute exact path={routes.path('hashtag')} component={HashtagPage} />
             <PrivateRoute exact path={routes.path('editProfile')} component={EditProfilePage} />
             <PrivateRoute exact path={routes.path('profile')} component={ProfilePage} />
             <PrivateRoute exact path={routes.path('settings')} component={SettingsPage} />

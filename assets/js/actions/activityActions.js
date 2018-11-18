@@ -283,6 +283,59 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
 }
 
 /**
+ * @param {string} hashtag
+ * @param {boolean} refresh
+ * @returns {function(*=, *, {endpoints: *, proxy: *})}
+ */
+export function activityFetchByHashtag(hashtag, refresh = false) {
+  return (dispatch, getState, { endpoints, proxy }) => {
+    const { activity } = getState();
+    const feedType = 'hashtag';
+
+    dispatch(activityIsFeedLoading(feedType, true));
+    if (refresh) {
+      dispatch(activityIsFeedRefreshing(feedType, true));
+    }
+
+    const url = endpoints.create('activityFeedHashtag', {
+      page: activity.feeds.hashtag.page
+    });
+    const body = {
+      'HashTag': hashtag
+    };
+
+    proxy.post(url, body)
+      .then((data) => {
+        if (data.code !== 'OK') {
+          return null;
+        }
+
+        const hasMore = data.Page < data.TotalPage;
+
+        return anomo.activities.setImageDimensions(data.Activities)
+          .then((activities) => {
+            dispatch({
+              type: ACTIVITY_FEED_FETCH,
+              feedType,
+              activities,
+              refresh,
+              hasMore
+            });
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        dispatch(activityIsFeedLoading(feedType, false));
+        if (refresh) {
+          dispatch(activityIsFeedRefreshing(feedType, false));
+        }
+      });
+  };
+}
+
+/**
  * @param {boolean} refresh
  * @returns {function(*, *, {batch: *})}
  */

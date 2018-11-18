@@ -10,7 +10,7 @@ const pathsAndRoutes = {
   profile:     '/profile/:id',
   editProfile: '/profile/edit',
   search:      '/search',
-  hashtag:     '/hashtag',
+  hashtag:     '/hashtag/:hashtag',
   login:       '/login',
   logout:      '/logout',
   settings:    '/settings',
