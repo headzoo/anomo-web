@@ -298,7 +298,13 @@ class ProfilePage extends React.PureComponent {
 
     if (profile.UserID === 0 || profile.isSending) {
       return (
-        <Loading middle />
+        <Page title="Loading">
+          <Row>
+            <Column className="gutter-lg text-center" md={4} offsetMd={4} xs={12}>
+              <Loading />
+            </Column>
+          </Row>
+        </Page>
       );
     }
 

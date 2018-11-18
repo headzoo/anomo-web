@@ -210,7 +210,15 @@ class ActivityPage extends React.PureComponent {
     const { activity } = this.state;
 
     if (isActivityLoading) {
-      return <Loading middle />;
+      return (
+        <Page title="Loading">
+          <Row>
+            <Column className="gutter-lg text-center" md={4} offsetMd={4} xs={12}>
+              <Loading />
+            </Column>
+          </Row>
+        </Page>
+      );
     }
 
     return (
