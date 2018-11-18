@@ -635,9 +635,9 @@ export function activityLikeComment(commentID, refID, actionType) {
       activityIsLikeCommentLoading(true, commentID),
       {
         type: ACTIVITY_LIKE_COMMENT,
+        actionType,
         commentID,
-        refID,
-        actionType
+        refID
       }
     ));
     setTimeout(() => {
@@ -645,6 +645,7 @@ export function activityLikeComment(commentID, refID, actionType) {
     }, 1000);
 
     const url = endpoints.create('activityCommentLike', {
+      actionType,
       commentID
     });
     proxy.get(url)

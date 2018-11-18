@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
 import { Twemoji } from 'react-emoji-render';
-import { connect, mapActionsToProps } from 'utils';
+import { numbers, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
 import { Image, Avatar, Icon, Pluralize, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
@@ -136,7 +136,7 @@ class CommentCard extends React.PureComponent {
   renderFooter = () => {
     const { comment, onReplyClick } = this.props;
 
-    const likes   = parseInt(comment.NumberOfLike || 0, 10);
+    const likes   = numbers.parseAny(comment.NumberOfLike);
     const isLiked = (comment.IsLike && comment.IsLike === '1');
 
     return (

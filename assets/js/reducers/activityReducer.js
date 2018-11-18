@@ -1,5 +1,5 @@
 import * as types from 'actions/activityActions';
-import { objects, redux, feeds as feedUtils } from 'utils';
+import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
 
 /**
@@ -240,18 +240,18 @@ function likeComment(state, action) {
 
   if (activity.RefID === action.refID) {
     if (!activity.ListComment) {
-      return;
+      return state;
     }
 
     for (let i = 0; i < activity.ListComment.length; i++) {
       const comment = activity.ListComment[i];
       if (comment.ID === action.commentID) {
         if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike = '1';
-          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
+          comment.IsLike       = '1';
+          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) + 1;
         } else {
-          comment.IsLike = '0';
-          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
+          comment.IsLike       = '0';
+          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) - 1;
         }
       }
     }
@@ -266,11 +266,11 @@ function likeComment(state, action) {
       const comment = a.ListComment[i];
       if (comment.ID === action.commentID) {
         if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike = '1';
-          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
+          comment.IsLike       = '1';
+          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) + 1;
         } else {
-          comment.IsLike = '0';
-          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
+          comment.IsLike       = '0';
+          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) - 1;
         }
       }
     }

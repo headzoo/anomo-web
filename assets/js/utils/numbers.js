@@ -50,6 +50,9 @@ export function numberToPrecision(number, precision) {
  * @returns {boolean}
  */
 export function numberIsInt(value, strict = false) {
+  if (value === undefined) {
+    return false;
+  }
   if (strict && Number(value) !== value) {
     return false;
   }
@@ -63,6 +66,9 @@ export function numberIsInt(value, strict = false) {
  * @returns {boolean}
  */
 export function numberIsFloat(value, strict = false) {
+  if (value === undefined) {
+    return false;
+  }
   if (strict && Number(value) !== value) {
     return false;
   }
@@ -76,6 +82,9 @@ export function numberIsFloat(value, strict = false) {
  * @returns {number}
  */
 export function numberParseAny(value, radix = 10) {
+  if (value === undefined) {
+    return 0;
+  }
   if (numberIsInt(value)) {
     return parseInt(value, radix);
   }
