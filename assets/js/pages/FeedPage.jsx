@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { browser, strings, connect, mapActionsToProps } from 'utils';
 import { Row, Column, ButtonGroup, Badge } from 'lib/bootstrap';
-import { Page, Feed, Loading, Link, LinkButton, Number, withRouter } from 'lib';
+import { Page, Feed, TrendingHashtags, Loading, Link, LinkButton, Number, withRouter } from 'lib';
 import { PostForm } from 'lib/forms';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
@@ -16,7 +16,6 @@ class FeedPage extends React.PureComponent {
     feeds:             PropTypes.object.isRequired,
     isMobile:          PropTypes.bool.isRequired,
     activeFeed:        PropTypes.string.isRequired,
-    trendingHashtags:  PropTypes.array.isRequired,
     history:           PropTypes.object.isRequired,
     location:          PropTypes.object.isRequired,
     uiActiveFeed:      PropTypes.func.isRequired,
@@ -134,25 +133,6 @@ class FeedPage extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderHashtags = () => {
-    const { trendingHashtags } = this.props;
-
-    return (
-      <div className="page-feed-trending-hashtags">
-        {trendingHashtags.slice(0, 5).map(hashtag => (
-          <span key={hashtag}>
-            <Link name="hashtag" params={{ hashtag }}>
-              #{hashtag}
-            </Link>
-          </span>
-        ))}
-      </div>
-    );
-  };
-
-  /**
-   * @returns {*}
-   */
   render() {
     const { feeds, isMobile, activeFeed } = this.props;
 
@@ -193,7 +173,7 @@ class FeedPage extends React.PureComponent {
               offsetMd={4}
               className="gutter-bottom"
             >
-              {this.renderHashtags()}
+              <TrendingHashtags />
             </Column>
           </Row>
         )}
@@ -216,10 +196,9 @@ class FeedPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    feeds:            state.activity.feeds,
-    isMobile:         state.ui.device.isMobile,
-    activeFeed:       state.ui.activeFeed,
-    trendingHashtags: state.activity.trendingHashtags
+    feeds:      state.activity.feeds,
+    isMobile:   state.ui.device.isMobile,
+    activeFeed: state.ui.activeFeed
   };
 };
 
