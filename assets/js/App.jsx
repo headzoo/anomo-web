@@ -28,12 +28,13 @@ import NotFoundPage from 'pages/NotFoundPage';
  */
 class App extends React.PureComponent {
   static propTypes = {
-    error:          PropTypes.string.isRequired,
-    device:         PropTypes.object.isRequired,
-    isLoading:      PropTypes.bool.isRequired,
-    sidebarDocked:  PropTypes.bool.isRequired,
-    visibleDrawers: PropTypes.object.isRequired,
-    dispatch:       PropTypes.func.isRequired
+    error:           PropTypes.string.isRequired,
+    device:          PropTypes.object.isRequired,
+    isLoading:       PropTypes.bool.isRequired,
+    sidebarDocked:   PropTypes.bool.isRequired,
+    visibleDrawers:  PropTypes.object.isRequired,
+    isAuthenticated: PropTypes.bool.isRequired,
+    dispatch:        PropTypes.func.isRequired
   };
 
   /**
@@ -116,7 +117,7 @@ class App extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isLoading, error, sidebarDocked, visibleDrawers } = this.props;
+    const { isLoading, isAuthenticated, error, sidebarDocked, visibleDrawers } = this.props;
 
     if (error) {
       return (
@@ -135,7 +136,7 @@ class App extends React.PureComponent {
       <Router history={history}>
         <ScrollToTop>
           <Nav />
-          {sidebarDocked ? (
+          {(sidebarDocked && isAuthenticated) ? (
             <div className="sidebar-docker">
               <Sidebar />
             </div>
@@ -165,11 +166,12 @@ class App extends React.PureComponent {
 
 const mapStateToProps = state => (
   {
-    error:          state.ui.errorMessage,
-    device:         state.ui.device,
-    isLoading:      state.ui.isLoading,
-    sidebarDocked:  state.ui.sidebarDocked,
-    visibleDrawers: state.ui.visibleDrawers
+    error:           state.ui.errorMessage,
+    device:          state.ui.device,
+    isLoading:       state.ui.isLoading,
+    sidebarDocked:   state.ui.sidebarDocked,
+    visibleDrawers:  state.ui.visibleDrawers,
+    isAuthenticated: state.user.isAuthenticated
   }
 );
 

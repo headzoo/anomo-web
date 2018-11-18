@@ -101,6 +101,9 @@ class LoginPage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
+          <Column className="gutter-top text-center">or</Column>
+        </Row>
+        <Row>
           <Column className="gutter-top">
             <FacebookLogin
               appId={facebook.appID}
