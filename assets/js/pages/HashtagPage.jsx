@@ -38,6 +38,17 @@ class HashtagPage extends React.PureComponent {
   };
 
   /**
+   * @params {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { match, activityFetchByHashtag } = this.props;
+
+    if (match.params.hashtag !== prevProps.match.params.hashtag) {
+      activityFetchByHashtag(match.params.hashtag, true);
+    }
+  };
+
+  /**
    * @param {Event} e
    * @param {boolean} focused
    */
