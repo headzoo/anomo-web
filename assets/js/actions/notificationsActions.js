@@ -1,4 +1,4 @@
-import Favico from 'favico.js';
+import { favicon } from 'utils';
 import * as constants from 'anomo/constants';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
@@ -6,9 +6,6 @@ export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
 export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 
 let isClearing = false;
-const favicon = new Favico({
-  animation: 'popFade'
-});
 
 /**
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
@@ -26,7 +23,7 @@ export function notificationsFetch() {
     proxy.get(url)
       .then((data) => {
         const newNumber = parseInt(data.NewNotificationsNumber, 10);
-        favicon.badge(newNumber);
+        favicon.noticeCount(newNumber);
         dispatch({
           type:          NOTIFICATIONS_FETCH,
           notifications: data.NotificationHistory,
@@ -49,7 +46,7 @@ export function notificationsRead(notificationID) {
     const { newNumber } = notifications;
 
     isClearing = true;
-    favicon.badge(newNumber - 1);
+    favicon.noticeCount(newNumber - 1);
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
@@ -75,7 +72,7 @@ export function notificationsRead(notificationID) {
 export function notificationsReadAll() {
   return (dispatch, getState, { endpoints, proxy }) => {
     isClearing = true;
-    favicon.badge(0);
+    favicon.noticeCount(0);
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });

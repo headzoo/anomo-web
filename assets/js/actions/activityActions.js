@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
-import { objects, media } from 'utils';
+import { objects, favicon } from 'utils';
 import anomo from 'anomo';
 import * as constants from 'anomo/constants';
 
@@ -389,6 +389,9 @@ export function activityFeedUpdate(activities) {
  * @returns {{type: string, newNumber: *, feedType: *}}
  */
 export function activityFeedNewNumber(feedType, newNumber) {
+  if (feedType === 'recent') {
+    favicon.newFeedCount(newNumber);
+  }
   return {
     type: ACTIVITY_FEED_NEW_NUMBER,
     newNumber,

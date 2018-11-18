@@ -10,11 +10,10 @@ export { default as arrays } from './arrays';
 export { default as dates } from './dates';
 export { default as feeds } from './feeds';
 export { default as media } from './media';
+export { default as favicon } from './favicon';
 export {
   connect,
   redux,
   mapStateToProps,
   mapActionsToProps
 };
-
-export const catchActionError = redux.catchActionError;
