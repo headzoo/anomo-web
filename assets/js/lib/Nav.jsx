@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { browser, connect, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
 import { MenuIcon } from 'lib/icons';
-import { Icon, withRouter } from 'lib';
+import { Icon } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -61,11 +62,9 @@ class Nav extends React.PureComponent {
       routes.route('following')
     ];
 
+    browser.scroll();
     if (feedRoutes.indexOf(location.pathname) === -1) {
       history.push(routes.route(activeFeed));
-    } else {
-      console.log('scroll');
-      browser.scroll();
     }
   };
 

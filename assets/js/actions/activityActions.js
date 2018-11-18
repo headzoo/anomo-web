@@ -496,14 +496,15 @@ export function activityLikeList(refID, actionType) {
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:  ACTIVITY_LIKE_LIST,
-            likes: data.likes || [],
-            actionType,
-            refID
-          });
-        }
+        dispatch({
+          type:  ACTIVITY_LIKE_LIST,
+          likes: data.likes || [],
+          actionType,
+          refID
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(activityIsLikeListLoading(false));
@@ -550,6 +551,9 @@ export function activityGet(refID, actionType) {
         activity.LikeList = responses[1].likes;
         dispatch(activitySet(activity));
       })
+      .catch((error) => {
+        console.error(error);
+      })
       .finally(() => {
         dispatch(batch(
           activityIsActivityLoading(false),
@@ -572,13 +576,14 @@ export function activityDelete(activityID) {
       activityID
     });
     proxy.get(url)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type: ACTIVITY_DELETE,
-            activityID
-          });
-        }
+      .then(() => {
+        dispatch({
+          type: ACTIVITY_DELETE,
+          activityID
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(activityIsDeleteSending(false, activityID));
@@ -609,10 +614,11 @@ export function activityLike(refID, actionType) {
       refID
     });
     proxy.get(url)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(activityGet(refID, actionType));
-        }
+      .then(() => {
+        dispatch(activityGet(refID, actionType));
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
@@ -642,10 +648,11 @@ export function activityLikeComment(commentID, refID, actionType) {
       commentID
     });
     proxy.get(url)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(activityGet(refID, actionType));
-        }
+      .then(() => {
+        dispatch(activityGet(refID, actionType));
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
