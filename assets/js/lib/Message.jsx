@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import twemoji from 'twemoji';
 import { objects } from 'utils';
+import { Link } from 'lib';
 import routes from 'store/routes';
 
 /**
@@ -163,9 +164,10 @@ class Message extends React.Component {
         const mention = `@${nextToken}`;
         const userID  = this.getUserIDFromMention(mention);
         if (userID !== 0) {
-          const anchor = React.createElement('a', {
+          const anchor = React.createElement(Link, {
             'key':       `mention_${keyIndex}`,
-            'href':      routes.route('profile', { id: userID }),
+            'name':      'profile',
+            'params':    { id: userID },
             'className': 'anchor anchor-mention'
           }, mention);
           keyIndex += 1;
@@ -193,10 +195,11 @@ class Message extends React.Component {
     for (let i = 0; i < tokens.length; i++) {
       const nextToken = tokens[i + 1];
       if (tokens[i] === '#' && nextToken && typeof nextToken === 'string' && nextToken.match(/^\w+$/)) {
-        const anchor = React.createElement('a', {
+        const anchor = React.createElement(Link, {
           'key':       `hashtag_${keyIndex}`,
-          'className': 'anchor anchor-hashtag',
-          'href':      routes.route('hashtag', { hashtag: nextToken.replace('#', '') }),
+          'name':      'hashtag',
+          'params':    { hashtag: nextToken.replace('#', '') },
+          'className': 'anchor anchor-hashtag'
         }, `#${nextToken}`);
         keyIndex += 1;
         i += 1;
