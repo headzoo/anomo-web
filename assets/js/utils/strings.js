@@ -38,6 +38,19 @@ export function stringUcWords(str) {
 
 /**
  * @param {string} str
+ * @param {number} maxLen
+ * @param {string} postfix
+ * @returns {string}
+ */
+export function stringTruncate(str, maxLen, postfix = '...') {
+  if (str.length <= maxLen) {
+    return str;
+  }
+  return `${str.substr(0, maxLen)}${postfix}`;
+}
+
+/**
+ * @param {string} str
  * @returns {string}
  */
 export function stringEncodeURI(str) {
@@ -55,6 +68,7 @@ export function stringDecodeURI(str) {
 export default {
   roundRobin:  stringRoundRobin,
   spaceCommas: stringSpaceCommas,
+  truncate:    stringTruncate,
   ucWords:     stringUcWords,
   encodeURI:   stringEncodeURI,
   decodeURI:   stringDecodeURI

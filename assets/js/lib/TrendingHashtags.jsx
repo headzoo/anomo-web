@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'utils';
+import { strings, connect } from 'utils';
 import { Link } from 'lib';
 
 /**
@@ -26,8 +26,8 @@ class TrendingHashtags extends React.PureComponent {
       <div className="trending-hashtags">
         {trendingHashtags.slice(0, max).map(hashtag => (
           <span key={hashtag}>
-            <Link name="hashtag" params={{ hashtag }}>
-              #{hashtag}
+            <Link name="hashtag" params={{ hashtag }} title={`#${hashtag}`}>
+              #{strings.truncate(hashtag, 12)}
             </Link>
           </span>
         ))}
