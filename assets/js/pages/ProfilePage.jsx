@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapStateToProps, mapActionsToProps } from 'utils';
+import { connect, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
 import { Page, Feed, Loading, Avatar, Icon, LinkButton, Number, Age, withRouter } from 'lib';
 import { UserCard } from 'lib/cards';
@@ -12,14 +12,16 @@ import * as profileActions from 'actions/profileActions';
  */
 class ProfilePage extends React.PureComponent {
   static propTypes = {
-    match:             PropTypes.object.isRequired,
-    profile:           PropTypes.object.isRequired,
-    profileFetch:      PropTypes.func.isRequired,
-    profilePosts:      PropTypes.func.isRequired,
-    profileFollowers:  PropTypes.func.isRequired,
-    profileFollowing:  PropTypes.func.isRequired,
-    profilePostsReset: PropTypes.func.isRequired,
-    uiVisibleModal:    PropTypes.func.isRequired,
+    match:              PropTypes.object.isRequired,
+    profile:            PropTypes.object.isRequired,
+    isOwner:            PropTypes.bool.isRequired,
+    followingUserNames: PropTypes.array.isRequired,
+    profileFetch:       PropTypes.func.isRequired,
+    profilePosts:       PropTypes.func.isRequired,
+    profileFollowers:   PropTypes.func.isRequired,
+    profileFollowing:   PropTypes.func.isRequired,
+    profilePostsReset:  PropTypes.func.isRequired,
+    uiVisibleModal:     PropTypes.func.isRequired,
   };
 
   /**
@@ -36,12 +38,18 @@ class ProfilePage extends React.PureComponent {
    *
    */
   componentDidMount = () => {
-    const { profileFetch, profilePosts, profileFollowers, profileFollowing, match } = this.props;
+    this.handleUpdate();
+  };
 
-    profileFetch(match.params.id);
-    profilePosts(match.params.id);
-    profileFollowers(match.params.id);
-    profileFollowing(match.params.id);
+  /**
+   * @param {*} prevProps
+   */
+  componentDidUpdate = (prevProps) => {
+    const { match } = this.props;
+
+    if (match.params.id !== prevProps.match.params.id) {
+      this.handleUpdate();
+    }
   };
 
   /**
@@ -51,6 +59,18 @@ class ProfilePage extends React.PureComponent {
     const { profilePostsReset } = this.props;
 
     profilePostsReset();
+  };
+
+  /**
+   *
+   */
+  handleUpdate = () => {
+    const { profileFetch, profilePosts, profileFollowers, profileFollowing, match } = this.props;
+
+    profileFetch(match.params.id);
+    profilePosts(match.params.id);
+    profileFollowers(match.params.id);
+    profileFollowing(match.params.id);
   };
 
   /**
@@ -83,18 +103,18 @@ class ProfilePage extends React.PureComponent {
    *
    */
   handleEllipsisClick = () => {
-    const { user, uiVisibleModal} = this.props;
+    const { profile, uiVisibleModal } = this.props;
 
-    uiVisibleModal('user', user);
+    uiVisibleModal('user', profile);
   };
 
   /**
    * @returns {*}
    */
   renderInfo = () => {
-    const { user, profile } = this.props;
+    const { followingUserNames, profile, isOwner } = this.props;
 
-    const isFollowing  = user.followingUserNames.indexOf(profile.UserName) !== -1;
+    const isFollowing  = followingUserNames.indexOf(profile.UserName) !== -1;
     const coverStyles  = {
       backgroundImage: `url(${profile.CoverPicture})`
     };
@@ -115,7 +135,7 @@ class ProfilePage extends React.PureComponent {
           <div className="card-profile-cover-mask" />
         </div>
         <div className="card-profile-container">
-          {profile.UserID === user.UserID && (
+          {isOwner && (
             <div className="card-profile-edit-btn">
               <LinkButton name="editProfile" theme="link">
                 Edit
@@ -313,7 +333,15 @@ class ProfilePage extends React.PureComponent {
   }
 }
 
+const mapStateToProps = state => (
+  {
+    profile:            state.profile,
+    isOwner:            state.profile.UserID === state.user.UserID,
+    followingUserNames: state.user.followingUserNames
+  }
+);
+
 export default connect(
-  mapStateToProps('user', 'profile'),
+  mapStateToProps,
   mapActionsToProps(uiActions, profileActions)
 )(withRouter(ProfilePage));
