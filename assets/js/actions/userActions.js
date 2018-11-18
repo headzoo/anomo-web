@@ -2,8 +2,8 @@ import md5 from 'md5';
 import { objects, browser } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFeedFetchAll, activityTrendingHashtags } from 'actions/activityActions';
-import { notificationsFetch } from 'actions/notificationsActions';
+import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
+import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
 
 export const USER_ERROR            = 'USER_ERROR';
 export const USER_SENDING          = 'USER_SENDING';
@@ -206,15 +206,11 @@ export function userLogin(username, password) {
       .then((u) => {
         user.isAuthenticated = true;
         endpoints.addDefaultParam('token', user.getToken());
-        dispatch(batch(
-          {
-            type: USER_LOGIN,
-            user: u
-          },
-          activityFeedFetchAll(),
-          activityTrendingHashtags(),
-          userFollowing(u.UserID, 1, true)
-        ));
+        dispatch({
+          type: USER_LOGIN,
+          user: u
+        });
+        dispatch(userStart(u.UserID)); // eslint-disable-line
       })
       .catch((error) => {
         console.warn(error);
@@ -244,15 +240,11 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
       .then((u) => {
         user.isAuthenticated = true;
         endpoints.addDefaultParam('token', user.getToken());
-        dispatch(batch(
-          {
-            type: USER_LOGIN,
-            user: u
-          },
-          activityFeedFetchAll(),
-          activityTrendingHashtags(),
-          userFollowing(u.UserID, 1, true)
-        ));
+        dispatch({
+          type: USER_LOGIN,
+          user: u
+        });
+        dispatch(userStart(u.UserID)); // eslint-disable-line
       })
       .catch((error) => {
         console.warn(error);
@@ -297,12 +289,7 @@ export function userRefresh() {
             type: USER_LOGIN,
             user: objects.merge(user.getDetails(), data.results)
           });
-          dispatch(batch(
-            notificationsFetch(),
-            activityFeedFetchAll(),
-            activityTrendingHashtags(),
-            userFollowing(id, 1, true)
-          ));
+          dispatch(userStart(id)); // eslint-disable-line
         })
         .catch((error) => {
           console.warn(error);
@@ -426,5 +413,22 @@ export function userSearch() {
           dispatch(userIsSearchSending(false));
         });
     });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userStart(userID) {
+  return (dispatch, getState, { batch }) => {
+    dispatch(activityFeedFetchAll());
+    dispatch(notificationsFetch());
+    dispatch(userFollowing(userID, 1, true));
+    dispatch(activityTrendingHashtags());
+    dispatch(batch(
+      activityIntervalStart(),
+      notificationsIntervalStart()
+    ));
   };
 }

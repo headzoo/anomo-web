@@ -7,10 +7,12 @@ import { objects, redux } from 'utils';
  * @returns {*}
  */
 function fetch(state, action) {
+  const notifications = objects.clone(action.notifications).reverse();
+
   return {
     ...state,
-    notifications: objects.clone(action.notifications).reverse(),
-    newNumber:     action.newNumber
+    notifications,
+    newNumber: notifications.length
   };
 }
 
@@ -26,8 +28,8 @@ function read(state, action) {
 
   return {
     ...state,
-    newNumber: notifications.length,
-    notifications
+    notifications,
+    newNumber: notifications.length
   };
 }
 
@@ -38,8 +40,8 @@ function read(state, action) {
 function readAll(state) {
   return {
     ...state,
-    newNumber:     0,
-    notifications: []
+    notifications: [],
+    newNumber:     0
   };
 }
 

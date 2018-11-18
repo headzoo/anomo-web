@@ -8,8 +8,8 @@ class Favicon {
    *
    */
   constructor() {
-    this._numNotices = 0;
-    this._numNewFeed = 0;
+    this.numNotices = 0;
+    this.numNewFeed = 0;
     this._favicon    = new Favico({
       bgColor:   '#d00',
       animation: 'popFade'
@@ -20,13 +20,13 @@ class Favicon {
    * @param {number} numNotices
    */
   noticeCount = (numNotices) => {
-    this._numNotices = numNotices;
-    if (this._numNotices > 0) {
+    this.numNotices = numNotices;
+    if (this.numNotices > 0) {
       this._switchToNotices();
-      this._favicon.badge(this._numNotices);
-    } else if (this._numNewFeed > 0) {
+      this._favicon.badge(this.numNotices);
+    } else if (this.numNewFeed > 0) {
       this._switchToFeeds();
-      this._favicon.badge(this._numNewFeed);
+      this._favicon.badge(this.numNewFeed);
     } else {
       this._favicon.badge(0);
     }
@@ -36,10 +36,10 @@ class Favicon {
    * @param {number} numNewFeed
    */
   newFeedCount = (numNewFeed) => {
-    this._numNewFeed = numNewFeed;
-    if (this._numNotices === 0) {
+    this.numNewFeed = numNewFeed;
+    if (this.numNotices === 0) {
       this._switchToFeeds();
-      this._favicon.badge(this._numNewFeed);
+      this._favicon.badge(this.numNewFeed);
     }
   };
 
@@ -47,7 +47,8 @@ class Favicon {
    * @private
    */
   _switchToNotices = () => {
-    this._favicon    = new Favico({
+    this._favicon.badge(0);
+    this._favicon = new Favico({
       bgColor:   '#d00',
       animation: 'popFade'
     });
@@ -57,7 +58,8 @@ class Favicon {
    * @private
    */
   _switchToFeeds = () => {
-    this._favicon    = new Favico({
+    this._favicon.badge(0);
+    this._favicon = new Favico({
       bgColor:   '#5774AC',
       animation: 'popFade'
     });

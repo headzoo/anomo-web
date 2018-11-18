@@ -1,4 +1,3 @@
-import { favicon } from 'utils';
 import * as constants from 'anomo/constants';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
@@ -22,12 +21,9 @@ export function notificationsFetch() {
     });
     proxy.get(url)
       .then((data) => {
-        const newNumber = parseInt(data.NewNotificationsNumber, 10);
-        favicon.noticeCount(newNumber);
         dispatch({
           type:          NOTIFICATIONS_FETCH,
-          notifications: data.NotificationHistory,
-          newNumber
+          notifications: data.NotificationHistory
         });
       })
       .catch((error) => {
@@ -42,11 +38,7 @@ export function notificationsFetch() {
  */
 export function notificationsRead(notificationID) {
   return (dispatch, getState, { endpoints, proxy }) => {
-    const { notifications } = getState();
-    const { newNumber } = notifications;
-
     isClearing = true;
-    favicon.noticeCount(newNumber - 1);
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
@@ -61,7 +53,6 @@ export function notificationsRead(notificationID) {
       })
       .finally(() => {
         isClearing = false;
-        dispatch(notificationsFetch());
       });
   };
 }
@@ -72,7 +63,6 @@ export function notificationsRead(notificationID) {
 export function notificationsReadAll() {
   return (dispatch, getState, { endpoints, proxy }) => {
     isClearing = true;
-    favicon.noticeCount(0);
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });
@@ -96,7 +86,6 @@ export function notificationsReadAll() {
  */
 export function notificationsIntervalStart() {
   return (dispatch) => {
-    dispatch(notificationsFetch());
     setInterval(() => {
       dispatch(notificationsFetch());
     }, 30000);

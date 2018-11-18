@@ -4,6 +4,7 @@ import createRootReducer from 'reducers';
 import thunk from 'redux-thunk';
 import deepmerge from 'deepmerge';
 import defaultState from 'store/defaultState';
+import faviconMiddleware from 'store/middleware/faviconMiddleware';
 import anomo from 'anomo';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -24,7 +25,11 @@ export default function configureStore(initialState = {}) {
     createRootReducer(),
     deepmerge(defaultState, initialState),
     composeEnhancers(
-      applyMiddleware(batchDispatchMiddleware, thunk.withExtraArgument(anomo))
+      applyMiddleware(
+        batchDispatchMiddleware,
+        thunk.withExtraArgument(anomo),
+        faviconMiddleware
+      )
     )
   );
 }

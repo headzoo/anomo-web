@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
-import { objects, favicon } from 'utils';
+import { objects } from 'utils';
 import anomo from 'anomo';
 import * as constants from 'anomo/constants';
 
@@ -185,6 +185,19 @@ export function activityIsFeedLoading(feedType, isLoading) {
 
 /**
  * @param {string} feedType
+ * @param {number} newNumber
+ * @returns {{type: string, newNumber: *, feedType: *}}
+ */
+export function activityFeedNewNumber(feedType, newNumber) {
+  return {
+    type: ACTIVITY_FEED_NEW_NUMBER,
+    newNumber,
+    feedType
+  };
+}
+
+/**
+ * @param {string} feedType
  * @param {boolean} isRefreshing
  * @returns {{type, isLoading: *}}
  */
@@ -203,18 +216,21 @@ export function activityIsFeedRefreshing(feedType, isRefreshing) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function activityFeedFetch(feedType, refresh = false, buffered = true) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy, batch }) => {
     const { activity } = getState();
 
     if (buffered && refresh && feedBuffers[feedType].length > 0) {
       const activities = objects.clone(feedBuffers[feedType]);
       feedBuffers[feedType] = [];
-      dispatch({
-        type:    ACTIVITY_FEED_FETCH,
-        prepend: true,
-        activities,
-        feedType
-      });
+      dispatch(batch(
+        {
+          type:    ACTIVITY_FEED_FETCH,
+          prepend: true,
+          activities,
+          feedType
+        },
+        activityFeedNewNumber(feedType, 0)
+      ));
       return;
     }
 
@@ -275,7 +291,10 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       .finally(() => {
         feedBuffers[feedType] = [];
         feedFetchSources[feedType] = null;
-        dispatch(activityIsFeedLoading(feedType, false));
+        dispatch(batch(
+          activityFeedNewNumber(feedType, 0),
+          activityIsFeedLoading(feedType, false)
+        ));
         if (refresh) {
           dispatch(activityIsFeedRefreshing(feedType, false));
         }
@@ -380,22 +399,6 @@ export function activityFeedUpdate(activities) {
   return {
     type: ACTIVITY_FEED_UPDATE,
     activities
-  };
-}
-
-/**
- * @param {string} feedType
- * @param {number} newNumber
- * @returns {{type: string, newNumber: *, feedType: *}}
- */
-export function activityFeedNewNumber(feedType, newNumber) {
-  if (feedType === 'recent') {
-    favicon.newFeedCount(newNumber);
-  }
-  return {
-    type: ACTIVITY_FEED_NEW_NUMBER,
-    newNumber,
-    feedType
   };
 }
 
