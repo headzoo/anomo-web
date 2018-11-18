@@ -1,5 +1,5 @@
 import * as types from 'actions/userActions';
-import * as defaultState from 'store/defaultState';
+import { defaultUser } from 'store/defaultState';
 import { objects, redux } from 'utils';
 
 /**
@@ -74,7 +74,7 @@ function login(state, action) {
  * @returns {*}
  */
 function logout() {
-  return objects.clone(defaultState.defaultUser);
+  return objects.clone(defaultUser);
 }
 
 /**
