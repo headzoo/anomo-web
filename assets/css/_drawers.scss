@@ -51,10 +51,20 @@
   }
 }
 
+.drawer-icons {
+  display: flex;
+  flex-direction: column;
+}
+
 .drawer-icon {
   color: #FFF;
   opacity: 0.9;
   cursor: pointer;
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &:hover {
     opacity: 1;

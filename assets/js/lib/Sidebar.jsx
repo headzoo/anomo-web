@@ -111,6 +111,16 @@ class Sidebar extends React.PureComponent {
   /**
    *
    */
+  handleLogoutClick = () => {
+    const { history } = this.props;
+
+    this.close();
+    history.push(routes.route('logout'));
+  };
+
+  /**
+   *
+   */
   handleDockClick = () => {
     const { isMobile, uiSidebarDocked, sidebarDocked } = this.props;
 
@@ -123,7 +133,7 @@ class Sidebar extends React.PureComponent {
    * @returns {*}
    */
   renderHeader = () => {
-    const { user } = this.props;
+    const { user, isMobile } = this.props;
 
     return (
       <div className="drawer-header">
@@ -131,12 +141,22 @@ class Sidebar extends React.PureComponent {
           <Avatar src={user.Avatar} md />
         </Link>
         <h3>{user.UserName}</h3>
-        <Icon
-          name="cog"
-          title="Settings"
-          className="drawer-icon"
-          onClick={this.handleSettingsClick}
-        />
+        <div className="drawer-icons">
+          <Icon
+            name="cog"
+            title="Settings"
+            className="drawer-icon"
+            onClick={this.handleSettingsClick}
+          />
+          {!isMobile && (
+            <Icon
+              title="Logout"
+              name="sign-out-alt"
+              className="drawer-icon"
+              onClick={this.handleLogoutClick}
+            />
+          )}
+        </div>
       </div>
     );
   };
@@ -248,7 +268,7 @@ class Sidebar extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { notifications } = this.props;
+    const { notifications, isMobile } = this.props;
 
     return (
       <div>
@@ -262,9 +282,11 @@ class Sidebar extends React.PureComponent {
           >
             Clear Notifications
           </Button>
-          <LinkButton onClick={this.close} name="logout" block>
-            Logout <Icon name="sign-out-alt" />
-          </LinkButton>
+          {isMobile && (
+            <LinkButton onClick={this.close} name="logout" block>
+              Logout <Icon name="sign-out-alt" />
+            </LinkButton>
+          )}
         </div>
         {this.renderFooter()}
       </div>
