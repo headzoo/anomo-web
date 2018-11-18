@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import YouTube from 'react-youtube';
-import { objects, connect, mapActionsToProps } from 'utils';
-import { Card, CardBody, CardText } from 'lib/bootstrap';
-import { Image, Message, Video, Shimmer, Poll, withRouter } from 'lib';
+import { connect, mapActionsToProps } from 'utils';
+import { Card } from 'lib/bootstrap';
+import { withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';

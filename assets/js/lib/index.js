@@ -1,4 +1,5 @@
-export { default as withRouter } from './withRouter';
+export { withRouter } from 'react-router-dom';
+
 export { default as types } from './types';
 export { default as Page } from './Page';
 export { default as PageTitle } from './PageTitle';

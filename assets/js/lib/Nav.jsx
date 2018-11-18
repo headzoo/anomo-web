@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { browser, connect, mapActionsToProps } from 'utils';
 import { Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
 import { MenuIcon } from 'lib/icons';
-import { Icon } from 'lib';
+import { Icon, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -132,7 +131,6 @@ class Nav extends React.PureComponent {
     return (
       <nav id="navbar" className="navbar navbar-expand-lg navbar-dark fixed-top">
         <MenuIcon onClick={this.handleMenuClick} />
-
         <ul className="nav navbar-nav mx-auto">
           <li className="nav-item" style={{ margin: '-15px 0' }}>
             <div className="navbar-brand clickable" onClick={this.handleBrandClick}>
@@ -168,7 +166,7 @@ const mapStateToProps = state => (
   }
 );
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapActionsToProps(uiActions, activityActions)
-)(withRouter(Nav));
+)(Nav));
