@@ -2,15 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { objects, browser } from 'utils';
-import { withConfig } from 'lib';
+import { getConfig } from 'store/config';
 
 /**
  *
  */
 class Image extends React.PureComponent {
   static propTypes = {
-    config: PropTypes.object.isRequired,
-    data:   PropTypes.shape({
+    data: PropTypes.shape({
       alt: PropTypes.string,
       src: PropTypes.string
     }).isRequired,
@@ -75,14 +74,14 @@ class Image extends React.PureComponent {
    * @param {Event} e
    */
   handleError = (e) => {
-    const { config, onError } = this.props;
+    const { onError } = this.props;
 
     if (!this.isErrored) {
       onError(e);
       if (!e.defaultPrevented) {
         this.isErrored = true;
         this.setState({
-          src: config.styles.placeholderImage
+          src: getConfig().styles.placeholderImage
         });
       }
     }
@@ -92,14 +91,14 @@ class Image extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { data, circle, config, className, ...props } = this.props;
+    const { data, circle, className, ...props } = this.props;
     let { src } = this.state;
 
     const classes = classNames(className, {
       'circle': circle
     });
 
-    if (config.https) {
+    if (getConfig().https) {
       src = src.replace('http://', 'https://');
     }
 
@@ -115,4 +114,4 @@ class Image extends React.PureComponent {
   }
 }
 
-export default withConfig(Image);
+export default Image;

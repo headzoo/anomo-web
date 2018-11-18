@@ -6,7 +6,8 @@ import { formSubmitting, formError } from 'actions/formActions';
 import { connect, mapStateToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardHeader, CardText, Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
-import { Page, withRouter, withConfig } from 'lib';
+import { Page, withRouter } from 'lib';
+import { getConfig } from 'store/config';
 import routes from 'store/routes';
 
 /**
@@ -16,7 +17,6 @@ class LoginPage extends React.PureComponent {
   static propTypes = {
     user:     PropTypes.object.isRequired,
     forms:    PropTypes.object.isRequired,
-    config:   PropTypes.object.isRequired,
     history:  PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
   };
@@ -62,8 +62,9 @@ class LoginPage extends React.PureComponent {
    * @returns {*}
    */
   renderForm = () => {
-    const { forms, user, config } = this.props;
+    const { forms, user } = this.props;
     const { login } = forms;
+    const { facebook } = getConfig();
 
     return (
       <Form
@@ -102,8 +103,8 @@ class LoginPage extends React.PureComponent {
         <Row>
           <Column className="gutter-top">
             <FacebookLogin
-              appId={config.facebook.appID}
-              fields={config.facebook.fields}
+              appId={facebook.appID}
+              fields={facebook.fields}
               callback={this.handleFacebookLogin}
               render={renderProps => (
                 <Button onClick={renderProps.onClick} disabled={user.isSending} block>
@@ -143,5 +144,5 @@ class LoginPage extends React.PureComponent {
 }
 
 export default connect(mapStateToProps('user', 'forms'))(
-  withRouter(withConfig(LoginPage))
+  withRouter(LoginPage)
 );

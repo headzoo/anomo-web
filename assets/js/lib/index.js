@@ -1,4 +1,3 @@
-export { default as withConfig } from './withConfig';
 export { default as withRouter } from './withRouter';
 export { default as types } from './types';
 export { default as Page } from './Page';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withConfig } from 'lib';
+import { getConfig } from 'store/config';
 
 /**
  *
@@ -25,7 +25,7 @@ class Loading extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { config, size, color, middle, strokeWidth, ...props } = this.props;
+    const { size, color, middle, strokeWidth, ...props } = this.props;
 
     return (
       <div className={classNames('loader', { 'middle': middle })} {...props}>
@@ -42,7 +42,7 @@ class Loading extends React.PureComponent {
             cx="50"
             cy="50"
             fill="none"
-            stroke={color || config.styles.primaryColor}
+            stroke={color || getConfig().styles.primaryColor}
             strokeWidth={strokeWidth}
             strokeDasharray="164.93361431346415 56.97787143782138"
             transform="rotate(132 50 50)"
@@ -64,4 +64,4 @@ class Loading extends React.PureComponent {
   }
 }
 
-export default withConfig(Loading);
+export default Loading;

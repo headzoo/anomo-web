@@ -8,7 +8,8 @@ import { objects, media, connect, mapActionsToProps } from 'utils';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
 import { ActivityPreviewCard } from 'lib/cards';
-import { Icon, EmojiPopper, withConfig } from 'lib';
+import { Icon, EmojiPopper } from 'lib';
+import { getConfig } from 'store/config';
 import * as uiActions from 'actions/uiActions';
 import * as formActions from 'actions/formActions';
 
@@ -21,7 +22,6 @@ class PostForm extends React.PureComponent {
     name:           PropTypes.string.isRequired,
     user:           PropTypes.object.isRequired,
     forms:          PropTypes.object.isRequired,
-    config:         PropTypes.object.isRequired,
     isMobile:       PropTypes.bool.isRequired,
     value:          PropTypes.string,
     reply:          PropTypes.bool,
@@ -52,7 +52,7 @@ class PostForm extends React.PureComponent {
     this.state = {
       emojiOpen:   false,
       focused:     false,
-      charCount:   props.config.anomo.maxChars,
+      charCount:   getConfig().anomo.maxChars,
       photoSource: '',
       videoSource: '',
       videoPoster: ''
@@ -156,8 +156,8 @@ class PostForm extends React.PureComponent {
    * @param {string} name
    */
   handleChange = (e, value, name) => {
-    const { config, onFocus } = this.props;
-    const { maxChars } = config.anomo;
+    const { onFocus } = this.props;
+    const { maxChars } = getConfig().anomo;
 
     if (name === 'photo') {
       const photoSource = window.URL.createObjectURL(this.photo.current.files()[0]);
@@ -232,7 +232,7 @@ class PostForm extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { id, user, forms, name, comment, isMobile, config, withUpload, withMobileForm } = this.props;
+    const { id, user, forms, name, comment, isMobile, withUpload, withMobileForm } = this.props;
     const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
     const isXs = isMobile && withMobileForm;
@@ -307,7 +307,7 @@ class PostForm extends React.PureComponent {
                     ref={this.photo}
                     id="form-post-photo"
                     style={{ display: 'none' }}
-                    accept={config.imageTypes}
+                    accept={getConfig().imageTypes}
                   />
                   <Input
                     type="file"
@@ -385,4 +385,4 @@ const mapStateToProps = state => (
 export default connect(
   mapStateToProps,
   mapActionsToProps(uiActions, formActions)
-)(withConfig(enhanceWithClickOutside(PostForm)));
+)(enhanceWithClickOutside(PostForm));

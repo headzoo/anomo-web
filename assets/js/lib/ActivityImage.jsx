@@ -48,7 +48,7 @@ class ActivityImage extends React.PureComponent {
   handleUpdate = () => {
     const { maxHeight } = this.props;
 
-    if (this.img.current.getWrappedInstance().height() > maxHeight) {
+    if (this.img.current.height() > maxHeight) {
       this.setState({ showButton: true });
     }
   };
