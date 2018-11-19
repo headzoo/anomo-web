@@ -729,6 +729,9 @@ export function activityLike(refID, actionType) {
       refID
     });
     proxy.get(url)
+      .then(() => {
+        dispatch(activityLikeList(refID, actionType));
+      })
       .catch((error) => {
         console.error(error);
         dispatch(activityLikeToggle(refID));

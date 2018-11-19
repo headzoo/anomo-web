@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AnimateHeight from 'react-animate-height';
 import { objects, connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
@@ -11,7 +10,6 @@ import { Page, Loading, UserBadge, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
-import { activityCommentStopNotify } from '../actions/activityActions';
 
 const FADE_DURATION  = 150;
 const COMMENT_PREFIX = '#comment-';
@@ -22,6 +20,7 @@ const COMMENT_PREFIX = '#comment-';
 class ActivityPage extends React.PureComponent {
   static propTypes = {
     activity:                  PropTypes.object.isRequired,
+    likeList:                  PropTypes.array.isRequired,
     isCommentsLoading:         PropTypes.bool.isRequired,
     isActivityLoading:         PropTypes.bool.isRequired,
     match:                     PropTypes.object.isRequired,
@@ -177,7 +176,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   renderLikeList = () => {
-    const { activity } = this.state;
+    const { likeList } = this.props;
 
     return (
       <Card className="card-activity-like-list">
@@ -187,7 +186,7 @@ class ActivityPage extends React.PureComponent {
         <CardBody>
           <CardText>
             <ul className="list-group">
-              {activity.LikeList.map(u => (
+              {likeList.map(u => (
                 <li key={u.UserID} className="list-group-item">
                   <UserBadge user={u} />
                 </li>
@@ -203,10 +202,8 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isActivityLoading, visibleModals } = this.props;
+    const { isActivityLoading, likeList, visibleModals } = this.props;
     const { activity } = this.state;
-
-    const likeList = activity.LikeList || [];
 
     return (
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
@@ -251,6 +248,7 @@ class ActivityPage extends React.PureComponent {
 const mapStateToProps = state => (
   {
     activity:          state.activity.activity,
+    likeList:          state.activity.activity.LikeList || [],
     visibleModals:     state.ui.visibleModals,
     isActivityLoading: state.activity.isActivityLoading,
     isCommentsLoading: state.activity.isCommentsLoading
