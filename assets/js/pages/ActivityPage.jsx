@@ -202,7 +202,7 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isActivityLoading, likeList, visibleModals } = this.props;
+    const { isActivityLoading, isCommentsLoading, likeList, visibleModals } = this.props;
     const { activity } = this.state;
 
     return (
@@ -229,9 +229,9 @@ class ActivityPage extends React.PureComponent {
         <TransitionGroup component={Row}>
           {this.renderComments()}
         </TransitionGroup>
-        {(!isActivityLoading && likeList.length > 0) && (
+        {(!isCommentsLoading && likeList.length > 0) && (
           <Row>
-            <Column className="gutter-top-lg" md={4} offsetMd={4} xs={12}>
+            <Column md={4} offsetMd={4} xs={12}>
               {this.renderLikeList()}
             </Column>
           </Row>
