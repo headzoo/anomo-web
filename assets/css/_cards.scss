@@ -420,7 +420,9 @@
 
 .card-profile-ellipsis {
   color: #FFF;
-  float: right;
+  position: absolute;
+  top: 5px;
+  right: 5px;
   opacity: 0.8;
   cursor: pointer;
   margin-bottom: 0.25rem;
