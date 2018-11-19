@@ -41,7 +41,7 @@ class NotificationsDrawer extends React.PureComponent {
         handler={false}
         onMaskClick={this.close}
         className="drawer-notifications"
-        width={isMobile ? '75vw' : '20vw'}
+        width={isMobile ? '75vw' : '18vw'}
         {...props}
       >
         <Sidebar />
