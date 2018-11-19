@@ -67,6 +67,10 @@
   &.md {
     height: 44px;
     width: 44px;
+
+    .icon-following {
+      font-size: 0.8rem;
+    }
   }
 
   &.lg {
@@ -75,7 +79,7 @@
 
     .icon-following {
       top: -4px;
-      font-size: 0.6rem;
+      font-size: 1.2rem;
     }
   }
 

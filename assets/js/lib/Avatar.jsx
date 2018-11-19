@@ -36,7 +36,7 @@ class Avatar extends React.PureComponent {
       alt: 'Avatar'
     };
     const classes = classNames('avatar-container', {
-      'sm': sm,
+      'sm': sm && !md && !lg,
       'md': md,
       'lg': lg
     });
