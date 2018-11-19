@@ -60,7 +60,7 @@ class Favicon {
   _switchToFeeds = () => {
     this._favicon.badge(0);
     this._favicon = new Favico({
-      bgColor:   '#5774AC',
+      bgColor:   '#77dc21',
       animation: 'popFade'
     });
   };
