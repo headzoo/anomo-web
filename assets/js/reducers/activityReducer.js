@@ -1,192 +1,15 @@
 import * as types from 'actions/activityActions';
 import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
-import {
-  ACTIVITY_COMMENT_LIKE_LIST, ACTIVITY_COMMENT_LIST_LOADING,
-  ACTIVITY_TRENDING_HASHTAGS
-} from '../actions/activityActions';
 
 /**
  * @param {*} state
- * @param {*} action
  * @returns {*}
  */
-function feedLoading(state, action) {
-  const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.isLoading = action.isLoading;
-
+function reset(state) {
   return {
     ...state,
-    feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function feedRefreshing(state, action) {
-  const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.isRefreshing = action.isRefreshing;
-
-  return {
-    ...state,
-    feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function submitting(state, action) {
-  return {
-    ...state,
-    isSubmitting: action.isSubmitting
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function likeLoading(state, action) {
-  const feeds    = objects.clone(state.feeds);
-  const activity = objects.clone(state.activity);
-
-  if (activity && activity.RefID === action.refID) {
-    activity.LikeIsLoading = action.isLoading;
-  }
-  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    a.LikeIsLoading = action.isLoading;
-  });
-
-  return {
-    ...state,
-    activity,
-    feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function likeListLoading(state, action) {
-  return {
-    ...state,
-    isLikeListLoading: action.isLikeListLoading
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function likeCommentLoading(state, action) {
-  const activity = objects.clone(state.activity);
-
-  if (activity.ListComment) {
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      if (activity.ListComment[i].ID === action.commentID) {
-        activity.ListComment[i].LikeIsLoading = action.isLoading;
-        break;
-      }
-    }
-  }
-
-  return {
-    ...state,
-    activity
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function commentsLoading(state, action) {
-  return {
-    ...state,
-    isCommentsLoading: action.isCommentsLoading
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function commentListLoading(state, action) {
-  const feeds    = objects.clone(state.feeds);
-  const activity = objects.clone(state.activity);
-
-  if (activity.RefID === action.refID) {
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      const comment = activity.ListComment[i];
-      if (comment.ID === action.commentID) {
-        comment.isCommentListLoading = action.isCommentListLoading;
-      }
-    }
-  }
-
-  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    for (let i = 0; i < a.ListComment.length; i++) {
-      const comment = a.ListComment[i];
-      if (comment.ID === action.commentID) {
-        comment.isCommentListLoading = action.isCommentListLoading;
-      }
-    }
-  });
-
-  return {
-    ...state,
-    activity,
-    feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function commentLikeList(state, action) {
-  const feeds    = objects.clone(state.feeds);
-  const activity = objects.clone(state.activity);
-
-  if (activity.RefID === action.refID) {
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      const comment = activity.ListComment[i];
-      if (comment.ID === action.commentID) {
-        comment.likes = action.likes;
-      }
-    }
-  }
-
-  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    for (let i = 0; i < a.ListComment.length; i++) {
-      const comment = a.ListComment[i];
-      if (comment.ID === action.commentID) {
-        comment.likes = action.likes;
-      }
-    }
-  });
-
-  return {
-    ...state,
-    activity,
-    feeds
+    activity: {}
   };
 }
 
@@ -219,15 +42,199 @@ function pollSending(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function submitting(state, action) {
+  return {
+    ...state,
+    isSubmitting: action.isSubmitting
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeListLoading(state, action) {
+  return {
+    ...state,
+    isLikeListLoading: action.isLikeListLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentsLoading(state, action) {
+  return {
+    ...state,
+    isCommentsLoading: action.isCommentsLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function activityLoading(state, action) {
+  return {
+    ...state,
+    isActivityLoading: action.isActivityLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function trendingHashtags(state, action) {
+  return {
+    ...state,
+    trendingHashtags: action.trendingHashtags
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function feedLoading(state, action) {
+  const feeds = objects.clone(state.feeds);
+  feeds[action.feedType].isLoading = action.isLoading;
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function feedRefreshing(state, action) {
+  const feeds = objects.clone(state.feeds);
+  feeds[action.feedType].isRefreshing = action.isRefreshing;
+
+  return {
+    ...state,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeLoading(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity && activity.RefID === action.refID) {
+    activity.LikeIsLoading = action.isLoading;
+  }
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    a.LikeIsLoading = action.isLoading;
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeCommentLoading(state, action) {
+  const activity = objects.clone(state.activity);
+
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeIsLoading: action.isLoading
+    });
+  });
+
+  return {
+    ...state,
+    activity
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentListLoading(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      isCommentListLoading: action.isCommentListLoading
+    });
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return objects.merge(c, {
+      isCommentListLoading: action.isCommentListLoading
+    });
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentLikeList(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeList: action.likes
+    });
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeList: action.likes
+    });
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function commentPrepend(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
-  if (!activity.ListComment) {
-    activity.ListComment = [];
-  }
   activity.ListComment.unshift(action.comment);
-  activity.Comment = parseInt(activity.Comment || 0, 10) + 1;
+  activity.Comment = numbers.parseAny(activity.Comment) + 1;
 
   feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
     a.Comment = activity.Comment;
@@ -249,11 +256,8 @@ function commentAppend(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
-  if (!activity.ListComment) {
-    activity.ListComment = [];
-  }
   activity.ListComment.push(action.comment);
-  activity.Comment = parseInt(activity.Comment || 0, 10) + 1;
+  activity.Comment = numbers.parseAny(activity.Comment) + 1;
 
   feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
     a.Comment = activity.Comment;
@@ -276,22 +280,10 @@ function like(state, action) {
   const activity = objects.clone(state.activity);
 
   if (activity.RefID === action.refID) {
-    if (!activity.IsLike || activity.IsLike === '0') {
-      activity.IsLike = '1';
-      activity.Like   = parseInt(activity.Like || 0, 10) + 1;
-    } else {
-      activity.IsLike = '0';
-      activity.Like   = parseInt(activity.Like || 0, 10) - 1;
-    }
+    feedUtils.toggleActivityLike(activity);
   }
   feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    if (!a.IsLike || a.IsLike === '0') {
-      a.IsLike = '1';
-      a.Like   = parseInt(a.Like || 0, 10) + 1;
-    } else {
-      a.IsLike = '0';
-      a.Like   = parseInt(a.Like || 0, 10) - 1;
-    }
+    return feedUtils.toggleActivityLike(a);
   });
 
   return {
@@ -310,42 +302,11 @@ function likeComment(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
-  if (activity.RefID === action.refID) {
-    if (!activity.ListComment) {
-      return state;
-    }
-
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      const comment = activity.ListComment[i];
-      if (comment.ID === action.commentID) {
-        if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike       = '1';
-          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) + 1;
-        } else {
-          comment.IsLike       = '0';
-          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) - 1;
-        }
-      }
-    }
-  }
-
-  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    if (!a.ListComment) {
-      return;
-    }
-
-    for (let i = 0; i < a.ListComment.length; i++) {
-      const comment = a.ListComment[i];
-      if (comment.ID === action.commentID) {
-        if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike       = '1';
-          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) + 1;
-        } else {
-          comment.IsLike       = '0';
-          comment.NumberOfLike = numbers.parseAny(comment.NumberOfLike) - 1;
-        }
-      }
-    }
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return feedUtils.toggleCommentLike(c);
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return feedUtils.toggleCommentLike(c);
   });
 
   return {
@@ -383,23 +344,9 @@ function likeList(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function activityLoading(state, action) {
-  return {
-    ...state,
-    isActivityLoading: action.isActivityLoading
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
 function feedNewNumber(state, action) {
   const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.newNumber = action.newNumber;
+  feeds[action.feedType].newNumber = action.newNumber;
 
   return {
     ...state,
@@ -510,30 +457,11 @@ function set(state, action) {
   feedUtils.traverseForActivityID(feeds, activity.ActivityID, () => {
     return objects.clone(activity);
   });
-/*  objects.forEach(feeds, (feed) => {
-    for (let i = 0; i < feed.activities.length; i++) {
-      if (feed.activities[i].ActivityID === activity.ActivityID) {
-        feed.activities[i] = objects.clone(activity);
-        break;
-      }
-    }
-  });*/
 
   return {
     ...state,
     activity,
     feeds
-  };
-}
-
-/**
- * @param {*} state
- * @returns {*}
- */
-function reset(state) {
-  return {
-    ...state,
-    activity: {}
   };
 }
 
@@ -607,18 +535,6 @@ function deleteIsSending(state, action) {
     ...state,
     activity,
     feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function trendingHashtags(state, action) {
-  return {
-    ...state,
-    trendingHashtags: action.trendingHashtags
   };
 }
 

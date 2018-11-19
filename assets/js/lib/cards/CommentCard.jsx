@@ -188,14 +188,14 @@ class CommentCard extends React.PureComponent {
   renderLikes = () => {
     const { comment } = this.props;
 
-    if (!comment.likes || comment.likes.length === 0) {
+    if (!comment.LikeList || comment.LikeList.length === 0) {
       return null;
     }
 
     return (
       <CardFooter className="card-activity-like-list">
         <ul className="list-group">
-          {comment.likes.map(u => (
+          {comment.LikeList.map(u => (
             <li key={u.UserID} className="list-group-item">
               <UserBadge user={u} />
             </li>
