@@ -19,6 +19,7 @@ class CommentCard extends React.PureComponent {
     comment:                 PropTypes.object.isRequired,
     activity:                PropTypes.object.isRequired,
     followingUserNames:      PropTypes.array.isRequired,
+    tags:                    PropTypes.array,
     className:               PropTypes.string,
     active:                  PropTypes.bool,
     history:                 PropTypes.object.isRequired,
@@ -29,6 +30,7 @@ class CommentCard extends React.PureComponent {
   };
 
   static defaultProps = {
+    tags:         [],
     active:       false,
     className:    '',
     onReplyClick: () => {}
@@ -125,13 +127,13 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   renderBody = () => {
-    const { comment } = this.props;
+    const { comment, tags } = this.props;
 
     return (
       <CardBody>
         <CardText>
           {comment.Content && (
-            <Message text={comment.Content} />
+            <Message text={comment.Content} tags={tags} />
           )}
           {comment.Image && (
             <Image

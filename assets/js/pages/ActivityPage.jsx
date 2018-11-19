@@ -143,7 +143,10 @@ class ActivityPage extends React.PureComponent {
     const { isCommentsLoading } = this.props;
     const { activity, activeComment } = this.state;
 
-    if (!objects.isEmpty(activity) && !activity.ListComment) {
+    if (objects.isEmpty(activity)) {
+      return null;
+    }
+    if (!activity.ListComment) {
       activity.ListComment = [];
     }
 
@@ -157,10 +160,18 @@ class ActivityPage extends React.PureComponent {
       );
     }
 
-    return (activity.ListComment || []).map(comment => (
+    const tags = activity.ListComment.map((c) => {
+      return {
+        id:   c.UserID,
+        name: `@${c.UserName}`
+      };
+    });
+
+    return (activity.ListComment).map(comment => (
       <FadeAndSlideTransition key={comment.ID} duration={FADE_DURATION}>
         <Column md={4} offsetMd={4} xs={12}>
           <CommentCard
+            tags={tags}
             comment={comment}
             activity={activity}
             onReplyClick={this.handleReplyClick}
