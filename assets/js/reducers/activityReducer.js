@@ -1,12 +1,24 @@
 import * as types from 'actions/activityActions';
 import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
+import { defaultActivity} from 'store/defaultState';
 
 /**
  * @param {*} state
+ * @param {*} action
  * @returns {*}
  */
-function reset(state) {
+function reset(state, action) {
+  if (action.feedType) {
+    const feeds = objects.clone(state.feeds);
+    feeds[action.feedType] = objects.clone(defaultActivity.feeds[action.feedType]);
+
+    return {
+      ...state,
+      feeds
+    };
+  }
+
   return {
     ...state,
     activity: {}

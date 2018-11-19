@@ -73,11 +73,11 @@ class Activities {
     a.DeleteIsSending = false;
     a.LikeIsLoading   = false;
 
-    if (!a.LikeList) {
-      a.LikeList = [];
-    }
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
+    }
+    if (!a.LikeList) {
+      a.LikeList = [];
     }
     if (!a.ListComment) {
       a.ListComment = [];

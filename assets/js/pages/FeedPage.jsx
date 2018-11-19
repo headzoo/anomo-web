@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { browser, strings, connect, mapActionsToProps } from 'utils';
 import { Row, Column, ButtonGroup, Badge } from 'lib/bootstrap';
-import { Page, Feed, TrendingHashtags, Loading, Link, LinkButton, Number, withRouter } from 'lib';
+import { Page, Feed, TrendingHashtags, Loading, LinkButton, Number, withRouter } from 'lib';
 import { PostForm } from 'lib/forms';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';

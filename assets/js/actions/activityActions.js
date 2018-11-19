@@ -67,6 +67,17 @@ export function activityReset() {
 }
 
 /**
+ * @param {string} feedType
+ * @returns {{type: string, feedType: *}}
+ */
+export function activityFeedReset(feedType) {
+  return {
+    type: ACTIVITY_RESET,
+    feedType
+  };
+}
+
+/**
  * @param {boolean} isLoading
  * @param {number} refID
  * @returns {{type: string, isLoading: *}}

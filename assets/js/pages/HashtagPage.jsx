@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, mapActionsToProps } from 'utils';
 import { Row, Column } from 'lib/bootstrap';
-import { Page, Feed, Loading, withRouter } from 'lib';
+import { Page, Feed, TrendingHashtags, withRouter } from 'lib';
 import { PostForm } from 'lib/forms';
 import * as activityActions from 'actions/activityActions';
 
@@ -13,7 +13,9 @@ class HashtagPage extends React.PureComponent {
   static propTypes = {
     hashtagFeed:            PropTypes.object.isRequired,
     match:                  PropTypes.object.isRequired,
+    isMobile:               PropTypes.bool.isRequired,
     activitySubmit:         PropTypes.func.isRequired,
+    activityFeedReset:      PropTypes.func.isRequired,
     activityFetchByHashtag: PropTypes.func.isRequired
   };
 
@@ -41,11 +43,21 @@ class HashtagPage extends React.PureComponent {
    * @params {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { match, activityFetchByHashtag } = this.props;
+    const { match, activityFeedReset, activityFetchByHashtag } = this.props;
 
     if (match.params.hashtag !== prevProps.match.params.hashtag) {
+      activityFeedReset('hashtag');
       activityFetchByHashtag(match.params.hashtag, true);
     }
+  };
+
+  /**
+   *
+   */
+  componentWillUnmount = () => {
+    const { activityFeedReset } = this.props;
+
+    activityFeedReset('hashtag');
   };
 
   /**
@@ -85,7 +97,7 @@ class HashtagPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { match, hashtagFeed } = this.props;
+    const { match, isMobile, hashtagFeed } = this.props;
     const { formValue } = this.state;
 
     return (
@@ -102,11 +114,20 @@ class HashtagPage extends React.PureComponent {
             />
           </Column>
         </Row>
+        {!isMobile && (
+          <Row>
+            <Column
+              md={4}
+              xs={12}
+              offsetMd={4}
+              className="gutter-bottom"
+            >
+              <TrendingHashtags />
+            </Column>
+          </Row>
+        )}
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
-            {hashtagFeed.isRefreshing && (
-              <Loading className="text-center gutter-bottom" />
-            )}
             <Feed
               onNext={this.handleNext}
               activities={hashtagFeed.activities}
@@ -121,6 +142,7 @@ class HashtagPage extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
+    isMobile:    state.ui.device.isMobile,
     hashtagFeed: state.activity.feeds.hashtag
   };
 };
