@@ -22,8 +22,8 @@ const COMMENT_PREFIX = '#comment-';
 class ActivityPage extends React.PureComponent {
   static propTypes = {
     activity:                  PropTypes.object.isRequired,
-    isActivityLoading:         PropTypes.bool,
     isCommentsLoading:         PropTypes.bool.isRequired,
+    isActivityLoading:         PropTypes.bool.isRequired,
     match:                     PropTypes.object.isRequired,
     history:                   PropTypes.object.isRequired,
     location:                  PropTypes.object.isRequired,
@@ -31,10 +31,6 @@ class ActivityPage extends React.PureComponent {
     uiVisibleModal:            PropTypes.func.isRequired,
     activitySubmitComment:     PropTypes.func.isRequired,
     activitySetupActivityPage: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-    isActivityLoading: false
   };
 
   /**
@@ -143,31 +139,25 @@ class ActivityPage extends React.PureComponent {
     const { isCommentsLoading } = this.props;
     const { activity, activeComment } = this.state;
 
-    if (objects.isEmpty(activity)) {
-      return null;
-    }
-    if (!activity.ListComment) {
-      activity.ListComment = [];
-    }
-
     if (isCommentsLoading) {
       return (
         <FadeAndSlideTransition key={0} duration={FADE_DURATION}>
-          <Column className="text-center" md={4} offsetMd={4} xs={12}>
+          <Column className="text-center gutter-bottom" md={4} offsetMd={4} xs={12}>
             <Loading />
           </Column>
         </FadeAndSlideTransition>
       );
     }
 
-    const tags = activity.ListComment.map((c) => {
+    const comments = activity.ListComment || [];
+    const tags     = comments.map((c) => {
       return {
         id:   c.UserID,
         name: `@${c.UserName}`
       };
     });
 
-    return (activity.ListComment).map(comment => (
+    return comments.map(comment => (
       <FadeAndSlideTransition key={comment.ID} duration={FADE_DURATION}>
         <Column md={4} offsetMd={4} xs={12}>
           <CommentCard
@@ -188,10 +178,6 @@ class ActivityPage extends React.PureComponent {
    */
   renderLikeList = () => {
     const { activity } = this.state;
-
-    if (!activity.LikeList) {
-      return null;
-    }
 
     return (
       <Card className="card-activity-like-list">
@@ -217,8 +203,10 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { visibleModals } = this.props;
+    const { isActivityLoading, visibleModals } = this.props;
     const { activity } = this.state;
+
+    const likeList = activity.LikeList || [];
 
     return (
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
@@ -227,6 +215,7 @@ class ActivityPage extends React.PureComponent {
             <ActivityCard
               clickable={false}
               activity={activity}
+              loading={isActivityLoading}
               clickableImage
             />
           </Column>
@@ -243,16 +232,13 @@ class ActivityPage extends React.PureComponent {
         <TransitionGroup component={Row}>
           {this.renderComments()}
         </TransitionGroup>
-        <AnimateHeight
-          duration={250}
-          height={(activity.LikeList && activity.LikeList.length > 0) ? 'auto' : 0}
-        >
+        {(!isActivityLoading && likeList.length > 0) && (
           <Row>
-            <Column md={4} offsetMd={4} xs={12}>
+            <Column className="gutter-top-lg" md={4} offsetMd={4} xs={12}>
               {this.renderLikeList()}
             </Column>
           </Row>
-        </AnimateHeight>
+        )}
         <ReplyModal
           onSubmit={this.handleCommentSubmit}
           open={visibleModals.reply !== false}

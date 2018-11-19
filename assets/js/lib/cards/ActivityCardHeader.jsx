@@ -10,6 +10,7 @@ import { Avatar, Shimmer, Icon, Age, Neighborhood } from 'lib';
  */
 class ActivityCardHeader extends React.PureComponent {
   static propTypes = {
+    loading:            PropTypes.bool,
     activity:           PropTypes.object.isRequired,
     followingUserNames: PropTypes.array.isRequired,
     onUserClick:        PropTypes.func,
@@ -17,6 +18,7 @@ class ActivityCardHeader extends React.PureComponent {
   };
 
   static defaultProps = {
+    loading:     false,
     onUserClick: () => {},
     onMenuClick: () => {}
   };
@@ -25,7 +27,7 @@ class ActivityCardHeader extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, onUserClick, onMenuClick, followingUserNames } = this.props;
+    const { activity, loading, onUserClick, onMenuClick, followingUserNames } = this.props;
 
     if (activity.IsAnonymous === '1') {
       activity.FromUserName = 'Anonymous';
@@ -33,7 +35,7 @@ class ActivityCardHeader extends React.PureComponent {
     }
 
     const isFollowing  = followingUserNames.indexOf(activity.FromUserName) !== -1;
-    const isLoading    = objects.isEmpty(activity) || activity.isLoading;
+    const isLoading    = loading || objects.isEmpty(activity);
 
     return (
       <CardHeader>

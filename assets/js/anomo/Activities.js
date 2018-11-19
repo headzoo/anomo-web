@@ -72,16 +72,13 @@ class Activities {
     a.IsDeleted       = false;
     a.DeleteIsSending = false;
     a.LikeIsLoading   = false;
+    a.LikeList        = a.LikeList || [];
+    a.ListComment     = a.ListComment || [];
 
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
-    if (!a.LikeList) {
-      a.LikeList = [];
-    }
-    if (!a.ListComment) {
-      a.ListComment = [];
-    }
+
     a.ListComment = a.ListComment.map((comment) => {
       comment.Content         = this.unescapeUnicode(comment.Content);
       comment.IsDeleted       = false;

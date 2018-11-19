@@ -18,6 +18,7 @@ class ActivityCard extends React.PureComponent {
   static propTypes = {
     activity:           PropTypes.object.isRequired,
     className:          PropTypes.string,
+    loading:            PropTypes.bool,
     history:            PropTypes.object.isRequired,
     clickable:          PropTypes.bool,
     clickableImage:     PropTypes.bool,
@@ -29,6 +30,7 @@ class ActivityCard extends React.PureComponent {
 
   static defaultProps = {
     className:      '',
+    loading:        false,
     clickable:      true,
     clickableImage: false
   };
@@ -105,7 +107,7 @@ class ActivityCard extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, followingUserNames, className } = this.props;
+    const { activity, loading, followingUserNames, className } = this.props;
 
     return (
       <Card
@@ -113,18 +115,21 @@ class ActivityCard extends React.PureComponent {
         className={classNames('card-activity  card-activity-clickable', className)}
       >
         <ActivityCardHeader
+          loading={loading}
           activity={activity}
           onUserClick={this.handleUserClick}
           onMenuClick={this.handleMenuClick}
           followingUserNames={followingUserNames}
         />
         <ActivityCardBody
+          loading={loading}
           activity={activity}
           onClick={this.handleBodyClick}
           onImageClick={this.handleImageClick}
           onPollAnswer={this.handlePollAnswer}
         />
         <ActivityCardFooter
+          loading={loading}
           activity={activity}
           onLikeClick={this.handleHeartClick}
         />
