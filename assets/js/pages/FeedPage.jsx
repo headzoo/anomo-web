@@ -166,16 +166,7 @@ class FeedPage extends React.PureComponent {
           </Column>
         </Row>
         {!isMobile && (
-          <Row>
-            <Column
-              md={4}
-              xs={12}
-              offsetMd={4}
-              className="gutter-bottom"
-            >
-              <TrendingHashtags />
-            </Column>
-          </Row>
+          <TrendingHashtags />
         )}
         <Row>
           <Column md={4} offsetMd={4} xs={12}>
