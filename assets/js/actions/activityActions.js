@@ -692,6 +692,17 @@ export function activityDelete(activityID) {
 
 /**
  * @param {number} refID
+ * @returns {{type: string, refID: *}}
+ */
+export function activityLikeToggle(refID) {
+  return {
+    type: ACTIVITY_LIKE,
+    refID
+  };
+}
+
+/**
+ * @param {number} refID
  * @param {number} actionType
  * @returns {function(*, *, {anomo: *})}
  */
@@ -699,26 +710,34 @@ export function activityLike(refID, actionType) {
   return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityIsLikeLoading(true, refID),
-      {
-        type: ACTIVITY_LIKE,
-        refID
-      }
+      activityLikeToggle(refID)
     ));
-    setTimeout(() => {
-      dispatch(activityIsLikeLoading(false, refID));
-    }, 1000);
 
     const url = endpoints.create('activityLike', {
       actionType,
       refID
     });
     proxy.get(url)
-      .then(() => {
-        dispatch(activityGet(refID, actionType));
-      })
       .catch((error) => {
         console.error(error);
+        dispatch(activityLikeToggle(refID));
+      })
+      .finally(() => {
+        dispatch(activityIsLikeLoading(false, refID));
       });
+  };
+}
+
+/**
+ * @param {number} commentID
+ * @param {number} refID
+ * @returns {{type: string, commentID: *, refID: *}}
+ */
+export function activityLikeCommentToggle(commentID, refID) {
+  return {
+    type: ACTIVITY_LIKE_COMMENT,
+    commentID,
+    refID
   };
 }
 
@@ -732,27 +751,20 @@ export function activityLikeComment(commentID, refID, actionType) {
   return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityIsLikeCommentLoading(true, commentID),
-      {
-        type: ACTIVITY_LIKE_COMMENT,
-        actionType,
-        commentID,
-        refID
-      }
+      activityLikeCommentToggle(commentID, refID)
     ));
-    setTimeout(() => {
-      dispatch(activityIsLikeCommentLoading(false, commentID));
-    }, 1000);
 
     const url = endpoints.create('activityCommentLike', {
       actionType,
       commentID
     });
     proxy.get(url)
-      .then(() => {
-        dispatch(activityGet(refID, actionType));
-      })
       .catch((error) => {
         console.error(error);
+        dispatch(activityLikeCommentToggle(commentID, refID));
+      })
+      .finally(() => {
+        dispatch(activityIsLikeCommentLoading(false, commentID));
       });
   };
 }
