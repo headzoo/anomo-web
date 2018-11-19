@@ -4,9 +4,9 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import { userLogin, userFacebookLogin } from 'actions/userActions';
 import { formSubmitting, formError } from 'actions/formActions';
 import { connect, mapStateToProps } from 'utils';
-import { Row, Column, Card, CardBody, CardHeader, CardText, Button } from 'lib/bootstrap';
+import { Row, Column, Card, CardBody, CardText, Button } from 'lib/bootstrap';
 import { Form, Input } from 'lib/forms';
-import { Page, withRouter } from 'lib';
+import { Page, Image, withRouter } from 'lib';
 import { getConfig } from 'store/config';
 import routes from 'store/routes';
 
@@ -96,7 +96,7 @@ class LoginPage extends React.PureComponent {
         <Row>
           <Column className="gutter-top">
             <Button disabled={login.isSubmitting || user.isSending || !login.isComplete} block>
-              Login
+              Login with Anomo
             </Button>
           </Column>
         </Row>
@@ -128,14 +128,50 @@ class LoginPage extends React.PureComponent {
     return (
       <Page title="Login">
         <Row>
-          <Column className="v-middle" sm={4} xs={12} offsetSm={4}>
+          <Column className="gutter-top-lg" sm={4} xs={12} offsetSm={4}>
             <Card fullWidth>
-              <CardHeader>
-                Login
-              </CardHeader>
               <CardBody>
                 <CardText>
                   {this.renderForm()}
+                </CardText>
+              </CardBody>
+            </Card>
+          </Column>
+        </Row>
+        <Row>
+          <Column className="gutter-top" sm={4} xs={12} offsetSm={4}>
+            <Card fullWidth>
+              <CardBody>
+                <CardText>
+                  <p>
+                    Register using the Anomo app available on iTunes and Google Play.
+                  </p>
+                  <Row>
+                    <Column sm={6} xs={12}>
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://itunes.apple.com/us/app/anomo-meet-new-people/id529027583?mt=8"
+                      >
+                        <Image
+                          className="page-login-store-badge"
+                          data={{ src: '/images/itunes-badge-300x89.png', alt: 'iTunes' }}
+                        />
+                      </a>
+                    </Column>
+                    <Column sm={6} xs={12}>
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://play.google.com/store/apps/details?id=com.vinasource.anomoinc.anomo"
+                      >
+                        <Image
+                          className="page-login-store-badge"
+                          data={{ src: '/images/google-play-badge-300x89.png', alt: 'Google Play' }}
+                        />
+                      </a>
+                    </Column>
+                  </Row>
                 </CardText>
               </CardBody>
             </Card>
