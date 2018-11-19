@@ -47,6 +47,7 @@ class Poll extends React.PureComponent {
   handleAnswerChange = (e, checked) => {
     const { onAnswer } = this.props;
 
+    e.stopPropagation();
     onAnswer(e, checked);
     if (!e.defaultPrevented) {
       e.preventDefault();

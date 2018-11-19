@@ -35,3 +35,4 @@ export { default as Neighborhood } from './Neighborhood';
 export { default as UserBadge } from './UserBadge';
 export { default as Sidebar } from './Sidebar';
 export { default as TrendingHashtags } from './TrendingHashtags';
+export { default as Ellipsis } from './Ellipsis';

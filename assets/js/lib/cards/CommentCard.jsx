@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Moment from 'react-moment';
 import { numbers, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
-import { Message, Image, Avatar, Icon, Pluralize, UserBadge, Link, Age, Neighborhood, withRouter } from 'lib';
+import { Message, Image, Avatar, Icon, Pluralize, Ellipsis, UserBadge, Link, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
@@ -164,7 +164,7 @@ class CommentCard extends React.PureComponent {
           />&nbsp;
           {numLikes}&nbsp;
           {isListLoading ? (
-            <span>Loading...</span>
+            <span>Loading<Ellipsis animated /></span>
           ) : (
             <span title="View likes" className="clickable" onClick={this.handleLikesClick}>
               <Pluralize
