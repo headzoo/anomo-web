@@ -59,9 +59,10 @@ class Poll extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleResultsClick = () => {
+  handleResultsClick = (e) => {
+    e.stopPropagation();
     this.setState({ panel: 'results' });
   };
 
