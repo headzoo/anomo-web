@@ -79,15 +79,16 @@ class Activities {
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
-    if (a.ListComment) {
-      a.ListComment = a.ListComment.map((comment) => {
-        comment.Content         = this.unescapeUnicode(comment.Content);
-        comment.IsDeleted       = false;
-        comment.DeleteIsSending = false;
-        comment.LikeIsLoading   = false;
-        return comment;
-      });
+    if (!a.ListComment) {
+      a.ListComment = [];
     }
+    a.ListComment = a.ListComment.map((comment) => {
+      comment.Content         = this.unescapeUnicode(comment.Content);
+      comment.IsDeleted       = false;
+      comment.DeleteIsSending = false;
+      comment.LikeIsLoading   = false;
+      return comment;
+    });
 
     return a;
   };

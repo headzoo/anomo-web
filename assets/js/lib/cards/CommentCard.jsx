@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Moment from 'react-moment';
-import { Twemoji } from 'react-emoji-render';
 import { numbers, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
-import { Image, Avatar, Icon, Pluralize, Age, Neighborhood, withRouter } from 'lib';
+import { Message, Image, Avatar, Icon, Pluralize, UserBadge, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
@@ -16,16 +15,17 @@ import * as activityActions from 'actions/activityActions';
  */
 class CommentCard extends React.PureComponent {
   static propTypes = {
-    id:                  PropTypes.string.isRequired,
-    comment:             PropTypes.object.isRequired,
-    activity:            PropTypes.object.isRequired,
-    followingUserNames:  PropTypes.array.isRequired,
-    className:           PropTypes.string,
-    active:              PropTypes.bool,
-    history:             PropTypes.object.isRequired,
-    uiVisibleModal:      PropTypes.func.isRequired,
-    activityLikeComment: PropTypes.func.isRequired,
-    onReplyClick:        PropTypes.func
+    id:                      PropTypes.string.isRequired,
+    comment:                 PropTypes.object.isRequired,
+    activity:                PropTypes.object.isRequired,
+    followingUserNames:      PropTypes.array.isRequired,
+    className:               PropTypes.string,
+    active:                  PropTypes.bool,
+    history:                 PropTypes.object.isRequired,
+    uiVisibleModal:          PropTypes.func.isRequired,
+    activityLikeComment:     PropTypes.func.isRequired,
+    activityCommentLikeList: PropTypes.func.isRequired,
+    onReplyClick:            PropTypes.func
   };
 
   static defaultProps = {
@@ -75,6 +75,15 @@ class CommentCard extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleLikesClick = () => {
+    const { comment, activity, activityCommentLikeList } = this.props;
+
+    activityCommentLikeList(comment.ID, activity.RefID, activity.ActionType);
+  };
+
+  /**
    * @returns {*}
    */
   renderHeader = () => {
@@ -117,7 +126,7 @@ class CommentCard extends React.PureComponent {
       <CardBody>
         <CardText>
           {comment.Content && (
-            <Twemoji text={comment.Content} />
+            <Message text={comment.Content} />
           )}
           {comment.Image && (
             <Image
@@ -136,8 +145,9 @@ class CommentCard extends React.PureComponent {
   renderFooter = () => {
     const { comment, onReplyClick } = this.props;
 
-    const likes   = numbers.parseAny(comment.NumberOfLike);
-    const isLiked = (comment.IsLike && comment.IsLike === '1');
+    const numLikes      = numbers.parseAny(comment.NumberOfLike);
+    const isLiked       = (comment.IsLike && comment.IsLike === '1');
+    const isListLoading = (comment.isCommentListLoading || false);
 
     return (
       <CardFooter>
@@ -147,12 +157,45 @@ class CommentCard extends React.PureComponent {
             loading={comment.LikeIsLoading}
             onClick={this.handleHeartClick}
           />&nbsp;
-          {likes}&nbsp;
-          <Pluralize number={likes} singular="Like" plural="Likes" />
+          {numLikes}&nbsp;
+          {isListLoading ? (
+            <span>Loading...</span>
+          ) : (
+            <span title="View likes" className="clickable" onClick={this.handleLikesClick}>
+              <Pluralize
+                number={numLikes}
+                singular="Like"
+                plural="Likes"
+              />
+            </span>
+          )}
         </div>
         <div className="clickable" onClick={e => onReplyClick(e, comment)}>
           Reply
         </div>
+      </CardFooter>
+    );
+  };
+
+  /**
+   * @returns {*}
+   */
+  renderLikes = () => {
+    const { comment } = this.props;
+
+    if (!comment.likes || comment.likes.length === 0) {
+      return null;
+    }
+
+    return (
+      <CardFooter className="card-activity-like-list">
+        <ul className="list-group">
+          {comment.likes.map(u => (
+            <li key={u.UserID} className="list-group-item">
+              <UserBadge user={u} />
+            </li>
+          ))}
+        </ul>
       </CardFooter>
     );
   };
@@ -172,6 +215,7 @@ class CommentCard extends React.PureComponent {
         {this.renderHeader()}
         {this.renderBody()}
         {this.renderFooter()}
+        {this.renderLikes()}
       </Card>
     );
   }

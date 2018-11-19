@@ -1,7 +1,10 @@
 import * as types from 'actions/activityActions';
 import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
-import { ACTIVITY_TRENDING_HASHTAGS } from '../actions/activityActions';
+import {
+  ACTIVITY_COMMENT_LIKE_LIST, ACTIVITY_COMMENT_LIST_LOADING,
+  ACTIVITY_TRENDING_HASHTAGS
+} from '../actions/activityActions';
 
 /**
  * @param {*} state
@@ -116,6 +119,74 @@ function commentsLoading(state, action) {
   return {
     ...state,
     isCommentsLoading: action.isCommentsLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentListLoading(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    for (let i = 0; i < activity.ListComment.length; i++) {
+      const comment = activity.ListComment[i];
+      if (comment.ID === action.commentID) {
+        comment.isCommentListLoading = action.isCommentListLoading;
+      }
+    }
+  }
+
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    for (let i = 0; i < a.ListComment.length; i++) {
+      const comment = a.ListComment[i];
+      if (comment.ID === action.commentID) {
+        comment.isCommentListLoading = action.isCommentListLoading;
+      }
+    }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentLikeList(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    for (let i = 0; i < activity.ListComment.length; i++) {
+      const comment = activity.ListComment[i];
+      if (comment.ID === action.commentID) {
+        comment.likes = action.likes;
+      }
+    }
+  }
+
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    for (let i = 0; i < a.ListComment.length; i++) {
+      const comment = a.ListComment[i];
+      if (comment.ID === action.commentID) {
+        comment.likes = action.likes;
+      }
+    }
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
   };
 }
 
@@ -574,6 +645,8 @@ export default redux.createReducer({
   [types.ACTIVITY_COMMENT_SENDING]:      commentSending,
   [types.ACTIVITY_COMMENT_PREPEND]:      commentPrepend,
   [types.ACTIVITY_COMMENT_APPEND]:       commentAppend,
+  [types.ACTIVITY_COMMENT_LIKE_LIST]:    commentLikeList,
+  [types.ACTIVITY_COMMENT_LIST_LOADING]: commentListLoading,
   [types.ACTIVITY_LIKE_LIST_LOADING]:    likeListLoading,
   [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading,
   [types.ACTIVITY_TRENDING_HASHTAGS]:    trendingHashtags

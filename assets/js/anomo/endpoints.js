@@ -33,6 +33,7 @@ const urls = {
   activityTrendingHashtags:  `${base}/activity/trending_hashtag/{token}/0`,
   activityComment:           `${base}/activity/comment/{token}/{refID}/{actionType}`,
   activityCommentLike:       `${base}/comment/like/{token}/{commentID}/{actionType}`,
+  activityCommentLikeList:   `${base}/comment/likelist/{token}/{commentID}/{actionType}`,
   activityCommentDelete:     `${base}/comment/delete/{token}/{commentID}`,
   activityCommentStopNotify: `${base}/comment/stop_receive_notify/{token}/{refID}/{actionType}`,
   activityAnswerPoll:        `${base}/poll/answer_poll/{token}/{pollID}/{answerID}`,

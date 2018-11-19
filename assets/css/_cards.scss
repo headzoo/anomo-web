@@ -219,6 +219,7 @@
 
 .card-activity-like-list {
   .list-group {
+    width: 100%;
     display: block;
   }
 
@@ -228,6 +229,10 @@
     float: left;
     display: inline;
   }
+}
+
+.card-footer.card-activity-like-list {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .card-form-post {

@@ -19,6 +19,8 @@ export const ACTIVITY_LIKE_LIST            = 'ACTIVITY_LIKE_LIST';
 export const ACTIVITY_LIKE_LIST_LOADING    = 'ACTIVITY_LIKE_LIST_LOADING';
 export const ACTIVITY_LIKE_COMMENT_LOADING = 'ACTIVITY_LIKE_COMMENT_LOADING';
 export const ACTIVITY_COMMENTS_LOADING     = 'ACTIVITY_COMMENTS_LOADING';
+export const ACTIVITY_COMMENT_LIST_LOADING = 'ACTIVITY_COMMENT_LIST_LOADING';
+export const ACTIVITY_COMMENT_LIKE_LIST    = 'ACTIVITY_COMMENT_LIKE_LIST';
 export const ACTIVITY_COMMENT_SENDING      = 'ACTIVITY_COMMENT_SENDING';
 export const ACTIVITY_COMMENT_PREPEND      = 'ACTIVITY_COMMENT_PREPEND';
 export const ACTIVITY_COMMENT_APPEND       = 'ACTIVITY_COMMENT_APPEND';
@@ -131,6 +133,21 @@ export function activityIsCommentSending(isCommentSending) {
   return {
     type: ACTIVITY_COMMENT_SENDING,
     isCommentSending
+  };
+}
+
+/**
+ * @param {boolean} isCommentListLoading
+ * @param {number} refID
+ * @param {number} commentID
+ * @returns {{type: string, isLoading: *}}
+ */
+export function activityIsCommentListLoading(isCommentListLoading, refID, commentID) {
+  return {
+    type: ACTIVITY_COMMENT_LIST_LOADING,
+    isCommentListLoading,
+    commentID,
+    refID
   };
 }
 
@@ -834,6 +851,39 @@ export function activityCommentStopNotify(refID, actionType) {
       refID
     });
     proxy.get(url);
+  };
+}
+
+/**
+ * @param {number} commentID
+ * @param {number} refID
+ * @param {string} actionType
+ * @returns {function(*, *, {proxy: *, endpoints: *})}
+ */
+export function activityCommentLikeList(commentID, refID, actionType) {
+  return (dispatch, getState, { proxy, endpoints }) => {
+    dispatch(activityIsCommentListLoading(true, refID, commentID));
+
+    const url = endpoints.create('activityCommentLikeList', {
+      actionType,
+      commentID
+    });
+    proxy.get(url)
+      .then((data) => {
+        dispatch({
+          type:  ACTIVITY_COMMENT_LIKE_LIST,
+          likes: data.likes,
+          refID,
+          commentID,
+          actionType
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        dispatch(activityIsCommentListLoading(false, refID, commentID));
+      });
   };
 }
 
