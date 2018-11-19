@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Moment from 'react-moment';
 import { numbers, connect, mapActionsToProps } from 'utils';
 import { Card, CardHeader, CardBody, CardFooter, CardText } from 'lib/bootstrap';
-import { Message, Image, Avatar, Icon, Pluralize, UserBadge, Age, Neighborhood, withRouter } from 'lib';
+import { Message, Image, Avatar, Icon, Pluralize, UserBadge, Link, Age, Neighborhood, withRouter } from 'lib';
 import { LikeIcon } from 'lib/icons';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
@@ -87,7 +87,7 @@ class CommentCard extends React.PureComponent {
    * @returns {*}
    */
   renderHeader = () => {
-    const { comment, followingUserNames } = this.props;
+    const { comment, activity, followingUserNames } = this.props;
 
     const isFollowing = followingUserNames.indexOf(comment.UserName) !== -1;
 
@@ -108,9 +108,14 @@ class CommentCard extends React.PureComponent {
           <div className="card-comment-ellipsis" onClick={this.handleMenuClick}>
             <Icon name="ellipsis-h" />
           </div>
-          <Moment fromNow ago>
-            {comment.CreatedDate}
-          </Moment>
+          <Link
+            name="comment"
+            params={{ commentID: comment.ID, refID: activity.RefID, actionType: activity.ActionType  }}
+          >
+            <Moment fromNow ago>
+              {comment.CreatedDate}
+            </Moment>
+          </Link>
         </div>
       </CardHeader>
     );
