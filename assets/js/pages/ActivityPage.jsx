@@ -206,20 +206,8 @@ class ActivityPage extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isActivityLoading, visibleModals } = this.props;
+    const { visibleModals } = this.props;
     const { activity } = this.state;
-
-    if (isActivityLoading) {
-      return (
-        <Page title="Loading">
-          <Row>
-            <Column className="gutter-lg text-center" md={4} offsetMd={4} xs={12}>
-              <Loading />
-            </Column>
-          </Row>
-        </Page>
-      );
-    }
 
     return (
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
