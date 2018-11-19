@@ -235,8 +235,9 @@ class PostForm extends React.PureComponent {
     const { id, user, forms, name, comment, isMobile, withUpload, withMobileForm } = this.props;
     const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
-    const isXs = isMobile && withMobileForm;
-    const placeholder = (photoSource || videoSource) ? '' : '...';
+    const form            = forms[name];
+    const isXs            = isMobile && withMobileForm;
+    const placeholder     = (photoSource || videoSource) ? '' : '...';
     const previewActivity = objects.merge(user, {
       FromUserName:   user.UserName,
       CreatedDate:    moment().format(''),
@@ -244,7 +245,7 @@ class PostForm extends React.PureComponent {
       VideoURL:       videoSource,
       VideoThumbnail: videoPoster,
       Message:        {
-        message:      forms[name].message || placeholder,
+        message:      form.message || placeholder,
         message_tags: []
       }
     });
@@ -261,7 +262,7 @@ class PostForm extends React.PureComponent {
               name={name}
               onSubmit={this.handleSubmit}
               onChange={this.handleChange}
-              disabled={forms[name].isSubmitting}
+              disabled={form.isSubmitting}
             >
               <Input
                 type="hidden"
@@ -325,7 +326,7 @@ class PostForm extends React.PureComponent {
                 </div>
                 {!isXs && (
                   <div className="card-form-post-btn">
-                    <Button disabled={forms[name].isSubmitting} block>
+                    <Button disabled={form.isSubmitting} block>
                       Send
                     </Button>
                   </div>
@@ -333,17 +334,17 @@ class PostForm extends React.PureComponent {
               </div>
               {isXs && (
                 <div className="card-form-post-btn gutter-top">
-                  <Button disabled={forms[name].isSubmitting} block>
+                  <Button disabled={form.isSubmitting} block>
                     Send
                   </Button>
                 </div>
               )}
               {isXs && (
                 <div className="card-form-post-btn gutter-top">
-                  <Button disabled={forms[name].isSubmitting} onClick={this.handlePhotoClick} block>
+                  <Button disabled={form.isSubmitting} onClick={this.handlePhotoClick} block>
                     Add Picture
                   </Button>
-                  <Button disabled={forms[name].isSubmitting} onClick={this.handleVideoClick} block>
+                  <Button disabled={form.isSubmitting} onClick={this.handleVideoClick} block>
                     Add Video
                   </Button>
                 </div>
@@ -364,8 +365,8 @@ class PostForm extends React.PureComponent {
         {isXs && (
           <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
             <ActivityPreviewCard
-              activity={previewActivity}
               comment={comment}
+              activity={previewActivity}
             />
           </AnimateHeight>
         )}

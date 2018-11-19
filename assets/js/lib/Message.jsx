@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import twemoji from 'twemoji';
 import { objects } from 'utils';
 import { Link } from 'lib';
-import routes from 'store/routes';
 
 /**
  *
@@ -28,14 +27,6 @@ class Message extends React.Component {
       parsed: this.parseText(props.text)
     };
   }
-
-  /**
-   * @param {*} nextProps
-   * @returns {boolean}
-   */
-  shouldComponentUpdate = (nextProps) => {
-    return this.props.text !== nextProps.text;
-  };
 
   /**
    * @param {string} mention
