@@ -4,7 +4,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import AnimateHeight from 'react-animate-height';
 import enhanceWithClickOutside from 'react-click-outside';
-import { objects, media, connect, mapActionsToProps } from 'utils';
+import { objects, browser, media, connect, mapActionsToProps } from 'utils';
 import { Card, CardBody, Button } from 'lib/bootstrap';
 import { Form, Input, Textarea } from 'lib/forms';
 import { ActivityPreviewCard } from 'lib/cards';
@@ -51,6 +51,7 @@ class PostForm extends React.PureComponent {
     super(props);
     this.state = {
       emojiOpen:   false,
+      showPreview: browser.storage.get(browser.storage.KEY_SHOW_PREVIEW, true),
       focused:     false,
       charCount:   getConfig().anomo.maxChars,
       photoSource: '',
@@ -206,6 +207,16 @@ class PostForm extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handlePreviewClick = () => {
+    const { showPreview } = this.state;
+
+    this.setState({ showPreview: !showPreview });
+    browser.storage.set(browser.storage.KEY_SHOW_PREVIEW, !showPreview);
+  };
+
+  /**
    * @param {Event} e
    */
   handleClickOutside = (e) => {
@@ -233,7 +244,7 @@ class PostForm extends React.PureComponent {
    */
   render() {
     const { id, user, forms, name, comment, isMobile, withUpload, withMobileForm } = this.props;
-    const { emojiOpen, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
+    const { emojiOpen, showPreview, photoSource, videoSource, videoPoster, charCount, focused } = this.state;
 
     const form            = forms[name];
     const isXs            = isMobile && withMobileForm;
@@ -284,7 +295,7 @@ class PostForm extends React.PureComponent {
                     />
                   </div>
                 )}
-                {!isXs && (
+                {/* {!isXs && (
                   <div className="card-form-post-emoji">
                     <EmojiPopper
                       open={emojiOpen}
@@ -292,7 +303,7 @@ class PostForm extends React.PureComponent {
                       onSelect={this.handleEmojiSelect}
                     />
                   </div>
-                )}
+                )} */}
                 <div className="card-form-post-message no-gutter">
                   <Textarea
                     name="message"
@@ -319,8 +330,14 @@ class PostForm extends React.PureComponent {
                     accept="video/*"
                   />
                   {focused && (
-                    <div className={charCountClasses}>
-                      {charCount}
+                    <div className="card-form-post-links">
+                      <div className="card-form-post-links-preview clickable" onClick={this.handlePreviewClick}>
+                        Preview
+                        <Icon name={showPreview ? 'angle-down' : 'angle-up'} />
+                      </div>
+                      <div className={charCountClasses}>
+                        {charCount}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -350,7 +367,7 @@ class PostForm extends React.PureComponent {
                 </div>
               )}
             </Form>
-            {!isXs && (
+            {(!isXs && showPreview) && (
               <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
                 <div className="gutter-top">
                   <ActivityPreviewCard
@@ -362,7 +379,7 @@ class PostForm extends React.PureComponent {
             )}
           </CardBody>
         </Card>
-        {isXs && (
+        {(isXs && showPreview) && (
           <AnimateHeight duration={50} height={focused ? 'auto' : 0}>
             <ActivityPreviewCard
               comment={comment}

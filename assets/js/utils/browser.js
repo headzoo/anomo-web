@@ -229,6 +229,7 @@ export default {
     KEY_DETAILS:        'Details',
     KEY_TOKEN:          'token',
     KEY_TAGS:           'tags',
+    KEY_SHOW_PREVIEW:   'showPreview',
     KEY_SIDEBAR_DOCKED: 'sidebarDocked'
   }
 };
