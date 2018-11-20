@@ -148,6 +148,9 @@ class App extends React.PureComponent {
             <PrivateRoute exact path={routes.path('editProfile')} component={EditProfilePage} />
             <PrivateRoute exact path={routes.path('profile')} component={ProfilePage} />
             <PrivateRoute exact path={routes.path('settings')} component={SettingsPage} />
+            <PrivateRoute exact path={routes.path('settingsNotifications')} component={SettingsPage} />
+            <PrivateRoute exact path={routes.path('settingsBlocked')} component={SettingsPage} />
+            <PrivateRoute exact path={routes.path('settingsPassword')} component={SettingsPage} />
             <PrivateRoute exact path={routes.path('search')} component={SearchPage} />
             <Route exact path={routes.path('login')} component={LoginPage} />
             <Route exact path={routes.path('logout')} component={LogoutPage} />

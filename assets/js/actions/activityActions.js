@@ -1,6 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
+import { profileIsLikeLoading, profileLikeToggle } from 'actions/profileActions';
 import { objects } from 'utils';
 import anomo from 'anomo';
 import * as constants from 'anomo/constants';
@@ -721,7 +722,9 @@ export function activityLike(refID, actionType) {
   return (dispatch, getState, { endpoints, proxy, batch }) => {
     dispatch(batch(
       activityIsLikeLoading(true, refID),
-      activityLikeToggle(refID)
+      profileIsLikeLoading(true, refID),
+      activityLikeToggle(refID),
+      profileLikeToggle(refID)
     ));
 
     const url = endpoints.create('activityLike', {
@@ -734,10 +737,16 @@ export function activityLike(refID, actionType) {
       })
       .catch((error) => {
         console.error(error);
-        dispatch(activityLikeToggle(refID));
+        dispatch(batch(
+          activityLikeToggle(refID),
+          profileLikeToggle(refID)
+        ));
       })
       .finally(() => {
-        dispatch(activityIsLikeLoading(false, refID));
+        dispatch(batch(
+          activityIsLikeLoading(false, refID),
+          profileIsLikeLoading(false, refID)
+        ));
       });
   };
 }

@@ -13,6 +13,7 @@ class Checkbox extends React.PureComponent {
   static propTypes = {
     id:           PropTypes.string.isRequired,
     name:         PropTypes.string,
+    value:        PropTypes.string,
     label:        PropTypes.string,
     theme:        PropTypes.oneOf(themes),
     errorMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
@@ -29,6 +30,7 @@ class Checkbox extends React.PureComponent {
   static defaultProps = {
     name:         '',
     label:        '',
+    value:        '',
     errorMessage: '',
     theme:        themes[0],
     radio:        false,
@@ -62,13 +64,13 @@ class Checkbox extends React.PureComponent {
    * @param {*} context
    */
   handleChange = (e, context) => {
-    const { id, name, onChange } = this.props;
+    const { id, name, value, onChange } = this.props;
 
     const checked = !this.state.checked;
     this.setState({ checked });
 
     const cb = (onChange || context.onChange) || (() => {});
-    cb(e, checked, name || id);
+    cb(e, checked, name || id, value);
   };
 
   /**

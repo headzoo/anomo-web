@@ -1,5 +1,5 @@
 import * as types from 'actions/profileActions';
-import { objects, redux } from 'utils';
+import { objects, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
 
 /**
@@ -131,9 +131,51 @@ function postsReset(state) {
   };
 }
 
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeLoading(state, action) {
+  const activities = objects.clone(state.activities);
+
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].RefID === action.refID) {
+      activities[i].LikeIsLoading = action.isLoading;
+    }
+  }
+
+  return {
+    ...state,
+    activities
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function like(state, action) {
+  const activities = objects.clone(state.activities);
+
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].RefID === action.refID) {
+      feedUtils.toggleActivityLike(activities[i]);
+    }
+  }
+
+  return {
+    ...state,
+    activities
+  };
+}
+
 export default redux.createReducer({
   [types.PROFILE_SENDING]:       sending,
   [types.PROFILE_POSTS_LOADING]: postsLoading,
+  [types.PROFILE_LIKE_LOADING]:  likeLoading,
+  [types.PROFILE_LIKE]:          like,
   [types.PROFILE_FETCH]:         fetch,
   [types.PROFILE_POSTS_FETCH]:   postsFetch,
   [types.PROFILE_FOLLOWING]:     following,

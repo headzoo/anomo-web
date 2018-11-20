@@ -66,6 +66,7 @@ class Ellipsis extends React.PureComponent {
     const { count } = this.state;
 
     delete props.count;
+    delete props.animated;
 
     return (
       <span {...props}>
