@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { objects, connect, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardHeader, CardText, Button, ButtonGroup } from 'lib/bootstrap';
 import { Form, Input, Checkbox } from 'lib/forms';
-import { Page, Icon } from 'lib';
+import { Page, Icon, Link, Loading, withRouter } from 'lib';
+import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as formActions from 'actions/formActions';
 import * as userActions from 'actions/userActions';
@@ -16,8 +17,12 @@ class SettingsPage extends React.PureComponent {
     user:               PropTypes.object.isRequired,
     password:           PropTypes.object.isRequired,
     notifications:      PropTypes.object.isRequired,
+    history:            PropTypes.object.isRequired,
+    location:           PropTypes.object.isRequired,
     formError:          PropTypes.func.isRequired,
     formChanges:        PropTypes.func.isRequired,
+    userBlock:          PropTypes.func.isRequired,
+    userBlocked:        PropTypes.func.isRequired,
     userUpdatePrivacy:  PropTypes.func.isRequired,
     userUpdatePassword: PropTypes.func.isRequired
   };
@@ -30,9 +35,30 @@ class SettingsPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      panel: 'list'
+      panel: this.getPanelFromPathname(props.location.pathname)
     };
+    if (this.state.panel === 'blocked') {
+      props.userBlocked();
+    }
+    this.unblock = [];
   }
+
+  /**
+   * @param {string} pathname
+   * @returns {string}
+   */
+  getPanelFromPathname = (pathname) => {
+    switch (pathname) {
+      case routes.route('settingsNotifications'):
+        return 'notifications';
+      case routes.route('settingsBlocked'):
+        return 'blocked';
+      case routes.route('settingsPassword'):
+        return 'password';
+      default:
+        return 'list';
+    }
+  };
 
   /**
    *
@@ -45,8 +71,14 @@ class SettingsPage extends React.PureComponent {
    * @param {*} prevProps
    */
   componentDidUpdate = (prevProps) => {
-    const { user } = this.props;
+    const { user, userBlocked, location } = this.props;
 
+    if (location.pathname !== prevProps.location.pathname) {
+      if (location.pathname === routes.route('settingsBlocked')) {
+        userBlocked();
+      }
+      this.setState({ panel: this.getPanelFromPathname(location.pathname) });
+    }
     if (!objects.isEqual(user, prevProps.user)) {
       this.handleUpdate();
     }
@@ -70,12 +102,28 @@ class SettingsPage extends React.PureComponent {
   };
 
   /**
-   *
    * @param {Event} e
    * @param {string} panel
    */
   handleItemClick = (e, panel) => {
-    this.setState({ panel });
+    const { history } = this.props;
+
+    history.push(routes.route(panel));
+  };
+
+  /**
+   * @param {Event} e
+   * @param {boolean} checked
+   * @param {string} name
+   * @param {string} userID
+   */
+  handleBlockedChange = (e, checked, name, userID) => {
+    const index = this.unblock.indexOf(userID);
+    if (!checked && index === -1) {
+      this.unblock.push(userID);
+    } else if (checked && index !== -1) {
+      this.unblock.splice(index, 1);
+    }
   };
 
   /**
@@ -122,6 +170,17 @@ class SettingsPage extends React.PureComponent {
 
     userUpdatePassword(values[constants.SETTING_OLD_PASSWORD], values[constants.SETTING_NEW_PASSWORD]);
     this.setState({ panel: 'list' });
+  };
+
+  /**
+   *
+   */
+  handleBlockedSubmit = () => {
+    const { userBlock } = this.props;
+
+    this.unblock.forEach((userID) => {
+      userBlock(userID);
+    });
   };
 
   /**
@@ -178,7 +237,7 @@ class SettingsPage extends React.PureComponent {
                 theme="secondary"
                 className="half-width"
                 disabled={notifications.isSubmitting}
-                onClick={e => this.handleItemClick(e, 'list')}
+                onClick={e => this.handleItemClick(e, 'settings')}
               >
                 Cancel
               </Button>
@@ -196,23 +255,46 @@ class SettingsPage extends React.PureComponent {
    * @returns {*}
    */
   renderBlocked = () => {
-    const { notifications } = this.props;
+    const { user } = this.props;
+    const { isBlockedSubmitting, isBlockedLoading } = user;
 
     return (
       <div>
-        Blocked
+        {isBlockedLoading ? (
+          <div className="text-center">
+            <Loading />
+          </div>
+        ) : (
+          <ul className="list-group">
+            {user.blocked.map(u => (
+              <li key={u.UserID} className="list-group-item">
+                <Checkbox
+                  value={u.UserID}
+                  name={u.UserName}
+                  label={u.UserName}
+                  onChange={this.handleBlockedChange}
+                  id={`form-settings-blocked-${u.UserID}`}
+                  checked
+                />
+              </li>
+            ))}
+          </ul>
+        )}
         <Row>
           <Column className="gutter-top">
             <ButtonGroup className="full-width">
               <Button
                 theme="secondary"
                 className="half-width"
-                disabled={notifications.isSubmitting}
-                onClick={e => this.handleItemClick(e, 'list')}
+                onClick={e => this.handleItemClick(e, 'settings')}
               >
                 Cancel
               </Button>
-              <Button className="half-width" disabled={notifications.isSubmitting}>
+              <Button
+                className="half-width"
+                disabled={isBlockedSubmitting || isBlockedLoading}
+                onClick={this.handleBlockedSubmit}
+              >
                 Save
               </Button>
             </ButtonGroup>
@@ -266,7 +348,7 @@ class SettingsPage extends React.PureComponent {
                   theme="secondary"
                   className="half-width"
                   disabled={password.isSubmitting}
-                  onClick={e => this.handleItemClick(e, 'list')}
+                  onClick={e => this.handleItemClick(e, 'settings')}
                 >
                   Cancel
                 </Button>
@@ -287,17 +369,23 @@ class SettingsPage extends React.PureComponent {
   renderList = () => {
     return (
       <ul className="list-group card-settings-list-group">
-        <li className="list-group-item" onClick={e => this.handleItemClick(e, 'notifications')}>
-          <div>Notifications</div>
-          <Icon name="angle-right" />
+        <li className="list-group-item">
+          <Link name="settingsNotifications">
+            <div>Notifications</div>
+            <Icon name="angle-right" />
+          </Link>
         </li>
-        <li className="list-group-item" onClick={e => this.handleItemClick(e, 'blocked')}>
-          <div>Blocked Users</div>
-          <Icon name="angle-right" />
+        <li className="list-group-item">
+          <Link name="settingsBlocked">
+            <div>Blocked Users</div>
+            <Icon name="angle-right" />
+          </Link>
         </li>
-        <li className="list-group-item" onClick={e => this.handleItemClick(e, 'password')}>
-          <div>Change Password</div>
-          <Icon name="angle-right" />
+        <li className="list-group-item">
+          <Link name="settingsPassword">
+            <div>Change Password</div>
+            <Icon name="angle-right" />
+          </Link>
         </li>
       </ul>
     );
@@ -359,4 +447,4 @@ const mapStateToProps = state => (
 export default connect(
   mapStateToProps,
   mapActionsToProps(formActions, userActions)
-)(SettingsPage);
+)(withRouter(SettingsPage));

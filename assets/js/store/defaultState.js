@@ -88,12 +88,14 @@ const commonUserElements = {
  */
 export const defaultUser = {
   ...commonUserElements,
-  searchResults:     [],
-  isAuthenticated:   false,
-  isSending:         false,
-  isSettingsSending: false,
-  isSearchSending:   false,
-  errorMessage:      ''
+  searchResults:       [],
+  isAuthenticated:     false,
+  isSending:           false,
+  isSettingsSending:   false,
+  isSearchSending:     false,
+  isBlockedSubmitting: false,
+  isBlockedLoading:    false,
+  errorMessage:        ''
 };
 
 /**

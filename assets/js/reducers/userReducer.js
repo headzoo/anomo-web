@@ -138,6 +138,30 @@ function blocked(state, action) {
  * @param {*} action
  * @returns {*}
  */
+function blockedLoading(state, action) {
+  return {
+    ...state,
+    isBlockedLoading: action.isBlockedLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function blockedSubmitting(state, action) {
+  return {
+    ...state,
+    isBlockedSubmitting: action.isBlockedSubmitting
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
 function searchResults(state, action) {
   return {
     ...state,
@@ -146,15 +170,17 @@ function searchResults(state, action) {
 }
 
 export default redux.createReducer({
-  [types.USER_ERROR]:            error,
-  [types.USER_LOGIN]:            login,
-  [types.USER_LOGOUT]:           logout,
-  [types.USER_SET]:              set,
-  [types.USER_FOLLOWERS]:        followers,
-  [types.USER_FOLLOWING]:        following,
-  [types.USER_BLOCKED]:          blocked,
-  [types.USER_SENDING]:          sending,
-  [types.USER_SETTINGS_SENDING]: settingsSending,
-  [types.USER_SEARCH_SENDING]:   searchSending,
-  [types.USER_SEARCH_RESULTS]:   searchResults
+  [types.USER_ERROR]:              error,
+  [types.USER_LOGIN]:              login,
+  [types.USER_LOGOUT]:             logout,
+  [types.USER_SET]:                set,
+  [types.USER_FOLLOWERS]:          followers,
+  [types.USER_FOLLOWING]:          following,
+  [types.USER_BLOCKED]:            blocked,
+  [types.USER_BLOCKED_LOADING]:    blockedLoading,
+  [types.USER_BLOCKED_SUBMITTING]: blockedSubmitting,
+  [types.USER_SENDING]:            sending,
+  [types.USER_SETTINGS_SENDING]:   settingsSending,
+  [types.USER_SEARCH_SENDING]:     searchSending,
+  [types.USER_SEARCH_RESULTS]:     searchResults
 });

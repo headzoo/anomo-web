@@ -5,17 +5,19 @@ import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
 import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
 
-export const USER_ERROR            = 'USER_ERROR';
-export const USER_SENDING          = 'USER_SENDING';
-export const USER_SETTINGS_SENDING = 'USER_SETTINGS_SENDING';
-export const USER_SEARCH_SENDING   = 'USER_SEARCH_SENDING';
-export const USER_LOGIN            = 'USER_LOGIN';
-export const USER_LOGOUT           = 'USER_LOGOUT';
-export const USER_SET              = 'USER_SET';
-export const USER_FOLLOWERS        = 'USER_FOLLOWERS';
-export const USER_FOLLOWING        = 'USER_FOLLOWING';
-export const USER_BLOCKED          = 'USER_BLOCKED';
-export const USER_SEARCH_RESULTS   = 'USER_SEARCH_RESULTS';
+export const USER_ERROR              = 'USER_ERROR';
+export const USER_SENDING            = 'USER_SENDING';
+export const USER_SETTINGS_SENDING   = 'USER_SETTINGS_SENDING';
+export const USER_SEARCH_SENDING     = 'USER_SEARCH_SENDING';
+export const USER_LOGIN              = 'USER_LOGIN';
+export const USER_LOGOUT             = 'USER_LOGOUT';
+export const USER_SET                = 'USER_SET';
+export const USER_FOLLOWERS          = 'USER_FOLLOWERS';
+export const USER_FOLLOWING          = 'USER_FOLLOWING';
+export const USER_BLOCKED            = 'USER_BLOCKED';
+export const USER_BLOCKED_LOADING    = 'USER_BLOCKED_LOADING';
+export const USER_BLOCKED_SUBMITTING = 'USER_BLOCKED_SUBMITTING';
+export const USER_SEARCH_RESULTS     = 'USER_SEARCH_RESULTS';
 
 /**
  * @param {string} errorMessage
@@ -150,13 +152,26 @@ export function userFollow(userID) {
 }
 
 /**
+ * @param {boolean} isBlockedLoading
+ * @returns {{type: string, isBlockedLoading: *}}
+ */
+export function userBlockedIsLoading(isBlockedLoading) {
+  return {
+    type: USER_BLOCKED_LOADING,
+    isBlockedLoading
+  };
+}
+
+/**
  * @param {number} userID
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
-export function userBlocked(userID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+export function userBlocked(userID = 0) {
+  return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(userBlockedIsLoading(true));
+
     const url = endpoints.create('userBlocked', {
-      userID
+      userID: userID || user.getID()
     });
     proxy.get(url)
       .then((data) => {
@@ -167,7 +182,22 @@ export function userBlocked(userID) {
       })
       .catch((error) => {
         console.warn(error);
+      })
+      .finally(() => {
+        dispatch(userBlockedIsLoading(false));
       });
+  };
+}
+
+
+/**
+ * @param {boolean} isBlockedSubmitting
+ * @returns {{type: string, isBlockedLoading: *}}
+ */
+export function userBlockedIsSubmitting(isBlockedSubmitting) {
+  return {
+    type: USER_BLOCKED_SUBMITTING,
+    isBlockedSubmitting
   };
 }
 
@@ -177,6 +207,8 @@ export function userBlocked(userID) {
  */
 export function userBlock(userID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
+    dispatch(userBlockedIsSubmitting(true));
+
     const url = endpoints.create('userBlock', {
       userID
     });
@@ -186,6 +218,9 @@ export function userBlock(userID) {
       })
       .catch((error) => {
         console.warn(error);
+      })
+      .finally(() => {
+        dispatch(userBlockedIsSubmitting(false));
       });
   };
 }

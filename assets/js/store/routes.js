@@ -1,23 +1,26 @@
 import { strings, objects } from 'utils';
 
 const pathsAndRoutes = {
-  home:        '/',
-  recent:      '/',
-  popular:     '/popular',
-  following:   '/following',
-  activity:    '/activity/:refID/:actionType',
-  comment:     '/activity/:refID/:actionType#c=:commentID',
-  profile:     '/profile/:id',
-  editProfile: '/profile/edit',
-  search:      '/search',
-  hashtag:     '/hashtag/:hashtag',
-  login:       '/login',
-  logout:      '/logout',
-  settings:    '/settings',
-  about:       '/about',
-  contact:     '/contact',
-  privacy:     '/privacy',
-  tou:         '/tou'
+  home:                  '/',
+  recent:                '/',
+  popular:               '/popular',
+  following:             '/following',
+  activity:              '/activity/:refID/:actionType',
+  comment:               '/activity/:refID/:actionType#c=:commentID',
+  profile:               '/profile/:id',
+  editProfile:           '/profile/edit',
+  search:                '/search',
+  hashtag:               '/hashtag/:hashtag',
+  login:                 '/login',
+  logout:                '/logout',
+  settings:              '/settings',
+  settingsNotifications: '/settings/notifications',
+  settingsBlocked:       '/settings/blocked',
+  settingsPassword:      '/settings/password',
+  about:                 '/about',
+  contact:               '/contact',
+  privacy:               '/privacy',
+  tou:                   '/tou'
 };
 
 /**
