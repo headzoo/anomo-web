@@ -56,4 +56,20 @@ class Request extends SymfonyRequest
 
         return $request;
     }
+
+    /**
+     * @return string
+     */
+    public function token()
+    {
+        $auth = $this->headers->get('Authorization');
+        if ($auth) {
+            $parts = explode(' ', $auth, 2);
+            if ($parts[0] === 'token') {
+                return $parts[1];
+            }
+        }
+
+        return '';
+    }
 }

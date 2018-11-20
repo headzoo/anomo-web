@@ -28,26 +28,43 @@ class Anomo
     }
 
     /**
-     * @param string $name
-     * @param array $params
-     * @return string
+     * @return Endpoints
      */
-    public function endpoint($name, $params = [])
+    public function getEndpoints()
     {
-        return $this->endpoints->create($name, $params);
+        return $this->endpoints;
     }
 
     /**
-     * @param string $url
+     * @param string $endpoint
+     * @param array $endpointParams
      * @return array
      */
-    public function get($url)
+    public function get($endpoint, $endpointParams = [])
     {
-        return [];
+        $url      = $this->endpoints->create($endpoint, $endpointParams);
+        $response = $this->guzzle->request('GET', $url);
+        $body     = trim((string)$response->getBody());
+
+        return json_decode($body, true);
     }
 
-    public function post($url, $body = [])
+    /**
+     * @param string $endpoint
+     * @param array $endpointParams
+     * @param array $body
+     * @return array
+     */
+    public function post($endpoint, $endpointParams = [], $body = [])
     {
+        $url    = $this->endpoints->create($endpoint, $endpointParams);
+        $params = [];
+        if ($body) {
+            $params['form_params'] = $body;
+        }
+        $response = $this->guzzle->request('POST', $url, $params);
+        $body     = trim((string)$response->getBody());
 
+        return json_decode($body, true);
     }
 }

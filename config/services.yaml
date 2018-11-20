@@ -30,3 +30,7 @@ services:
     App\EventListener\ApiResponseListener:
         tags:
             - { name: kernel.event_listener, method: onKernelView, event: kernel.view }
+
+    App\EventListener\ApiRequestListener:
+        tags:
+            - { name: kernel.event_listener, method: onKernelRequest, event: kernel.request }

@@ -2,8 +2,6 @@
 namespace App\Controller\Api;
 
 use App\Anomo\Anomo;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,20 +18,36 @@ class FeedsController extends Controller
     }
 
     /**
-     * @Route("/{name}", name="fetch")
+     * @Route(
+     *     "/anomo/{name}/{lastActivityID<\d+>}",
+     *     defaults={"lastActivityID": 0},
+     *     name="fetch"
+     * )
      *
      * @param Anomo $anomo
      * @param string $name
-     * @return string
+     * @param int $lastActivityID
+     * @return array
      */
-    public function fetchAction(Anomo $anomo, $name)
+    public function fetchAction(Anomo $anomo, $name, $lastActivityID)
     {
-        $url = $anomo->endpoint('activityFetch', [
-            'token'          => 'abc',
-            'lastActivityID' => 0
-        ]);
-        $resp = $anomo->get($url);
+        $name = strtolower($name);
+        $feedTypes = [
+            'recent'    => 0,
+            'popular'   => 2,
+            'following' => 3
+        ];
+        if (!isset($feedTypes[$name])) {
+            throw $this->createNotFoundException();
+        }
 
-        return $name;
+        return $anomo->get('feed', [
+            'gender'         => 0,
+            'minAge'         => 13,
+            'maxAge'         => 100,
+            'actionType'     => 1,
+            'feedType'       => $feedTypes[$name],
+            'lastActivityID' => $lastActivityID
+        ]);
     }
 }
