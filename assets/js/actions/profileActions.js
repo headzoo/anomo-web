@@ -1,5 +1,7 @@
 export const PROFILE_SENDING       = 'PROFILE_SENDING';
 export const PROFILE_POSTS_LOADING = 'PROFILE_POSTS_LOADING';
+export const PROFILE_LIKE_LOADING  = 'PROFILE_LIKE_LOADING';
+export const PROFILE_LIKE          = 'PROFILE_LIKE';
 export const PROFILE_FETCH         = 'PROFILE_FETCH';
 export const PROFILE_POSTS_FETCH   = 'PROFILE_POSTS_FETCH';
 export const PROFILE_POSTS_RESET   = 'PROFILE_POSTS_RESET';
@@ -25,6 +27,30 @@ export function profileIsPostsLoading(isPostsLoading) {
   return {
     type: PROFILE_POSTS_LOADING,
     isPostsLoading
+  };
+}
+
+/**
+ * @param {boolean} isLoading
+ * @param {number} refID
+ * @returns {{type: string, isLoading: *}}
+ */
+export function profileIsLikeLoading(isLoading, refID) {
+  return {
+    type: PROFILE_LIKE_LOADING,
+    isLoading,
+    refID
+  };
+}
+
+/**
+ * @param {number} refID
+ * @returns {{type: string, refID: *}}
+ */
+export function profileLikeToggle(refID) {
+  return {
+    type: PROFILE_LIKE,
+    refID
   };
 }
 
