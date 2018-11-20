@@ -47,6 +47,7 @@ class Poll extends React.PureComponent {
   handleAnswerChange = (e, checked) => {
     const { onAnswer } = this.props;
 
+    e.stopPropagation();
     onAnswer(e, checked);
     if (!e.defaultPrevented) {
       e.preventDefault();
@@ -58,9 +59,10 @@ class Poll extends React.PureComponent {
   };
 
   /**
-   *
+   * @param {Event} e
    */
-  handleResultsClick = () => {
+  handleResultsClick = (e) => {
+    e.stopPropagation();
     this.setState({ panel: 'results' });
   };
 

@@ -1,4 +1,6 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
+const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 Encore
     .setOutputPath('public/build/')
@@ -20,4 +22,12 @@ Encore
     })
 ;
 
-module.exports = Encore.getWebpackConfig();
+const webpackConfig = Encore.getWebpackConfig();
+if (Encore.isProduction()) {
+  webpackConfig.plugins = webpackConfig.plugins.filter(
+    plugin => !(plugin instanceof webpack.optimize.UglifyJsPlugin)
+  );
+  webpackConfig.plugins.push(new UglifyJsPlugin());
+}
+
+module.exports = webpackConfig;

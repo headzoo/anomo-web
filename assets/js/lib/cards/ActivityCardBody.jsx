@@ -10,6 +10,7 @@ import { ActivityImage, Message, Video, Shimmer, Poll } from 'lib';
  */
 class ActivityCardBody extends React.PureComponent {
   static propTypes = {
+    loading:      PropTypes.bool,
     activity:     PropTypes.object.isRequired,
     onClick:      PropTypes.func,
     onPollAnswer: PropTypes.func,
@@ -17,6 +18,7 @@ class ActivityCardBody extends React.PureComponent {
   };
 
   static defaultProps = {
+    loading:      false,
     onClick:      () => {},
     onPollAnswer: () => {},
     onImageClick: () => {}
@@ -26,9 +28,9 @@ class ActivityCardBody extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, onClick, onImageClick, onPollAnswer } = this.props;
+    const { activity, loading, onClick, onImageClick, onPollAnswer } = this.props;
 
-    if (objects.isEmpty(activity) || activity.isLoading) {
+    if (loading || objects.isEmpty(activity)) {
       return (
         <CardBody>
           <CardText>
@@ -56,8 +58,8 @@ class ActivityCardBody extends React.PureComponent {
           )}
           {activity.Image && (
             <ActivityImage
+              activity={activity}
               onClick={onImageClick}
-              data={{ src: activity.Image, alt: 'Image' }}
             />
           )}
           {(activity.VideoID && activity.VideoSource === 'youtube') && (

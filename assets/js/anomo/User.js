@@ -10,11 +10,13 @@ class User {
   /**
    *
    */
-  constructor() {
-    this.id      = 0;
-    this.details = null;
-    this.token   = '';
-    this.proxy   = new Proxy();
+  constructor(debug = false) {
+    this.debug           = debug;
+    this.id              = 0;
+    this.details         = null;
+    this.token           = '';
+    this.proxy           = new Proxy();
+    this.isAuthenticated = false;
   }
 
   /**
@@ -124,6 +126,7 @@ class User {
       if (data.token) {
         this.setID(parseInt(data.UserID, 10));
         this.setToken(data.token);
+        this.isAuthenticated = true;
 
         delete data.token;
         delete data.code;
@@ -148,6 +151,7 @@ class User {
       if (data.UserID) {
         this.setID(parseInt(data.UserID, 10));
         this.setToken(data.token);
+        this.isAuthenticated = true;
 
         delete data.token;
         delete data.code;
@@ -164,6 +168,7 @@ class User {
     this.removeID();
     this.removeToken();
     this.removeDetails();
+    this.isAuthenticated = false;
 
     if (this.hasToken() && !localOnly) {
       const url = endpoints.create('userLogout', {

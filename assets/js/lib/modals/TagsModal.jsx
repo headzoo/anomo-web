@@ -79,15 +79,6 @@ class TagsModal extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('tags', false);
-  };
-
-  /**
    * @param {Event} e
    */
   handleSaveClick = (e) => {
@@ -183,8 +174,8 @@ class TagsModal extends React.PureComponent {
 
     return (
       <Modal
+        name="tags"
         footer={footer}
-        onClosed={this.handleClose}
         className="modal-tags modal-list"
         title={isIntents ? 'Intents' : 'Interests'}
         {...rest}

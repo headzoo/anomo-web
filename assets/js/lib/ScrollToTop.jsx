@@ -17,7 +17,7 @@ class ScrollToTop extends React.PureComponent {
 
     // The hash value can change without causing the scroll.
     if (location.pathname !== prevLocation.pathname || location.search !== prevLocation.search) {
-      browser.scroll(0, 'auto');
+      browser.scroll();
     }
   }
 

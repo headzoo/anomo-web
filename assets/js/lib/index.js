@@ -1,5 +1,5 @@
-export { default as withConfig } from './withConfig';
-export { default as withRouter } from './withRouter';
+export { withRouter } from 'react-router-dom';
+
 export { default as types } from './types';
 export { default as Page } from './Page';
 export { default as PageTitle } from './PageTitle';
@@ -32,3 +32,7 @@ export { default as GifPlayer } from './GifPlayer';
 export { default as Video } from './Video';
 export { default as Age } from './Age';
 export { default as Neighborhood } from './Neighborhood';
+export { default as UserBadge } from './UserBadge';
+export { default as Sidebar } from './Sidebar';
+export { default as TrendingHashtags } from './TrendingHashtags';
+export { default as Ellipsis } from './Ellipsis';

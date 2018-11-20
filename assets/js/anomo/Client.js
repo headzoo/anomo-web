@@ -11,10 +11,10 @@ class Client {
   /**
    *
    */
-  constructor() {
-    this.user       = new User();
-    this.proxy      = new Proxy();
-    this.activities = new Activities();
+  constructor(debug = false) {
+    this.user       = new User(debug);
+    this.proxy      = new Proxy(debug);
+    this.activities = new Activities(debug);
     this.endpoints  = endpoints;
     this.history    = history;
   }

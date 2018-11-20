@@ -11,6 +11,7 @@ import { Pluralize, Number, Link } from 'lib';
  */
 class ActivityCardFooter extends React.PureComponent {
   static propTypes = {
+    loading:        PropTypes.bool,
     activity:       PropTypes.object.isRequired,
     comment:        PropTypes.bool,
     onLikeClick:    PropTypes.func,
@@ -18,6 +19,7 @@ class ActivityCardFooter extends React.PureComponent {
   };
 
   static defaultProps = {
+    loading:        false,
     comment:        false,
     onLikeClick:    () => {},
     onCommentClick: () => {}

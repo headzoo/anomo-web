@@ -27,24 +27,64 @@
   }
 }
 
-.avatar-following {
+.user-badge {
+  color: #000;
+  position: relative;
+
+  &:hover {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .avatar-container {
+    margin-right: $gutter-size;
+  }
+}
+
+.avatar-container {
   position: relative;
   display: inline-block;
 
-  &::after {
-    content: "\F005";
+  .icon-following {
+    top: -8px;
+    left: -4px;
     color: gold;
-    top: -5px;
-    left: -5px;
-    font-weight: 900;
-    font-size: 0.8rem;
     position: absolute;
-    font-family: "Font Awesome 5 Free";
+    font-size: 0.8rem;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   }
 
-  &.lg::after {
-    top: -10px;
-    left: -10px;
-    font-size: 1.5rem;
+  &.sm {
+    height: 30px;
+    width: 30px;
+
+    .icon-following {
+      top: -4px;
+      font-size: 0.6rem;
+    }
+  }
+
+  &.md {
+    height: 44px;
+    width: 44px;
+
+    .icon-following {
+      font-size: 0.7rem;
+    }
+  }
+
+  &.lg {
+    width: 150px;
+    height: 150px;
+
+    .icon-following {
+      top: -4px;
+      font-size: 1.2rem;
+    }
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
   }
 }

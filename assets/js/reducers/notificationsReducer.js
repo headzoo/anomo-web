@@ -1,5 +1,5 @@
 import * as types from 'actions/notificationsActions';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 
 /**
  * @param {*} state
@@ -7,10 +7,12 @@ import { objects } from 'utils';
  * @returns {*}
  */
 function fetch(state, action) {
+  const notifications = objects.clone(action.notifications).reverse();
+
   return {
     ...state,
-    notifications: objects.clone(action.notifications).reverse(),
-    newNumber:     action.newNumber
+    notifications,
+    newNumber: notifications.length
   };
 }
 
@@ -26,8 +28,8 @@ function read(state, action) {
 
   return {
     ...state,
-    newNumber: notifications.length,
-    notifications
+    notifications,
+    newNumber: notifications.length
   };
 }
 
@@ -38,24 +40,13 @@ function read(state, action) {
 function readAll(state) {
   return {
     ...state,
-    newNumber:     0,
-    notifications: []
+    notifications: [],
+    newNumber:     0
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function notificationsReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.NOTIFICATIONS_FETCH:
-      return fetch(state, action);
-    case types.NOTIFICATIONS_READ:
-      return read(state, action);
-    case types.NOTIFICATIONS_READ_ALL:
-      return readAll(state);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.NOTIFICATIONS_FETCH]:    fetch,
+  [types.NOTIFICATIONS_READ]:     read,
+  [types.NOTIFICATIONS_READ_ALL]: readAll
+});

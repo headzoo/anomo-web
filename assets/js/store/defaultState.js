@@ -15,15 +15,22 @@ export const defaultAnomo = {
  *
  */
 export const defaultUi = {
-  deviceSize:    'xs',
+  device: {
+    width:    0,
+    size:     'xs',
+    isMobile: false
+  },
+  contentWidth:  551,
   activeFeed:    'recent',
   isLoading:     true,
+  sidebarDocked: false,
   errorMessage:  '',
   errorInfo:     {},
   visibleModals: {
     user:     false,
     tags:     false,
     post:     false,
+    reply:    false,
     intents:  false,
     activity: false,
     comment:  false
@@ -129,14 +136,20 @@ export const defaultActivity = {
     },
     following: {
       ...commonFeed
+    },
+    hashtag: {
+      page:    1,
+      hasMore: true,
+      ...commonFeed
     }
   },
   activity:          {},
-  isLoading:         false,
+  trendingHashtags:  [],
+  isActivityLoading: false,
   isSubmitting:      false,
-  isRefreshing:      false,
   isCommentsLoading: false,
   isCommentSending:  false,
+  isLikeListLoading: false,
   isPollSending:     false
 };
 
@@ -167,11 +180,18 @@ export const defaultForms = {
   post: {
     message: '',
     photo:   '',
+    reply:   '0',
     ...commonFormElements
   },
   postModal: {
     message: '',
     photo:   '',
+    reply:   '0',
+    ...commonFormElements
+  },
+  reply: {
+    message: '',
+    reply:   '0',
     ...commonFormElements
   },
   search: {

@@ -29,6 +29,15 @@ export function profileIsPostsLoading(isPostsLoading) {
 }
 
 /**
+ * @returns {{type: string}}
+ */
+export function profilePostsReset() {
+  return {
+    type: PROFILE_POSTS_RESET
+  };
+}
+
+/**
  * @param {number} userID
  * @returns {function(*, *, {user: *})}
  */
@@ -36,24 +45,17 @@ export function profileFetch(userID) {
   return (dispatch, getState, { user }) => {
     dispatch(profileIsSending(true));
 
-/*    const profile = JSON.parse(localStorage.getItem('profile'));
-    dispatch({
-      type: PROFILE_FETCH,
-      profile
-    });
-    dispatch(profileIsSending(false));
-    return;*/
-
     user.info(userID)
       .then((data) => {
-        // localStorage.setItem('profile', JSON.stringify(data.results));
-        if (data.code === 'OK') {
-          dispatch({
-            type:    PROFILE_FETCH,
-            profile: data.results
-          });
-        }
-      }).finally(() => {
+        dispatch({
+          type:    PROFILE_FETCH,
+          profile: data.results
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
         dispatch(profileIsSending(false));
       });
   };
@@ -65,7 +67,7 @@ export function profileFetch(userID) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function profilePosts(userID, refresh = false) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(profileIsPostsLoading(true));
 
     let lastActivityID = 0;
@@ -74,20 +76,20 @@ export function profilePosts(userID, refresh = false) {
     }
 
     const url = endpoints.create('profilePosts', {
-      token: user.getToken(),
       lastActivityID,
       userID
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:       PROFILE_POSTS_FETCH,
-            activities: data.Activities,
-            isLastPage: data.Activities.length < 10,
-            refresh
-          });
-        }
+        dispatch({
+          type:       PROFILE_POSTS_FETCH,
+          activities: data.Activities,
+          isLastPage: data.Activities.length < 10,
+          refresh
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(profileIsPostsLoading(false));
@@ -102,24 +104,24 @@ export function profilePosts(userID, refresh = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function profileFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowers', {
-      token: user.getToken(),
       userID,
       page
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      PROFILE_FOLLOWERS,
-            followers: data.ListFollower,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(profileFollowers(userID, page + 1));
-          }
+        dispatch({
+          type:      PROFILE_FOLLOWERS,
+          followers: data.ListFollower,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(profileFollowers(userID, page + 1));
         }
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
@@ -131,33 +133,24 @@ export function profileFollowers(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function profileFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowing', {
-      token: user.getToken(),
       userID,
       page
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      PROFILE_FOLLOWING,
-            following: data.ListFollowing,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(profileFollowing(userID, page + 1));
-          }
+        dispatch({
+          type:      PROFILE_FOLLOWING,
+          following: data.ListFollowing,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(profileFollowing(userID, page + 1));
         }
+      })
+      .catch((error) => {
+        console.error(error);
       });
-  };
-}
-
-/**
- * @returns {{type: string}}
- */
-export function profilePostsReset() {
-  return {
-    type: PROFILE_POSTS_RESET
   };
 }

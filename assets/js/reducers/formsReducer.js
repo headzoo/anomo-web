@@ -1,6 +1,6 @@
 import * as types from 'actions/formActions';
 import * as defaultState from 'store/defaultState';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 
 /**
  * @param {*} state
@@ -172,31 +172,14 @@ function complete(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function formsReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.FORMS_CHANGE:
-      return change(state, action);
-    case types.FORMS_CHANGES:
-      return changes(state, action);
-    case types.FORMS_SUBMITTING:
-      return submitting(state, action);
-    case types.FORMS_SUBMITTED:
-      return submitted(state, action);
-    case types.FORMS_DISABLED:
-      return disabled(state, action);
-    case types.FORMS_ERROR:
-      return error(state, action);
-    case types.FORMS_SUCCESS:
-      return success(state, action);
-    case types.FORMS_RESET:
-      return reset(state, action);
-    case types.FORMS_COMPLETE:
-      return complete(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.FORMS_CHANGE]:     change,
+  [types.FORMS_CHANGES]:    changes,
+  [types.FORMS_SUBMITTING]: submitting,
+  [types.FORMS_SUBMITTED]:  submitted,
+  [types.FORMS_DISABLED]:   disabled,
+  [types.FORMS_ERROR]:      error,
+  [types.FORMS_SUCCESS]:    success,
+  [types.FORMS_RESET]:      reset,
+  [types.FORMS_COMPLETE]:   complete
+});

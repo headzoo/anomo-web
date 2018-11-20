@@ -56,15 +56,6 @@ class UserModal extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('user', false);
-  };
-
-  /**
    * @param {Event} e
    * @param {string} item
    */
@@ -103,8 +94,8 @@ class UserModal extends React.PureComponent {
 
     return (
       <Modal
+        name="user"
         className="modal-user modal-list"
-        onClosed={this.handleClose}
         withHeader={false}
         {...rest}
       >

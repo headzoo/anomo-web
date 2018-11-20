@@ -4,7 +4,7 @@
 .page {
   .container,
   .container-fluid {
-    padding-top: ($header-height + 5px);
+    padding-top: ($header-height + $gutter-size);
   }
 }
 
@@ -79,4 +79,8 @@
       background-color: #bccae4;
     }
   }
+}
+
+.page-login-store-badge {
+  width: 100%;
 }

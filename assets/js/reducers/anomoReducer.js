@@ -1,4 +1,5 @@
 import * as types from 'actions/anomoActions';
+import { redux } from 'utils';
 
 /**
  * @param {*} state
@@ -48,21 +49,9 @@ function intents(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function anomoReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.ANOMO_TAGS_LOADING:
-      return tagsLoading(state, action);
-    case types.ANOMO_INTENTS_LOADING:
-      return intentsLoading(state, action);
-    case types.ANOMO_TAGS:
-      return tags(state, action);
-    case types.ANOMO_INTENTS:
-      return intents(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.ANOMO_TAGS]:            tags,
+  [types.ANOMO_INTENTS]:         intents,
+  [types.ANOMO_TAGS_LOADING]:    tagsLoading,
+  [types.ANOMO_INTENTS_LOADING]: intentsLoading
+});

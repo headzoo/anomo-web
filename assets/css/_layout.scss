@@ -1,6 +1,10 @@
 @import "vars";
 @import "mixins";
 
+#mount {
+  position: relative;
+}
+
 body {
   color: #333;
   font-weight: 300;
@@ -16,4 +20,13 @@ a {
 
 footer {
   padding: $gutter-size;
+}
+
+.sidebar-docker {
+  @extend .drawer-content-wrapper;
+  top: $header-height;
+  bottom: 0;
+  width: 18vw;
+  position: fixed;
+  border-right: 1px solid #46474c;
 }

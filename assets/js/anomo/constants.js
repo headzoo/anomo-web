@@ -3,6 +3,9 @@ export const NOTIFICATION_COMMENT      = '14';
 export const NOTIFICATION_FOLLOW       = '15';
 export const NOTIFICATION_MENTION      = '16';
 export const NOTIFICATION_LIKE_COMMENT = '17';
+export const NOTIFICATION_STATUS_READ   = '0';
+export const NOTIFICATION_STATUS_UNREAD = '1';
+
 
 export const ACTION_TYPE_JOIN = '28';
 

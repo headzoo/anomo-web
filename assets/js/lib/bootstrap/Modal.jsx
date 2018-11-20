@@ -1,28 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { objects, browser } from 'utils';
+import { objects, browser, connect, mapActionsToProps } from 'utils';
 import { Icon } from 'lib';
+import * as uiActions from 'actions/uiActions';
 
 /**
  *
  */
 class Modal extends React.PureComponent {
   static propTypes = {
-    sm:         PropTypes.bool,
-    lg:         PropTypes.bool,
-    open:       PropTypes.bool,
-    fade:       PropTypes.bool,
-    centered:   PropTypes.bool,
-    backdrop:   PropTypes.bool,
-    icon:       PropTypes.string,
-    title:      PropTypes.string,
-    footer:     PropTypes.node,
-    withHeader: PropTypes.bool,
-    className:  PropTypes.string,
-    children:   PropTypes.node,
-    onOpened:   PropTypes.func,
-    onClosed:   PropTypes.func
+    sm:             PropTypes.bool,
+    lg:             PropTypes.bool,
+    name:           PropTypes.string,
+    open:           PropTypes.bool,
+    fade:           PropTypes.bool,
+    centered:       PropTypes.bool,
+    backdrop:       PropTypes.bool,
+    icon:           PropTypes.string,
+    title:          PropTypes.string,
+    footer:         PropTypes.node,
+    withHeader:     PropTypes.bool,
+    className:      PropTypes.string,
+    children:       PropTypes.node,
+    onOpened:       PropTypes.func,
+    onClosed:       PropTypes.func,
+    uiVisibleModal: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -33,6 +36,7 @@ class Modal extends React.PureComponent {
     centered:   true,
     backdrop:   true,
     withHeader: true,
+    name:       '',
     footer:     '',
     icon:       '',
     title:      '',
@@ -118,9 +122,14 @@ class Modal extends React.PureComponent {
    *
    */
   close = () => {
+    const { name, uiVisibleModal } = this.props;
+
     this.modalDOM.modal('hide');
     this.opened = false;
     this.props.onClosed();
+    if (name) {
+      uiVisibleModal(name, false);
+    }
   };
 
   /**
@@ -136,9 +145,14 @@ class Modal extends React.PureComponent {
    *
    */
   handleModalHidden = () => {
+    const { name, uiVisibleModal } = this.props;
+
     this.opened = false;
     browser.showScrollbars();
     this.props.onClosed();
+    if (name) {
+      uiVisibleModal(name, false);
+    }
   };
 
   /**
@@ -176,7 +190,7 @@ class Modal extends React.PureComponent {
         ref={this.modalRef}
         data-backdrop={backdrop}
         className={modalClasses}
-        {...objects.propsFilter(props, Modal.propTypes, 'dispatch')}
+        {...objects.propsFilter(props, Modal.propTypes, uiActions, 'dispatch')}
       >
         <div className={dialogClasses} role="document">
           <div className="modal-content">
@@ -202,4 +216,7 @@ class Modal extends React.PureComponent {
   }
 }
 
-export default Modal;
+export default connect(
+  null,
+  mapActionsToProps(uiActions)
+)(Modal);

@@ -1,41 +1,33 @@
-import Favico from 'favico.js';
+import * as constants from 'anomo/constants';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
 export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
 export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 
 let isClearing = false;
-const favicon = new Favico({
-  animation: 'popFade'
-});
 
 /**
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsFetch() {
   return (dispatch, getState, { user, endpoints, proxy }) => {
-    if (isClearing) {
-      return;
-    }
-    const token = user.getToken();
-    if (!token) {
+    if (isClearing || !user.isAuthenticated) {
       return;
     }
 
     const url = endpoints.create('notificationsHistory', {
-      token
+      status: constants.NOTIFICATION_STATUS_UNREAD,
+      page:   1
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          const newNumber = parseInt(data.NewNotificationsNumber, 10);
-          favicon.badge(newNumber);
-          dispatch({
-            type:          NOTIFICATIONS_FETCH,
-            notifications: data.NotificationHistory,
-            newNumber
-          });
-        }
+        dispatch({
+          type:          NOTIFICATIONS_FETCH,
+          notifications: data.NotificationHistory
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 }
@@ -45,25 +37,22 @@ export function notificationsFetch() {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsRead(notificationID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    const { notifications } = getState();
-    const { newNumber } = notifications;
-
+  return (dispatch, getState, { endpoints, proxy }) => {
     isClearing = true;
-    favicon.badge(newNumber - 1);
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
     });
 
     const url = endpoints.create('notificationsRead', {
-      token: user.getToken(),
       notificationID
     });
     proxy.get(url)
+      .catch((error) => {
+        console.warn(error);
+      })
       .finally(() => {
         isClearing = false;
-        dispatch(notificationsFetch());
       });
   };
 }
@@ -72,27 +61,22 @@ export function notificationsRead(notificationID) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsReadAll() {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    const { notifications } = getState();
-
+  return (dispatch, getState, { endpoints, proxy }) => {
     isClearing = true;
-    favicon.badge(0);
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });
 
-    const promises = [];
-    notifications.notifications.forEach((n) => {
-      const url = endpoints.create('notificationsRead', {
-        token:          user.getToken(),
-        notificationID: n.ID
-      });
-      promises.push(proxy.get(url));
+    const url = endpoints.create('notificationsHistory', {
+      status: constants.NOTIFICATION_STATUS_READ,
+      page:   1
     });
-    Promise.all(promises)
-      .then(() => {
+    proxy.get(url)
+      .catch((error) => {
+        console.warn(error);
+      })
+      .finally(() => {
         isClearing = false;
-        dispatch(notificationsFetch());
       });
   };
 }
@@ -102,7 +86,6 @@ export function notificationsReadAll() {
  */
 export function notificationsIntervalStart() {
   return (dispatch) => {
-    dispatch(notificationsFetch());
     setInterval(() => {
       dispatch(notificationsFetch());
     }, 30000);

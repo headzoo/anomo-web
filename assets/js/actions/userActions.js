@@ -2,8 +2,8 @@ import md5 from 'md5';
 import { objects, browser } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
-import { activityFeedFetchAll } from 'actions/activityActions';
-import { notificationsFetch } from 'actions/notificationsActions';
+import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
+import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
 
 export const USER_ERROR            = 'USER_ERROR';
 export const USER_SENDING          = 'USER_SENDING';
@@ -25,6 +25,17 @@ export function userError(errorMessage) {
   return {
     type: USER_ERROR,
     errorMessage
+  };
+}
+
+/**
+ * @param {*} user
+ * @returns {{type: string, user: *}}
+ */
+export function userSet(user) {
+  return {
+    type: USER_SET,
+    user
   };
 }
 
@@ -68,24 +79,24 @@ export function userIsSearchSending(isSearchSending) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowers', {
-      token: user.getToken(),
       userID,
       page
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      USER_FOLLOWERS,
-            followers: data.ListFollower,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(userFollowers(userID, page + 1, false));
-          }
+        dispatch({
+          type:      USER_FOLLOWERS,
+          followers: data.ListFollower,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(userFollowers(userID, page + 1, false));
         }
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -97,24 +108,24 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollowing', {
-      token: user.getToken(),
       userID,
       page
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:      USER_FOLLOWING,
-            following: data.ListFollowing,
-            page
-          });
-          if (fetchAll && data.CurrentPage < data.TotalPage) {
-            dispatch(userFollowing(userID, page + 1, true));
-          }
+        dispatch({
+          type:      USER_FOLLOWING,
+          following: data.ListFollowing,
+          page
+        });
+        if (fetchAll && data.CurrentPage < data.TotalPage) {
+          dispatch(userFollowing(userID, page + 1, true));
         }
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -126,12 +137,14 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
 export function userFollow(userID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userFollow', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
       .then(() => {
         dispatch(userFollowing(user.getID(), 1, true));
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -141,19 +154,19 @@ export function userFollow(userID) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userBlocked(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userBlocked', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:    USER_BLOCKED,
-            blocked: data.results
-          });
-        }
+        dispatch({
+          type:    USER_BLOCKED,
+          blocked: data.results
+        });
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -165,12 +178,14 @@ export function userBlocked(userID) {
 export function userBlock(userID) {
   return (dispatch, getState, { user, endpoints, proxy }) => {
     const url = endpoints.create('userBlock', {
-      token: user.getToken(),
       userID
     });
     proxy.get(url)
       .then(() => {
         dispatch(userBlocked(user.getID()));
+      })
+      .catch((error) => {
+        console.warn(error);
       });
   };
 }
@@ -181,24 +196,26 @@ export function userBlock(userID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { user }) => {
-    dispatch(userIsSending(true));
-    dispatch(userError(''));
+  return (dispatch, getState, { user, endpoints, batch }) => {
+    dispatch(batch(
+      userError(''),
+      userIsSending(true)
+    ));
 
     user.login(username, password)
       .then((u) => {
-        if (u.code && u.code === 'FAIL') {
-          dispatch(userError('Username or password is incorrect.'));
-          user.logout(true);
-        } else {
-          dispatch({
-            type: USER_LOGIN,
-            user: u
-          });
-
-          dispatch(activityFeedFetchAll());
-          dispatch(userFollowing(u.UserID), 1, true);
-        }
+        user.isAuthenticated = true;
+        endpoints.addDefaultParam('token', user.getToken());
+        dispatch({
+          type: USER_LOGIN,
+          user: u
+        });
+        dispatch(userStart(u.UserID)); // eslint-disable-line
+      })
+      .catch((error) => {
+        console.warn(error);
+        dispatch(userError('Username or password is incorrect.'));
+        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -213,19 +230,26 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {user: *})}
  */
 export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
-  return (dispatch, getState, { user }) => {
-    dispatch(userIsSending(true));
-    dispatch(userError(''));
+  return (dispatch, getState, { user, endpoints, batch }) => {
+    dispatch(batch(
+      userError(''),
+      userIsSending(true)
+    ));
 
     user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
+        user.isAuthenticated = true;
+        endpoints.addDefaultParam('token', user.getToken());
         dispatch({
           type: USER_LOGIN,
           user: u
         });
-
-        dispatch(activityFeedFetchAll());
-        dispatch(userFollowing(u.UserID), 1, true);
+        dispatch(userStart(u.UserID)); // eslint-disable-line
+      })
+      .catch((error) => {
+        console.warn(error);
+        dispatch(userError('Username or password is incorrect.'));
+        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -249,45 +273,37 @@ export function userLogout() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userRefresh() {
-  return (dispatch, getState, { user }) => {
+  return (dispatch, getState, { user, endpoints, batch }) => {
     const id = user.getID();
     if (id && user.hasToken()) {
-      dispatch(userIsSending(true));
-      dispatch(userError(''));
+      dispatch(batch(
+        userError('test'),
+        userIsSending(true)
+      ));
 
       user.info(id)
         .then((data) => {
-          if (data.code === 'OK') {
-            dispatch({
-              type: USER_LOGIN,
-              user: objects.merge(user.getDetails(), data.results)
-            });
-
-            dispatch(activityFeedFetchAll());
-            dispatch(notificationsFetch());
-            dispatch(userFollowing(id, 1, true));
-          } else {
-            user.logout(true);
-          }
+          user.isAuthenticated = true;
+          endpoints.addDefaultParam('token', user.getToken());
+          dispatch({
+            type: USER_LOGIN,
+            user: objects.merge(user.getDetails(), data.results)
+          });
+          dispatch(userStart(id)); // eslint-disable-line
+        })
+        .catch((error) => {
+          console.warn(error);
+          user.logout(true);
         })
         .finally(() => {
-          dispatch(userIsSending(false));
-          dispatch(uiIsLoading(false));
+          dispatch(batch(
+            uiIsLoading(false),
+            userIsSending(false)
+          ));
         });
     } else {
       dispatch(uiIsLoading(false));
     }
-  };
-}
-
-/**
- * @param {*} user
- * @returns {{type: string, user: *}}
- */
-export function userSet(user) {
-  return {
-    type: USER_SET,
-    user
   };
 }
 
@@ -297,21 +313,20 @@ export function userSet(user) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userUpdatePassword(oldPassword, newPassword) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdatePassword', {
-      token: user.getToken()
-    });
+    const url = endpoints.create('userUpdatePassword');
     const body = {
       OldPassword: md5(oldPassword),
       NewPassword: md5(newPassword)
     };
     proxy.post(url, body)
-      .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(formSuccess('password', 'Password updated successfully.'));
-        }
+      .then(() => {
+        dispatch(formSuccess('password', 'Password updated successfully.'));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -324,17 +339,16 @@ export function userUpdatePassword(oldPassword, newPassword) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userUpdateSettings(values) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdate', {
-      token: user.getToken()
-    });
+    const url = endpoints.create('userUpdate');
     proxy.post(url, values)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch(userSet(data));
-        }
+        dispatch(userSet(data));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -351,16 +365,16 @@ export function userUpdatePrivacy(values) {
     dispatch(userIsSettingsSending(true));
 
     const url = endpoints.create('userUpdatePrivacy', {
-      token:  user.getToken(),
       userID: user.getID()
     });
     proxy.post(url, values)
-      .then((data) => {
-        if (data.code === 'OK') {
-          const details = objects.merge(user.getDetails(), values);
-          user.setDetails(details);
-          dispatch(userSet(details));
-        }
+      .then(() => {
+        const details = objects.merge(user.getDetails(), values);
+        user.setDetails(details);
+        dispatch(userSet(details));
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(userIsSettingsSending(false));
@@ -381,23 +395,40 @@ export function userSearch() {
       dispatch(userIsSearchSending(true));
 
       const url = endpoints.create('userSearch', {
-        token:  user.getToken(),
         userID: user.getID(),
         latitude,
         longitude
       });
       proxy.get(url)
         .then((data) => {
-          if (data.code === 'OK') {
-            dispatch({
-              type:          USER_SEARCH_RESULTS,
-              searchResults: data.results.ListUser || []
-            });
-          }
+          dispatch({
+            type:          USER_SEARCH_RESULTS,
+            searchResults: data.results.ListUser || []
+          });
+        })
+        .catch((error) => {
+          console.warn(error);
         })
         .finally(() => {
           dispatch(userIsSearchSending(false));
         });
     });
+  };
+}
+
+/**
+ * @param {number} userID
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userStart(userID) {
+  return (dispatch, getState, { batch }) => {
+    dispatch(activityFeedFetchAll());
+    dispatch(notificationsFetch());
+    dispatch(userFollowing(userID, 1, true));
+    dispatch(activityTrendingHashtags());
+    dispatch(batch(
+      activityIntervalStart(),
+      notificationsIntervalStart()
+    ));
   };
 }

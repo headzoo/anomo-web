@@ -37,12 +37,13 @@ export function anomoIntentsFetch() {
     const url = endpoints.create('anomoListIntent');
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          dispatch({
-            type:    ANOMO_INTENTS,
-            intents: data.ListIntent
-          });
-        }
+        dispatch({
+          type:    ANOMO_INTENTS,
+          intents: data.ListIntent
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(anomoIsIntentsLoading(false));
@@ -69,24 +70,25 @@ export function anomoTagsFetch() {
     const url = endpoints.create('anomoListInterest');
     proxy.get(url)
       .then((data) => {
-        if (data.code === 'OK') {
-          tags = [];
-          data.ListInterests.forEach((group) => {
-            group.TagList.forEach((tag) => {
-              tags.push({
-                TagID:    tag.TagID,
-                Name:     tag.Name,
-                Category: group.Category
-              });
+        tags = [];
+        data.ListInterests.forEach((group) => {
+          group.TagList.forEach((tag) => {
+            tags.push({
+              TagID:    tag.TagID,
+              Name:     tag.Name,
+              Category: group.Category
             });
           });
+        });
 
-          browser.storage.set(browser.storage.KEY_TAGS, tags);
-          dispatch({
-            type: ANOMO_TAGS,
-            tags
-          });
-        }
+        browser.storage.set(browser.storage.KEY_TAGS, tags);
+        dispatch({
+          type: ANOMO_TAGS,
+          tags
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         dispatch(anomoIsTagsLoading(false));

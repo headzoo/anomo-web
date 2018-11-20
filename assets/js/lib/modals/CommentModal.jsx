@@ -61,15 +61,6 @@ class CommentModal extends React.PureComponent {
   };
 
   /**
-   *
-   */
-  handleClose = () => {
-    const { uiVisibleModal } = this.props;
-
-    uiVisibleModal('comment', false);
-  };
-
-  /**
    * @param {Event} e
    * @param {string} item
    */
@@ -188,8 +179,8 @@ class CommentModal extends React.PureComponent {
 
     return (
       <Modal
+        name="comment"
         withHeader={false}
-        onClosed={this.handleClose}
         className="modal-comment modal-list"
         {...objects.propsFilter(rest, CommentModal.propTypes, uiActions, userActions, activityActions)}
       >

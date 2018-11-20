@@ -4,7 +4,8 @@ import { objects, connect, mapStateToProps, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, Button, ButtonGroup } from 'lib/bootstrap';
 import { Form, Input, Textarea, Hidden } from 'lib/forms';
 import { TagsModal } from 'lib/modals';
-import { Page, Icon, Avatar, Age, withRouter, withConfig } from 'lib';
+import { Page, Icon, Avatar, Age, withRouter } from 'lib';
+import { getConfig } from 'store/config';
 import routes from 'store/routes';
 import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
@@ -20,7 +21,6 @@ class EditProfilePage extends React.PureComponent {
     ui:                 PropTypes.object.isRequired,
     user:               PropTypes.object.isRequired,
     forms:              PropTypes.object.isRequired,
-    config:             PropTypes.object.isRequired,
     history:            PropTypes.object.isRequired,
     formChange:         PropTypes.func.isRequired,
     formChanges:        PropTypes.func.isRequired,
@@ -292,8 +292,9 @@ class EditProfilePage extends React.PureComponent {
    * @returns {*}
    */
   renderForm = () => {
-    const { forms, config } = this.props;
+    const { forms } = this.props;
     const { profile } = forms;
+    const { imageTypes } = getConfig();
 
     return (
       <Form
@@ -307,7 +308,7 @@ class EditProfilePage extends React.PureComponent {
           ref={this.avatar}
           id="form-profile-avatar"
           style={{ display: 'none' }}
-          accept={config.imageTypes}
+          accept={imageTypes}
         />
         <Input
           type="file"
@@ -315,7 +316,7 @@ class EditProfilePage extends React.PureComponent {
           ref={this.cover}
           id="form-profile-cover"
           style={{ display: 'none' }}
-          accept={config.imageTypes}
+          accept={imageTypes}
         />
         <Hidden
           ref={this.tags}
@@ -443,4 +444,4 @@ class EditProfilePage extends React.PureComponent {
 export default connect(
   mapStateToProps('ui', 'user', 'forms', 'anomo'),
   mapActionsToProps(uiActions, formActions, userActions, anomoActions)
-)(withConfig(withRouter(EditProfilePage)));
+)(withRouter(EditProfilePage));

@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import YouTube from 'react-youtube';
-import { objects, connect, mapActionsToProps } from 'utils';
-import { Card, CardBody, CardText } from 'lib/bootstrap';
-import { Image, Message, Video, Shimmer, Poll, withRouter } from 'lib';
+import { connect, mapActionsToProps } from 'utils';
+import { Card } from 'lib/bootstrap';
+import { withRouter } from 'lib';
 import routes from 'store/routes';
 import * as activityActions from 'actions/activityActions';
 import * as uiActions from 'actions/uiActions';
@@ -19,6 +18,7 @@ class ActivityCard extends React.PureComponent {
   static propTypes = {
     activity:           PropTypes.object.isRequired,
     className:          PropTypes.string,
+    loading:            PropTypes.bool,
     history:            PropTypes.object.isRequired,
     clickable:          PropTypes.bool,
     clickableImage:     PropTypes.bool,
@@ -30,6 +30,7 @@ class ActivityCard extends React.PureComponent {
 
   static defaultProps = {
     className:      '',
+    loading:        false,
     clickable:      true,
     clickableImage: false
   };
@@ -84,9 +85,8 @@ class ActivityCard extends React.PureComponent {
   handleBodyClick = (e) => {
     const { activity, clickable, history } = this.props;
 
-    if (clickable) {
+    if (clickable && e.target.tagName !== 'A') {
       e.preventDefault();
-
       const route = routes.route('activity', { refID: activity.RefID, actionType: activity.ActionType });
       history.push(route, { activity });
     }
@@ -106,53 +106,8 @@ class ActivityCard extends React.PureComponent {
   /**
    * @returns {*}
    */
-  renderBody = () => {
-    const { activity } = this.props;
-
-    if (objects.isEmpty(activity) || activity.isLoading) {
-      return (
-        <CardBody>
-          <CardText>
-            <Shimmer className="card-activity-shimmer" />
-            <Shimmer className="card-activity-shimmer-short" />
-          </CardText>
-        </CardBody>
-      );
-    }
-
-    return (
-      <CardBody onClick={this.handleBodyClick}>
-        <CardText>
-          {(activity.Message && activity.Message.message) && (
-            <Message text={activity.Message.message} tags={activity.Message.message_tags} />
-          )}
-          {activity.Poll && (
-            <Poll poll={activity.Poll} onAnswer={this.handlePollAnswer} />
-          )}
-          {activity.Image && (
-            <Image
-              data={{ src: activity.Image, alt: 'Image' }}
-              onClick={this.handleImageClick}
-            />
-          )}
-          {activity.VideoID && (
-            <YouTube
-              videoId={activity.VideoID}
-            />
-          )}
-          {activity.VideoURL && (
-            <Video source={activity.VideoURL} poster={activity.VideoThumbnail} />
-          )}
-        </CardText>
-      </CardBody>
-    );
-  };
-
-  /**
-   * @returns {*}
-   */
   render() {
-    const { activity, followingUserNames, className } = this.props;
+    const { activity, loading, followingUserNames, className } = this.props;
 
     return (
       <Card
@@ -160,18 +115,21 @@ class ActivityCard extends React.PureComponent {
         className={classNames('card-activity  card-activity-clickable', className)}
       >
         <ActivityCardHeader
+          loading={loading}
           activity={activity}
           onUserClick={this.handleUserClick}
           onMenuClick={this.handleMenuClick}
           followingUserNames={followingUserNames}
         />
         <ActivityCardBody
+          loading={loading}
           activity={activity}
           onClick={this.handleBodyClick}
           onImageClick={this.handleImageClick}
           onPollAnswer={this.handlePollAnswer}
         />
         <ActivityCardFooter
+          loading={loading}
           activity={activity}
           onLikeClick={this.handleHeartClick}
         />

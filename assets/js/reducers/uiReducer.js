@@ -1,5 +1,5 @@
 import * as types from 'actions/uiActions';
-import objects from 'utils/objects';
+import { objects, redux } from 'utils';
 
 const BREAK_SM = 576;
 const BREAK_MD = 768;
@@ -37,22 +37,42 @@ function errorMessage(state, action) {
  * @returns {*}
  */
 function windowResize(state, action) {
+  const device = objects.clone(state.device);
   const { width } = action;
 
-  let deviceSize = 'xs';
+  device.width = width;
   if (width >= BREAK_XL) {
-    deviceSize = 'xl';
+    device.size     = 'xl';
+    device.isMobile = false;
   } else if (width >= BREAK_LG) {
-    deviceSize = 'lg';
+    device.size     = 'lg';
+    device.isMobile = false;
   } else if (width >= BREAK_MD) {
-    deviceSize = 'md';
+    device.size     = 'md';
+    device.isMobile = false;
   } else if (width >= BREAK_SM) {
-    deviceSize = 'sm';
+    device.size = 'sm';
+    device.isMobile = true;
+  } else {
+    device.size     = 'xs';
+    device.isMobile = true;
   }
 
   return {
     ...state,
-    deviceSize
+    device
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function contentWidth(state, action) {
+  return {
+    ...state,
+    contentWidth: action.contentWidth
   };
 }
 
@@ -99,20 +119,23 @@ function activeFeed(state, action) {
  * @param {*} action
  * @returns {*}
  */
-export default function uiReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.UI_LOADING:
-      return loading(state, action);
-    case types.UI_ERROR_MESSAGE:
-      return errorMessage(state, action);
-    case types.UI_WINDOW_RESIZE:
-      return windowResize(state, action);
-    case types.UI_VISIBLE_MODAL:
-      return visibleModal(state, action);
-    case types.UI_VISIBLE_DRAWER:
-      return visibleDrawer(state, action);
-    case types.UI_ACTIVE_FEED:
-      return activeFeed(state, action);
-    default: return state;
-  }
+function sidebarDocked(state, action) {
+  return {
+    ...state,
+    visibleDrawers: {
+      notifications: false
+    },
+    sidebarDocked: action.sidebarDocked
+  };
 }
+
+export default redux.createReducer({
+  [types.UI_LOADING]:        loading,
+  [types.UI_ACTIVE_FEED]:    activeFeed,
+  [types.UI_ERROR_MESSAGE]:  errorMessage,
+  [types.UI_WINDOW_RESIZE]:  windowResize,
+  [types.UI_CONTENT_WIDTH]:  contentWidth,
+  [types.UI_VISIBLE_MODAL]:  visibleModal,
+  [types.UI_VISIBLE_DRAWER]: visibleDrawer,
+  [types.UI_SIDEBAR_DOCKED]: sidebarDocked
+});

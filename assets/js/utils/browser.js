@@ -220,14 +220,15 @@ export default {
   parseHash:      browserParseHash,
   position:       browserPosition,
   storage:        {
-    get:         browserStorageGet,
-    set:         browserStorageSet,
-    push:        browserStoragePush,
-    remove:      browserStorageRemove,
-    KEY_USER:    'user',
-    KEY_ID:      'UserID',
-    KEY_DETAILS: 'Details',
-    KEY_TOKEN:   'token',
-    KEY_TAGS:    'tags'
+    get:                browserStorageGet,
+    set:                browserStorageSet,
+    push:               browserStoragePush,
+    remove:             browserStorageRemove,
+    KEY_USER:           'user',
+    KEY_ID:             'UserID',
+    KEY_DETAILS:        'Details',
+    KEY_TOKEN:          'token',
+    KEY_TAGS:           'tags',
+    KEY_SIDEBAR_DOCKED: 'sidebarDocked'
   }
 };

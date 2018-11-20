@@ -2,8 +2,8 @@ import deepmerge from 'deepmerge';
 
 let config = {
   debug:      false,
-  lang:       'en',
   https:      true,
+  lang:       'en',
   imageTypes: 'image/*',
   styles:     {
     primaryColor:     '#00d2d9',
@@ -19,17 +19,17 @@ let config = {
 };
 
 /**
- * @returns {*}
- */
-export function getConfig() {
-  return config;
-}
-
-/**
  * @param {*} c
  * @returns {*}
  */
 export function setConfig(c) {
   config = deepmerge(config, c);
+  return config;
+}
+
+/**
+ * @returns {*}
+ */
+export function getConfig() {
   return config;
 }

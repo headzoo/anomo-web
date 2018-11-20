@@ -1,6 +1,113 @@
 import * as types from 'actions/activityActions';
-import { objects, feeds as feedUtils } from 'utils';
+import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
+import { defaultActivity} from 'store/defaultState';
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function reset(state, action) {
+  if (action.feedType) {
+    const feeds = objects.clone(state.feeds);
+    feeds[action.feedType] = objects.clone(defaultActivity.feeds[action.feedType]);
+
+    return {
+      ...state,
+      feeds
+    };
+  }
+
+  return {
+    ...state,
+    activity: {}
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentSending(state, action) {
+  return {
+    ...state,
+    isCommentSending: action.isCommentSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function pollSending(state, action) {
+  return {
+    ...state,
+    isPollSending: action.isPollSending
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function submitting(state, action) {
+  return {
+    ...state,
+    isSubmitting: action.isSubmitting
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function likeListLoading(state, action) {
+  return {
+    ...state,
+    isLikeListLoading: action.isLikeListLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentsLoading(state, action) {
+  return {
+    ...state,
+    isCommentsLoading: action.isCommentsLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function activityLoading(state, action) {
+  return {
+    ...state,
+    isActivityLoading: action.isActivityLoading
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function trendingHashtags(state, action) {
+  return {
+    ...state,
+    trendingHashtags: action.trendingHashtags
+  };
+}
 
 /**
  * @param {*} state
@@ -9,9 +116,7 @@ import anomo from 'anomo';
  */
 function feedLoading(state, action) {
   const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.isLoading = action.isLoading;
+  feeds[action.feedType].isLoading = action.isLoading;
 
   return {
     ...state,
@@ -26,25 +131,11 @@ function feedLoading(state, action) {
  */
 function feedRefreshing(state, action) {
   const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.isRefreshing = action.isRefreshing;
+  feeds[action.feedType].isRefreshing = action.isRefreshing;
 
   return {
     ...state,
     feeds
-  };
-}
-
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function submitting(state, action) {
-  return {
-    ...state,
-    isSubmitting: action.isSubmitting
   };
 }
 
@@ -79,14 +170,11 @@ function likeLoading(state, action) {
 function likeCommentLoading(state, action) {
   const activity = objects.clone(state.activity);
 
-  if (activity.ListComment) {
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      if (activity.ListComment[i].ID === action.commentID) {
-        activity.ListComment[i].LikeIsLoading = action.isLoading;
-        break;
-      }
-    }
-  }
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeIsLoading: action.isLoading
+    });
+  });
 
   return {
     ...state,
@@ -99,10 +187,25 @@ function likeCommentLoading(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function commentsLoading(state, action) {
+function commentListLoading(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      isCommentListLoading: action.isCommentListLoading
+    });
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return objects.merge(c, {
+      isCommentListLoading: action.isCommentListLoading
+    });
+  });
+
   return {
     ...state,
-    isCommentsLoading: action.isCommentsLoading
+    activity,
+    feeds
   };
 }
 
@@ -111,22 +214,25 @@ function commentsLoading(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function commentSending(state, action) {
-  return {
-    ...state,
-    isCommentSending: action.isCommentSending
-  };
-}
+function commentLikeList(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-function pollSending(state, action) {
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeList: action.likes
+    });
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return objects.merge(c, {
+      LikeList: action.likes
+    });
+  });
+
   return {
     ...state,
-    isPollSending: action.isPollSending
+    activity,
+    feeds
   };
 }
 
@@ -139,11 +245,31 @@ function commentPrepend(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
-  if (!activity.ListComment) {
-    activity.ListComment = [];
-  }
   activity.ListComment.unshift(action.comment);
-  activity.Comment = parseInt(activity.Comment || 0, 10) + 1;
+  activity.Comment = numbers.parseAny(activity.Comment) + 1;
+
+  feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
+    a.Comment = activity.Comment;
+  });
+
+  return {
+    ...state,
+    activity,
+    feeds
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function commentAppend(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  activity.ListComment.push(action.comment);
+  activity.Comment = numbers.parseAny(activity.Comment) + 1;
 
   feedUtils.traverseForActivityID(feeds, activity.ActivityID, (a) => {
     a.Comment = activity.Comment;
@@ -166,22 +292,10 @@ function like(state, action) {
   const activity = objects.clone(state.activity);
 
   if (activity.RefID === action.refID) {
-    if (!activity.IsLike || activity.IsLike === '0') {
-      activity.IsLike = '1';
-      activity.Like   = parseInt(activity.Like || 0, 10) + 1;
-    } else {
-      activity.IsLike = '0';
-      activity.Like   = parseInt(activity.Like || 0, 10) - 1;
-    }
+    feedUtils.toggleActivityLike(activity);
   }
   feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    if (!a.IsLike || a.IsLike === '0') {
-      a.IsLike = '1';
-      a.Like   = parseInt(a.Like || 0, 10) + 1;
-    } else {
-      a.IsLike = '0';
-      a.Like   = parseInt(a.Like || 0, 10) - 1;
-    }
+    return feedUtils.toggleActivityLike(a);
   });
 
   return {
@@ -200,42 +314,11 @@ function likeComment(state, action) {
   const feeds    = objects.clone(state.feeds);
   const activity = objects.clone(state.activity);
 
-  if (activity.RefID === action.refID) {
-    if (!activity.ListComment) {
-      return;
-    }
-
-    for (let i = 0; i < activity.ListComment.length; i++) {
-      const comment = activity.ListComment[i];
-      if (comment.ID === action.commentID) {
-        if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike = '1';
-          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
-        } else {
-          comment.IsLike = '0';
-          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
-        }
-      }
-    }
-  }
-
-  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
-    if (!a.ListComment) {
-      return;
-    }
-
-    for (let i = 0; i < a.ListComment.length; i++) {
-      const comment = a.ListComment[i];
-      if (comment.ID === action.commentID) {
-        if (!comment.IsLike || comment.IsLike === '0') {
-          comment.IsLike = '1';
-          comment.Like   = parseInt(comment.Like || 0, 10) + 1;
-        } else {
-          comment.IsLike = '0';
-          comment.Like   = parseInt(comment.Like || 0, 10) - 1;
-        }
-      }
-    }
+  feedUtils.traverseActivityCommentsForID(activity, action.commentID, (c) => {
+    return feedUtils.toggleCommentLike(c);
+  });
+  feedUtils.traverseFeedCommentsForID(feeds, action.commentID, (c) => {
+    return feedUtils.toggleCommentLike(c);
   });
 
   return {
@@ -250,10 +333,21 @@ function likeComment(state, action) {
  * @param {*} action
  * @returns {*}
  */
-function activityLoading(state, action) {
+function likeList(state, action) {
+  const feeds    = objects.clone(state.feeds);
+  const activity = objects.clone(state.activity);
+
+  if (activity.RefID === action.refID) {
+    activity.LikeList = action.likes;
+  }
+  feedUtils.traverseForRefID(feeds, action.refID, (a) => {
+    a.LikeList = action.likes;
+  });
+
   return {
     ...state,
-    isActivityLoading: action.isActivityLoading
+    activity,
+    feeds
   };
 }
 
@@ -264,9 +358,7 @@ function activityLoading(state, action) {
  */
 function feedNewNumber(state, action) {
   const feeds = objects.clone(state.feeds);
-  const feed  = feeds[action.feedType];
-
-  feed.newNumber = action.newNumber;
+  feeds[action.feedType].newNumber = action.newNumber;
 
   return {
     ...state,
@@ -306,6 +398,17 @@ function feedFetch(state, action) {
   }
 
   feed.newNumber = 0;
+
+  if (feed.page !== undefined) {
+    if (action.refresh) {
+      feed.page = 1;
+    } else {
+      feed.page += 1;
+    }
+  }
+  if (feed.hasMore !== undefined && action.hasMore !== undefined) {
+    feed.hasMore = action.hasMore;
+  }
 
   return {
     ...state,
@@ -366,30 +469,11 @@ function set(state, action) {
   feedUtils.traverseForActivityID(feeds, activity.ActivityID, () => {
     return objects.clone(activity);
   });
-/*  objects.forEach(feeds, (feed) => {
-    for (let i = 0; i < feed.activities.length; i++) {
-      if (feed.activities[i].ActivityID === activity.ActivityID) {
-        feed.activities[i] = objects.clone(activity);
-        break;
-      }
-    }
-  });*/
 
   return {
     ...state,
     activity,
     feeds
-  };
-}
-
-/**
- * @param {*} state
- * @returns {*}
- */
-function reset(state) {
-  return {
-    ...state,
-    activity: {}
   };
 }
 
@@ -466,55 +550,32 @@ function deleteIsSending(state, action) {
   };
 }
 
-/**
- * @param {*} state
- * @param {*} action
- * @returns {*}
- */
-export default function activityReducer(state = {}, action = {}) {
-  switch (action.type) {
-    case types.ACTIVITY_RESET:
-      return reset(state);
-    case types.ACTIVITY_SET:
-      return set(state, action);
-    case types.ACTIVITY_SUBMITTING:
-      return submitting(state, action);
-    case types.ACTIVITY_FEED_LOADING:
-      return feedLoading(state, action);
-    case types.ACTIVITY_FEED_REFRESHING:
-      return feedRefreshing(state, action);
-    case types.ACTIVITY_FEED_UPDATE:
-      return feedUpdate(state, action);
-    case types.ACTIVITY_FEED_PREPEND:
-      return feedPrepend(state, action);
-    case types.ACTIVITY_LIKE:
-      return like(state, action);
-    case types.ACTIVITY_LIKE_COMMENT:
-      return likeComment(state, action);
-    case types.ACTIVITY_LIKE_LOADING:
-      return likeLoading(state, action);
-    case types.ACTIVITY_LIKE_COMMENT_LOADING:
-      return likeCommentLoading(state, action);
-    case types.ACTIVITY_COMMENTS_LOADING:
-      return commentsLoading(state, action);
-    case types.ACTIVITY_COMMENT_SENDING:
-      return commentSending(state, action);
-    case types.ACTIVITY_COMMENT_PREPEND:
-      return commentPrepend(state, action);
-    case types.ACTIVITY_POLL_SENDING:
-      return pollSending(state, action);
-    case types.ACTIVITY_ACTIVITY_LOADING:
-      return activityLoading(state, action);
-    case types.ACTIVITY_FEED_NEW_NUMBER:
-      return feedNewNumber(state, action);
-    case types.ACTIVITY_FEED_FETCH:
-      return feedFetch(state, action);
-    case types.ACTIVITY_DELETE:
-      return deleteActivity(state, action);
-    case types.ACTIVITY_COMMENT_DELETE:
-      return deleteComment(state, action);
-    case types.ACTIVITY_DELETE_SENDING:
-      return deleteIsSending(state, action);
-    default: return state;
-  }
-}
+export default redux.createReducer({
+  [types.ACTIVITY_RESET]:                reset,
+  [types.ACTIVITY_SET]:                  set,
+  [types.ACTIVITY_LIKE]:                 like,
+  [types.ACTIVITY_LIKE_LIST]:            likeList,
+  [types.ACTIVITY_DELETE]:               deleteActivity,
+  [types.ACTIVITY_COMMENT_DELETE]:       deleteComment,
+  [types.ACTIVITY_LIKE_COMMENT]:         likeComment,
+  [types.ACTIVITY_SUBMITTING]:           submitting,
+  [types.ACTIVITY_FEED_LOADING]:         feedLoading,
+  [types.ACTIVITY_FEED_REFRESHING]:      feedRefreshing,
+  [types.ACTIVITY_FEED_UPDATE]:          feedUpdate,
+  [types.ACTIVITY_FEED_PREPEND]:         feedPrepend,
+  [types.ACTIVITY_LIKE_LOADING]:         likeLoading,
+  [types.ACTIVITY_POLL_SENDING]:         pollSending,
+  [types.ACTIVITY_FEED_FETCH]:           feedFetch,
+  [types.ACTIVITY_FEED_NEW_NUMBER]:      feedNewNumber,
+  [types.ACTIVITY_ACTIVITY_LOADING]:     activityLoading,
+  [types.ACTIVITY_DELETE_SENDING]:       deleteIsSending,
+  [types.ACTIVITY_COMMENTS_LOADING]:     commentsLoading,
+  [types.ACTIVITY_COMMENT_SENDING]:      commentSending,
+  [types.ACTIVITY_COMMENT_PREPEND]:      commentPrepend,
+  [types.ACTIVITY_COMMENT_APPEND]:       commentAppend,
+  [types.ACTIVITY_COMMENT_LIKE_LIST]:    commentLikeList,
+  [types.ACTIVITY_COMMENT_LIST_LOADING]: commentListLoading,
+  [types.ACTIVITY_LIKE_LIST_LOADING]:    likeListLoading,
+  [types.ACTIVITY_LIKE_COMMENT_LOADING]: likeCommentLoading,
+  [types.ACTIVITY_TRENDING_HASHTAGS]:    trendingHashtags
+});

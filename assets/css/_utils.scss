@@ -21,6 +21,10 @@
   padding: $gutter-size;
 }
 
+.gutter-lg {
+  padding: $gutter-size * 2;
+}
+
 .gutter-bottom {
   padding-bottom: $gutter-size;
 }
