@@ -6,7 +6,7 @@ import { ActivityCard, CommentCard } from 'lib/cards';
 import { ReplyModal } from 'lib/modals';
 import { Row, Column, Card, CardHeader, CardBody, CardText } from 'lib/bootstrap';
 import { PostForm } from 'lib/forms';
-import { Page, Loading, UserBadge, withRouter } from 'lib';
+import { Page, Loading, Icon, UserBadge, withRouter } from 'lib';
 import routes from 'store/routes';
 import * as uiActions from 'actions/uiActions';
 import * as activityActions from 'actions/activityActions';
@@ -39,7 +39,7 @@ class ActivityPage extends React.PureComponent {
     super(props);
     this.state = {
       activity:      {},
-      activeComment: ''
+      activeComment: { ID: '0' }
     };
   }
 
@@ -64,9 +64,9 @@ class ActivityPage extends React.PureComponent {
       this.setState({ activity: this.props.activity });
     } else if (location.hash && location.hash.indexOf(COMMENT_PREFIX) === 0) {
       if (isCommentsLoading !== prevProps.isCommentsLoading && prevProps.isCommentsLoading) {
-        this.scrollToComment(location.hash);
+        this.activateComment(location.hash);
       } else if (location.hash !== prevProps.location.hash) {
-        this.scrollToComment(location.hash);
+        this.activateComment(location.hash);
       }
     }
   };
@@ -74,16 +74,17 @@ class ActivityPage extends React.PureComponent {
   /**
    * @param {string} hash
    */
-  scrollToComment = (hash) => {
-    const activeComment = hash.replace(COMMENT_PREFIX, '');
-    this.setState({ activeComment }, () => {
-      const comment = document.querySelector(hash);
-      if (comment) {
-        comment.scrollIntoView({
-          behavior: 'smooth'
-        });
+  activateComment = (hash) => {
+    const { activity } = this.props;
+    const { ListComment } = activity;
+
+    const hashID = hash.replace(COMMENT_PREFIX, '');
+    for (let i = 0; i < ListComment.length; i++) {
+      if (ListComment[i].ID === hashID) {
+        this.setState({ activeComment: ListComment[i] });
+        break;
       }
-    });
+    }
   };
 
   /**
@@ -132,6 +133,20 @@ class ActivityPage extends React.PureComponent {
   };
 
   /**
+   *
+   */
+  handleJumpClick = () => {
+    const { activeComment } = this.state;
+
+    const comment = document.querySelector(`${COMMENT_PREFIX}${activeComment.ID}`);
+    if (comment) {
+      comment.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  /**
    * @returns {*}
    */
   renderComments = () => {
@@ -164,7 +179,7 @@ class ActivityPage extends React.PureComponent {
             comment={comment}
             activity={activity}
             onReplyClick={this.handleReplyClick}
-            active={activeComment === comment.ID}
+            active={activeComment.ID === comment.ID}
             id={`${COMMENT_PREFIX.replace('#', '')}${comment.ID}`}
           />
         </Column>
@@ -203,10 +218,20 @@ class ActivityPage extends React.PureComponent {
    */
   render() {
     const { isActivityLoading, isCommentsLoading, likeList, visibleModals } = this.props;
-    const { activity } = this.state;
+    const { activity, activeComment } = this.state;
 
     return (
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
+        {activeComment.ID !== '0' && (
+          <Row>
+            <Column md={4} offsetMd={4} xs={12}>
+              <div className="page-activity-jump-link clickable" onClick={this.handleJumpClick}>
+                Go to {activeComment.UserName}&apos;s comment.
+                <Icon name="angle-down" />
+              </div>
+            </Column>
+          </Row>
+        )}
         <Row>
           <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
             <ActivityCard

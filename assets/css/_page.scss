@@ -84,3 +84,15 @@
 .page-login-store-badge {
   width: 100%;
 }
+
+.page-activity-jump-link {
+  color: $color-link;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  .icon {
+    margin-left: 0.25rem;
+  }
+}
