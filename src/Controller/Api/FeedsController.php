@@ -21,7 +21,8 @@ class FeedsController extends Controller
      * @Route(
      *     "/anomo/{name}/{lastActivityID<\d+>}",
      *     defaults={"lastActivityID": 0},
-     *     name="anomo"
+     *     name="anomo",
+     *     methods={"GET"}
      * )
      *
      * @param Anomo $anomo

@@ -3,7 +3,7 @@ import { objects, browser } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
-import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
+import { notificationsFetch, notificationsIntervalStart } from 'actions/notificationsActions';
 import api from 'api';
 
 export const USER_ERROR              = 'USER_ERROR';
@@ -138,13 +138,13 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollow(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     const url = endpoints.create('userFollow', {
       userID
     });
     proxy.get(url)
       .then(() => {
-        dispatch(userFollowing(user.getID(), 1, true));
+        dispatch(userFollowing(userID, 1, true));
       })
       .catch((error) => {
         console.warn(error);
@@ -168,11 +168,13 @@ export function userBlockedIsLoading(isBlockedLoading) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userBlocked(userID = 0) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
+    const { user } = getState();
+
     dispatch(userBlockedIsLoading(true));
 
     const url = endpoints.create('userBlocked', {
-      userID: userID || user.getID()
+      userID: userID || user.UserID
     });
     proxy.get(url)
       .then((data) => {
@@ -207,7 +209,7 @@ export function userBlockedIsSubmitting(isBlockedSubmitting) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userBlock(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
     dispatch(userBlockedIsSubmitting(true));
 
     const url = endpoints.create('userBlock', {
@@ -215,7 +217,7 @@ export function userBlock(userID) {
     });
     proxy.get(url)
       .then(() => {
-        dispatch(userBlocked(user.getID()));
+        dispatch(userBlocked(userID));
       })
       .catch((error) => {
         console.warn(error);
@@ -227,32 +229,70 @@ export function userBlock(userID) {
 }
 
 /**
+ * @param {*} user
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userStart(user) {
+  return (dispatch, getState, { batch }) => {
+    api.setToken(user.token);
+    api.setUserID(user.UserID);
+
+    dispatch({
+      type: USER_LOGIN,
+      user
+    });
+    dispatch(activityFeedFetchAll());
+    dispatch(notificationsFetch());
+    dispatch(userFollowing(user.UserID, 1, true));
+    dispatch(activityTrendingHashtags());
+    dispatch(batch(
+      activityIntervalStart(),
+      notificationsIntervalStart()
+    ));
+  };
+}
+
+/**
+ * @returns {function(*, *, {anomo: *})}
+ */
+export function userLogout() {
+  return (dispatch) => {
+    api.request('api_users_anomo_logout')
+      .post()
+      .finally(() => {
+        api.deleteToken();
+        api.deleteUserID();
+        dispatch({
+          type: USER_LOGOUT
+        });
+      });
+  };
+}
+
+/**
  * @param {string} username
  * @param {string} password
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { user, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
     ));
 
-    user.login(username, password)
-      .then((u) => {
-        user.isAuthenticated = true;
-        api.setToken(user.getToken());
-        endpoints.addDefaultParam('token', user.getToken());
-        dispatch({
-          type: USER_LOGIN,
-          user: u
-        });
-        dispatch(userStart(u.UserID)); // eslint-disable-line
+    api.request('api_users_anomo_login')
+      .post({
+        UserName: username,
+        Password: password
+      })
+      .then((resp) => {
+        dispatch(userStart(resp));
       })
       .catch((error) => {
         console.warn(error);
+        dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
-        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -273,7 +313,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
       userIsSending(true)
     ));
 
-    user.facebookLogin(facebookEmail, facebookUserID, accessToken)
+/*    user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
         user.isAuthenticated = true;
         api.setToken(user.getToken());
@@ -291,19 +331,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
       })
       .finally(() => {
         dispatch(userIsSending(false));
-      });
-  };
-}
-
-/**
- * @returns {function(*, *, {anomo: *})}
- */
-export function userLogout() {
-  return (dispatch, getState, { user }) => {
-    user.logout();
-    dispatch({
-      type: USER_LOGOUT
-    });
+      });*/
   };
 }
 
@@ -311,28 +339,27 @@ export function userLogout() {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userRefresh() {
-  return (dispatch, getState, { user, endpoints, batch }) => {
-    const id = user.getID();
-    if (id && user.hasToken()) {
+  return (dispatch, getState, { batch }) => {
+    const token  = api.getToken();
+    const userID = api.getUserID();
+
+    if (userID && token) {
       dispatch(batch(
         userError('test'),
         userIsSending(true)
       ));
 
-      user.info(id)
-        .then((data) => {
-          user.isAuthenticated = true;
-          api.setToken(user.getToken());
-          endpoints.addDefaultParam('token', user.getToken());
-          dispatch({
-            type: USER_LOGIN,
-            user: objects.merge(user.getDetails(), data.results)
-          });
-          dispatch(userStart(id)); // eslint-disable-line
+      api.request('api_users_anomo_info', { userID })
+        .get()
+        .then((resp) => {
+          const user = userStart(objects.merge(resp.results, {
+            token
+          }));
+          dispatch(userStart(user));
         })
         .catch((error) => {
           console.warn(error);
-          user.logout(true);
+          dispatch(userLogout());
         })
         .finally(() => {
           dispatch(batch(
@@ -400,17 +427,17 @@ export function userUpdateSettings(values) {
  * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userUpdatePrivacy(values) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
+    const { user } = getState();
+
     dispatch(userIsSettingsSending(true));
 
     const url = endpoints.create('userUpdatePrivacy', {
-      userID: user.getID()
+      userID: user.UserID
     });
     proxy.post(url, values)
       .then(() => {
-        const details = objects.merge(user.getDetails(), values);
-        user.setDetails(details);
-        dispatch(userSet(details));
+        dispatch(userSet(values));
       })
       .catch((error) => {
         console.error(error);
@@ -425,7 +452,9 @@ export function userUpdatePrivacy(values) {
  * @returns {function(*=, *, {user: *, proxy: *, endpoints: *})}
  */
 export function userSearch() {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { proxy, endpoints }) => {
+    const { user } = getState();
+
     /**
      * @param {number} latitude
      * @param {number} longitude
@@ -434,7 +463,7 @@ export function userSearch() {
       dispatch(userIsSearchSending(true));
 
       const url = endpoints.create('userSearch', {
-        userID: user.getID(),
+        userID: user.UserID,
         latitude,
         longitude
       });
@@ -452,22 +481,5 @@ export function userSearch() {
           dispatch(userIsSearchSending(false));
         });
     });
-  };
-}
-
-/**
- * @param {number} userID
- * @returns {function(*, *, {batch: *})}
- */
-export function userStart(userID) {
-  return (dispatch, getState, { batch }) => {
-    dispatch(activityFeedFetchAll());
-    dispatch(notificationsFetch());
-    dispatch(userFollowing(userID, 1, true));
-    dispatch(activityTrendingHashtags());
-    dispatch(batch(
-      activityIntervalStart(),
-      notificationsIntervalStart()
-    ));
   };
 }

@@ -1,34 +1,80 @@
 import axios from 'axios';
+import { browser } from 'utils';
 import Routing from '../../../public/bundles/fosjsrouting/js/router';
 import routes from '../../../public/build/js/routes.json';
 
 Routing.setRoutingData(routes);
 
-let token = '';
+let token  = browser.storage.get(browser.storage.KEY_TOKEN, '');
+let userID = browser.storage.get(browser.storage.KEY_ID, 0);
 
 /**
  * @param {string} tok
  */
 const setToken = (tok) => {
   token = tok;
+  browser.storage.set(browser.storage.KEY_TOKEN, token);
+};
+
+/**
+ * @returns {string}
+ */
+const getToken = () => {
+  return token;
+};
+
+/**
+ *
+ */
+const deleteToken = () => {
+  token = '';
+  browser.storage.remove(browser.storage.KEY_TOKEN);
+};
+
+/**
+ * @param {number} ui
+ */
+const setUserID = (ui) => {
+  userID = ui;
+  browser.storage.set(browser.storage.KEY_ID, userID);
+};
+
+/**
+ * @returns {number}
+ */
+const getUserID = () => {
+  return userID;
+};
+
+/**
+ *
+ */
+const deleteUserID = () => {
+  userID = 0;
+  browser.storage.remove(browser.storage.KEY_ID);
 };
 
 /**
  * @returns {AxiosInstance}
  */
 const instance = () => {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (token) {
+    headers.Authorization = `token ${token}`;
+  }
+
   return axios.create({
     timeout: 10000,
-    headers: {
-      'Authorization': `token ${token}`
-    }
+    headers
   });
 };
 
 /**
  * @param {string} url
  * @param {*} config
- * @returns {PromiseLike}
+ * @returns {Promise}
  */
 const get = (url, config = {}) => {
   return instance().get(url, config)
@@ -38,6 +84,11 @@ const get = (url, config = {}) => {
         throw new Error(data.code);
       }
       return data;
+    })
+    .catch((error) => {
+      if (!axios.isCancel(error)) {
+        throw error;
+      }
     });
 };
 
@@ -45,16 +96,21 @@ const get = (url, config = {}) => {
  * @param {string} url
  * @param {*} body
  * @param {*} config
- * @returns {PromiseLike}
+ * @returns {Promise}
  */
-const post = (url, body, config = {}) => {
-  return instance().post(url, body, config)
+const post = (url, body = {}, config = {}) => {
+  return instance().post(url, JSON.stringify(body), config)
     .then(resp => resp.data)
     .then((data) => {
       if (data.code !== 'OK') {
         throw new Error(data.code);
       }
       return data;
+    })
+    .catch((error) => {
+      if (!axios.isCancel(error)) {
+        throw error;
+      }
     });
 };
 
@@ -71,7 +127,7 @@ class Request {
 
   /**
    * @param {*} config
-   * @returns {PromiseLike}
+   * @returns {Promise}
    */
   get = (config) => {
     return get(this.url, config);
@@ -80,7 +136,7 @@ class Request {
   /**
    * @param {*} body
    * @param {*} config
-   * @returns {PromiseLike}
+   * @returns {Promise}
    */
   post = (body = {}, config = {}) => {
     return post(this.url, body, config);
@@ -100,5 +156,10 @@ export default {
   get,
   post,
   request,
-  setToken
+  setToken,
+  getToken,
+  deleteToken,
+  setUserID,
+  getUserID,
+  deleteUserID
 };

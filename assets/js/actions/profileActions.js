@@ -71,7 +71,7 @@ export function profileFetch(userID) {
   return (dispatch, getState, { user }) => {
     dispatch(profileIsSending(true));
 
-    user.info(userID)
+/*    user.info(userID)
       .then((data) => {
         dispatch({
           type:    PROFILE_FETCH,
@@ -83,7 +83,7 @@ export function profileFetch(userID) {
       })
       .finally(() => {
         dispatch(profileIsSending(false));
-      });
+      });*/
   };
 }
 

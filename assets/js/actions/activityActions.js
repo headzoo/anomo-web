@@ -63,6 +63,21 @@ const feedFetchNewNumberSources = {
 const hiddenActionTypes = [constants.ACTION_TYPE_JOIN];
 
 /**
+ * @param {string} feedType
+ * @returns {{cancelToken: string | string | *}}
+ */
+function getFeedFetchConfig(feedType) {
+  if (feedFetchSources[feedType]) {
+    feedFetchSources[feedType].cancel();
+  }
+  feedFetchSources[feedType] = CancelToken.source();
+
+  return {
+    cancelToken: feedFetchSources[feedType].token
+  };
+}
+
+/**
  * @returns {{type: string}}
  */
 export function activityReset() {
@@ -178,7 +193,6 @@ export function activityIsSubmitting(isSubmitting) {
   };
 }
 
-
 /**
  * @param {boolean} isPollSending
  * @returns {{type: string, isLoading: *}}
@@ -253,7 +267,8 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
     if (buffered && refresh && feedBuffers[feedType].length > 0) {
       const activities = objects.clone(feedBuffers[feedType]);
       feedBuffers[feedType] = [];
-      dispatch(batch(
+
+      return dispatch(batch(
         {
           type:    ACTIVITY_FEED_FETCH,
           prepend: true,
@@ -262,7 +277,6 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
         },
         activityFeedNewNumber(feedType, 0)
       ));
-      return;
     }
 
     dispatch(activityIsFeedLoading(feedType, true));
@@ -270,19 +284,12 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       dispatch(activityIsFeedRefreshing(feedType, true));
     }
 
-    if (feedFetchSources[feedType]) {
-      feedFetchSources[feedType].cancel();
-    }
-    feedFetchSources[feedType] = CancelToken.source();
-
-    const { activity } = getState();
-    api.request('api_feeds_anomo', {
-      name:           feedType,
-      lastActivityID: refresh ? 0 : activity.feeds[feedType].lastActivityID
+    const lastActivityID = refresh ? 0 : getState().activity.feeds[feedType].lastActivityID;
+    return api.request('api_feeds_anomo', {
+      name: feedType,
+      lastActivityID
     })
-      .get({
-        cancelToken: feedFetchSources[feedType].token
-      })
+      .get(getFeedFetchConfig(feedType))
       .then((data) => {
         return anomo.activities.setImageDimensions(data.Activities)
           .then((activities) => {
@@ -295,23 +302,21 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
               feedType,
               refresh
             });
-          })
-          .catch((err) => {
-            if (!axios.isCancel(err)) {
-              throw err;
-            }
-          })
-          .finally(() => {
-            feedBuffers[feedType] = [];
-            feedFetchSources[feedType] = null;
-            dispatch(batch(
-              activityFeedNewNumber(feedType, 0),
-              activityIsFeedLoading(feedType, false)
-            ));
-            if (refresh) {
-              dispatch(activityIsFeedRefreshing(feedType, false));
-            }
           });
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        feedBuffers[feedType] = [];
+        feedFetchSources[feedType] = null;
+        dispatch(batch(
+          activityFeedNewNumber(feedType, 0),
+          activityIsFeedLoading(feedType, false)
+        ));
+        if (refresh) {
+          dispatch(activityIsFeedRefreshing(feedType, false));
+        }
       });
   };
 }

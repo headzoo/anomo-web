@@ -3,10 +3,7 @@ import { objects, strings } from 'utils';
 // https://github.com/unofficial-anomo-api/open/wiki/New-Anomo-2.11-Update-API-End-Points
 const base = 'https://ws.anomo.com/v101/index.php/webservice';
 const urls = {
-  userLogin:                 `${base}/user/login`,
   userFBLogin:               `${base}/user/login_with_fb`,
-  userLogout:                `${base}/user/logout/{token}`,
-  userInfo:                  `${base}/user/get_user_info/{token}/{userID}`,
   userBlock:                 `${base}/user/block_user/{token}/{userID}`,
   userBlocked:               `${base}/user/get_blocked_users/{token}/{userID}`,
   userFollow:                `${base}/user/follow/{token}/{userID}`,
@@ -21,8 +18,6 @@ const urls = {
   anomoListIntent:           `${base}/user/list_intent`,
   anomoListInterest:         `${base}/user/list_interests`,
   profilePosts:              `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,
-  activityFetch:             `${base}/activity/get_activities/{token}/1/0/-1/0/13/100/{lastActivityID}/0`,
-  activityFeedRecent:        `${base}/activity/get_activities/{token}/1/0/-1/0/13/100/{lastActivityID}/0`,
   activityFeedPopular:       `${base}/activity/get_activities/{token}/1/2/-1/0/13/100/{lastActivityID}/0`,
   activityFeedFollowing:     `${base}/activity/get_activities/{token}/1/3/-1/0/13/100/{lastActivityID}/0`,
   activityFeedHashtag:       `${base}/activity/get_activities/{token}/{page}/0/-1/0/18/100/0/0`,

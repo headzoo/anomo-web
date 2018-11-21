@@ -10,7 +10,9 @@ let isClearing = false;
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsFetch() {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { endpoints, proxy }) => {
+    const { user } = getState();
+
     if (isClearing || !user.isAuthenticated) {
       return;
     }
