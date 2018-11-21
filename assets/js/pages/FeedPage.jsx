@@ -156,12 +156,7 @@ class FeedPage extends React.PureComponent {
           </Row>
         )}
         <Row>
-          <Column
-            md={4}
-            xs={12}
-            offsetMd={4}
-            className="gutter-bottom"
-          >
+          <Column md={4} xs={12} offsetMd={4} className="gutter-bottom">
             {this.renderNav()}
           </Column>
         </Row>
