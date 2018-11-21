@@ -4,7 +4,9 @@ import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { profileIsLikeLoading, profileLikeToggle } from 'actions/profileActions';
 import { objects } from 'utils';
 import anomo from 'anomo';
+import api from 'api';
 import * as constants from 'anomo/constants';
+import Routing from '../../../public/bundles/fosjsrouting/js/router';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
@@ -242,12 +244,10 @@ export function activityIsFeedRefreshing(feedType, isRefreshing) {
  * @param {string} feedType
  * @param {boolean} refresh
  * @param {boolean} buffered
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: function})}
  */
 export function activityFeedFetch(feedType, refresh = false, buffered = true) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
-    const { activity } = getState();
-
+  return (dispatch, getState, { batch }) => {
     if (buffered && refresh && feedBuffers[feedType].length > 0) {
       const activities = objects.clone(feedBuffers[feedType]);
       feedBuffers[feedType] = [];
@@ -273,35 +273,15 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
     }
     feedFetchSources[feedType] = CancelToken.source();
 
-    let url = '';
-    switch (feedType) {
-      case 'recent':
-        url = endpoints.create('activityFeedRecent', {
-          lastActivityID: refresh ? 0 : activity.feeds.recent.lastActivityID
-        });
-        break;
-      case 'popular':
-        url = endpoints.create('activityFeedPopular', {
-          lastActivityID: refresh ? 0 : activity.feeds.popular.lastActivityID
-        });
-        break;
-      case 'following':
-        url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: refresh ? 0 : activity.feeds.following.lastActivityID
-        });
-        break;
-    }
-
-    const config = {
-      cancelToken: feedFetchSources[feedType].token
-    };
-
-    proxy.get(url, config)
+    const { activity } = getState();
+    api.request('api_feeds_anomo', {
+      name:           feedType,
+      lastActivityID: refresh ? 0 : activity.feeds[feedType].lastActivityID
+    })
+      .get({
+        cancelToken: feedFetchSources[feedType].token
+      })
       .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
         return anomo.activities.setImageDimensions(data.Activities)
           .then((activities) => {
             dispatch({
@@ -310,23 +290,23 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
               feedType,
               refresh
             });
+          })
+          .catch((err) => {
+            if (!axios.isCancel(err)) {
+              throw err;
+            }
+          })
+          .finally(() => {
+            feedBuffers[feedType] = [];
+            feedFetchSources[feedType] = null;
+            dispatch(batch(
+              activityFeedNewNumber(feedType, 0),
+              activityIsFeedLoading(feedType, false)
+            ));
+            if (refresh) {
+              dispatch(activityIsFeedRefreshing(feedType, false));
+            }
           });
-      })
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          throw err;
-        }
-      })
-      .finally(() => {
-        feedBuffers[feedType] = [];
-        feedFetchSources[feedType] = null;
-        dispatch(batch(
-          activityFeedNewNumber(feedType, 0),
-          activityIsFeedLoading(feedType, false)
-        ));
-        if (refresh) {
-          dispatch(activityIsFeedRefreshing(feedType, false));
-        }
       });
   };
 }

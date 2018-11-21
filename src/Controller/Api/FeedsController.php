@@ -5,7 +5,7 @@ use App\Anomo\Anomo;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/feeds", name="api_feeds_")
+ * @Route("/feeds", name="api_feeds_", options={"expose"=true})
  */
 class FeedsController extends Controller
 {
@@ -21,7 +21,7 @@ class FeedsController extends Controller
      * @Route(
      *     "/anomo/{name}/{lastActivityID<\d+>}",
      *     defaults={"lastActivityID": 0},
-     *     name="fetch"
+     *     name="anomo"
      * )
      *
      * @param Anomo $anomo
@@ -29,7 +29,7 @@ class FeedsController extends Controller
      * @param int $lastActivityID
      * @return array
      */
-    public function fetchAction(Anomo $anomo, $name, $lastActivityID)
+    public function anomoAction(Anomo $anomo, $name, $lastActivityID)
     {
         $name = strtolower($name);
         $feedTypes = [

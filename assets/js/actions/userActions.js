@@ -4,6 +4,7 @@ import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
 import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
+import api from 'api';
 
 export const USER_ERROR              = 'USER_ERROR';
 export const USER_SENDING            = 'USER_SENDING';
@@ -240,6 +241,7 @@ export function userLogin(username, password) {
     user.login(username, password)
       .then((u) => {
         user.isAuthenticated = true;
+        api.setToken(user.getToken());
         endpoints.addDefaultParam('token', user.getToken());
         dispatch({
           type: USER_LOGIN,
@@ -274,6 +276,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
     user.facebookLogin(facebookEmail, facebookUserID, accessToken)
       .then((u) => {
         user.isAuthenticated = true;
+        api.setToken(user.getToken());
         endpoints.addDefaultParam('token', user.getToken());
         dispatch({
           type: USER_LOGIN,
@@ -319,6 +322,7 @@ export function userRefresh() {
       user.info(id)
         .then((data) => {
           user.isAuthenticated = true;
+          api.setToken(user.getToken());
           endpoints.addDefaultParam('token', user.getToken());
           dispatch({
             type: USER_LOGIN,
