@@ -31,6 +31,24 @@ class UsersController extends Controller
     }
 
     /**
+     * @Route("/anomo/login/facebook", name="anomo_login_facebook", methods={"POST"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function anomoFacebookLoginAction(Anomo $anomo, Request $request)
+    {
+        $body = $this->getRequired($request->json->all(), [
+            'Email',
+            'FacebookID',
+            'FbAccessToken'
+        ]);
+
+        return $anomo->post('userFBLogin', [], $body);
+    }
+
+    /**
      * @Route("/anomo/logout", name="anomo_logout", methods={"POST"})
      *
      * @param Anomo $anomo
@@ -53,21 +71,5 @@ class UsersController extends Controller
         return $anomo->get('user', [
             'userID' => $userID
         ]);
-    }
-
-    /**
-     * @param array $values
-     * @param array $required
-     * @return array
-     */
-    protected function getRequired(array $values, array $required)
-    {
-        foreach($required as $name) {
-            if (empty($values[$name])) {
-                throw $this->createBadRequestException();
-            }
-        }
-
-        return $values;
     }
 }

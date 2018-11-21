@@ -307,31 +307,29 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {user: *})}
  */
 export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
-  return (dispatch, getState, { user, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
     ));
 
-/*    user.facebookLogin(facebookEmail, facebookUserID, accessToken)
-      .then((u) => {
-        user.isAuthenticated = true;
-        api.setToken(user.getToken());
-        endpoints.addDefaultParam('token', user.getToken());
-        dispatch({
-          type: USER_LOGIN,
-          user: u
-        });
-        dispatch(userStart(u.UserID)); // eslint-disable-line
+    api.request('api_users_anomo_login_facebook')
+      .post({
+        Email:         facebookEmail,
+        FacebookID:    facebookUserID,
+        FbAccessToken: accessToken
+      })
+      .then((resp) => {
+        dispatch(userStart(resp));
       })
       .catch((error) => {
         console.warn(error);
+        dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
-        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
-      });*/
+      });
   };
 }
 
