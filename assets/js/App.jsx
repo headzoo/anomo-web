@@ -6,6 +6,7 @@ import { errorMessage, windowResize, uiSidebarDocked, uiContentWidth } from 'act
 import { connect } from 'utils/state';
 import { browser } from 'utils';
 import { NotificationsDrawer } from 'lib/drawers';
+import { ActivityModal, UserModal, PostModal, CommentModal } from 'lib/modals';
 import { PrivateRoute, ScrollToTop, Nav, Sidebar, Mask, Loading } from 'lib';
 import history from 'store/history';
 import routes from 'store/routes';
@@ -30,6 +31,7 @@ class App extends React.PureComponent {
     device:          PropTypes.object.isRequired,
     isLoading:       PropTypes.bool.isRequired,
     sidebarDocked:   PropTypes.bool.isRequired,
+    visibleModals:   PropTypes.object.isRequired,
     visibleDrawers:  PropTypes.object.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
     dispatch:        PropTypes.func.isRequired
@@ -113,7 +115,7 @@ class App extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { isLoading, isAuthenticated, error, sidebarDocked, visibleDrawers } = this.props;
+    const { isLoading, isAuthenticated, error, sidebarDocked, visibleModals, visibleDrawers } = this.props;
 
     if (error) {
       return (
@@ -157,6 +159,10 @@ class App extends React.PureComponent {
             <Route exact path={routes.path('about')} component={AboutPage} />
             <Route exact path="*" component={NotFoundPage} />
           </Switch>
+          <ActivityModal open={visibleModals.activity !== false} />
+          <CommentModal open={visibleModals.comment !== false} />
+          <UserModal open={visibleModals.user !== false} />
+          <PostModal open={visibleModals.post !== false} />
         </ScrollToTop>
       </Router>
     );
@@ -169,6 +175,7 @@ const mapStateToProps = state => (
     device:          state.ui.device,
     isLoading:       state.ui.isLoading,
     sidebarDocked:   state.ui.sidebarDocked,
+    visibleModals:   state.ui.visibleModals,
     visibleDrawers:  state.ui.visibleDrawers,
     isAuthenticated: state.user.isAuthenticated
   }

@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { browser, objects, connect } from 'utils';
-import { Container } from 'lib/bootstrap';
-import { ActivityModal, UserModal, PostModal, CommentModal } from 'lib/modals';
+import { browser, objects } from 'utils';
+import { Container, Row, Column } from 'lib/bootstrap';
 import { Footer } from 'lib';
 
 /**
@@ -11,12 +10,11 @@ import { Footer } from 'lib';
  */
 class Page extends React.PureComponent {
   static propTypes = {
-    title:         PropTypes.string.isRequired,
-    withFooter:    PropTypes.bool,
-    fullHeight:    PropTypes.bool,
-    className:     PropTypes.string,
-    children:      PropTypes.node,
-    visibleModals: PropTypes.object.isRequired
+    title:      PropTypes.string.isRequired,
+    withFooter: PropTypes.bool,
+    fullHeight: PropTypes.bool,
+    className:  PropTypes.string,
+    children:   PropTypes.node
   };
 
   static defaultProps = {
@@ -35,19 +33,21 @@ class Page extends React.PureComponent {
   }
 
   /**
-   *
+   * @param {*} prevProps
    */
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     const { title } = this.props;
 
-    browser.title(title);
+    if (title !== prevProps.title) {
+      browser.title(title);
+    }
   };
 
   /**
    * @returns {*}
    */
   render() {
-    const { withFooter, fullHeight, className, children, visibleModals, ...props } = this.props;
+    const { withFooter, fullHeight, className, children, ...props } = this.props;
 
     const classes = classNames('page', {
       'page-full-height': fullHeight
@@ -56,22 +56,16 @@ class Page extends React.PureComponent {
     return (
       <div className={classes} {...objects.propsFilter(props, Page.propTypes, 'dispatch')}>
         <Container fluid>
-          {children}
+          <Row>
+            <Column md={4} offsetMd={4} xs={12}>
+              {children}
+            </Column>
+          </Row>
         </Container>
         {withFooter && <Footer />}
-        <ActivityModal open={visibleModals.activity !== false} />
-        <CommentModal open={visibleModals.comment !== false} />
-        <UserModal open={visibleModals.user !== false} />
-        <PostModal open={visibleModals.post !== false} />
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    visibleModals: state.ui.visibleModals
-  };
-};
-
-export default connect(mapStateToProps)(Page);
+export default Page;

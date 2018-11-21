@@ -29,12 +29,7 @@ class TrendingHashtags extends React.PureComponent {
 
     return (
       <Row>
-        <Column
-          md={4}
-          xs={12}
-          offsetMd={4}
-          className="gutter-bottom"
-        >
+        <Column className="gutter-bottom">
           <div className="trending-hashtags">
             {trendingHashtags.slice(0, max).map(hashtag => (
               <span key={hashtag}>

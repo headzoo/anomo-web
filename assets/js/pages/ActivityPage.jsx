@@ -157,7 +157,7 @@ class ActivityPage extends React.PureComponent {
     if (isCommentsLoading) {
       return (
         <FadeAndSlideTransition key={0} duration={FADE_DURATION}>
-          <Column className="text-center gutter-bottom" md={4} offsetMd={4} xs={12}>
+          <Column className="text-center gutter-bottom">
             <Loading />
           </Column>
         </FadeAndSlideTransition>
@@ -174,7 +174,7 @@ class ActivityPage extends React.PureComponent {
 
     return comments.map(comment => (
       <FadeAndSlideTransition key={comment.ID} duration={FADE_DURATION}>
-        <Column md={4} offsetMd={4} xs={12}>
+        <Column>
           <CommentCard
             tags={tags}
             comment={comment}
@@ -225,7 +225,7 @@ class ActivityPage extends React.PureComponent {
       <Page key={`page_${activity.ActivityID}`} title={activity.FromUserName || ''}>
         {activeComment.ID !== '0' && (
           <Row>
-            <Column md={4} offsetMd={4} xs={12}>
+            <Column>
               <div className="page-activity-jump-link clickable" onClick={this.handleJumpClick}>
                 Go to {activeComment.UserName}&apos;s comment.
                 <Icon name="angle-down" />
@@ -234,7 +234,7 @@ class ActivityPage extends React.PureComponent {
           </Row>
         )}
         <Row>
-          <Column className="gutter-top" md={4} offsetMd={4} xs={12}>
+          <Column className="gutter-top">
             <ActivityCard
               clickable={false}
               activity={activity}
@@ -244,7 +244,7 @@ class ActivityPage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
-          <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
+          <Column className="gutter-bottom">
             <PostForm
               name="post"
               onSubmit={this.handleCommentSubmit}
@@ -257,7 +257,7 @@ class ActivityPage extends React.PureComponent {
         </TransitionGroup>
         {(!isCommentsLoading && likeList.length > 0) && (
           <Row>
-            <Column md={4} offsetMd={4} xs={12}>
+            <Column>
               {this.renderLikeList()}
             </Column>
           </Row>

@@ -36,7 +36,7 @@ class SearchPage extends React.PureComponent {
     return (
       <Page title="Search">
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             {isSearchSending ? (
               <Loading className="text-center" />
             ) : (

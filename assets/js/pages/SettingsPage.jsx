@@ -412,25 +412,21 @@ class SettingsPage extends React.PureComponent {
 
     return (
       <Page title={title}>
-        <Row>
-          <Column md={4} offsetMd={4} xs={12}>
-            <Card className="card-settings">
-              <CardHeader>
-                {title}
-              </CardHeader>
-              <CardBody>
-                <CardText>
-                  {{
-                    'list':          this.renderList(),
-                    'password':      this.renderPassword(),
-                    'blocked':       this.renderBlocked(),
-                    'notifications': this.renderNotifications()
-                  }[panel]}
-                </CardText>
-              </CardBody>
-            </Card>
-          </Column>
-        </Row>
+        <Card className="card-settings">
+          <CardHeader>
+            {title}
+          </CardHeader>
+          <CardBody>
+            <CardText>
+              {{
+                'list':          this.renderList(),
+                'password':      this.renderPassword(),
+                'blocked':       this.renderBlocked(),
+                'notifications': this.renderNotifications()
+              }[panel]}
+            </CardText>
+          </CardBody>
+        </Card>
       </Page>
     );
   }
