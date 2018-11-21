@@ -95,10 +95,11 @@ class ActivityPage extends React.PureComponent {
     const { state } = location;
 
     if (state && state.activity) {
-      this.setState({ activity: state.activity }, () => {
+      this.setState({ activity: state.activity, activeComment: { ID: '0' } }, () => {
         activitySetupActivityPage(0, 0, state.activity);
       });
     } else {
+      this.setState({ activeComment: { ID: '0' } });
       activitySetupActivityPage(match.params.refID, match.params.actionType);
     }
   };

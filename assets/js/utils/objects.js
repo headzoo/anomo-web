@@ -6,7 +6,7 @@ const { hasOwnProperty } = Object.prototype;
  * @param {Object} obj
  * @returns {boolean}
  */
-export function objectIsEmpty(obj) {
+function isEmpty(obj) {
   // null and undefined are "empty"
   if (obj == null) return true;
 
@@ -56,7 +56,7 @@ export function objectIsEmpty(obj) {
  * @param {Array|object} rest
  * @returns {*}
  */
-export function objectPropsFilter(obj1, obj2, ...rest) {
+function propsFilter(obj1, obj2, ...rest) {
   const obj2Keys = Object.keys(obj2);
   const newProps = Object.assign({}, obj1);
   Object.keys(newProps)
@@ -90,7 +90,7 @@ export function objectPropsFilter(obj1, obj2, ...rest) {
  * @param {function} cb The callback function
  * @return {object}
  */
-export function objectForEach(obj, cb) {
+function forEach(obj, cb) {
   for (const key of Object.keys(obj)) { // eslint-disable-line
     cb(obj[key], key);
   }
@@ -107,9 +107,9 @@ export function objectForEach(obj, cb) {
  * @param {function} cb The callback function
  * @returns {Array}
  */
-export function objectMap(obj, cb) {
+function map(obj, cb) {
   const results = [];
-  objectForEach(obj, (val, key) => {
+  forEach(obj, (val, key) => {
     const result = cb(val, key);
     if (result !== undefined) {
       results.push(result);
@@ -123,10 +123,10 @@ export function objectMap(obj, cb) {
  * @param {*} obj
  * @returns {*}
  */
-export function objectClone(obj) {
+function clone(obj) {
   const bObject = Array.isArray(obj) ? [] : {};
 
-  objectForEach(obj, (value, key) => {
+  forEach(obj, (value, key) => {
     let clonedValue;
     if (Array.isArray(value)) {
       clonedValue = value.slice(0);
@@ -135,7 +135,7 @@ export function objectClone(obj) {
     } else {
       clonedValue = value;
     }
-    bObject[key] = (typeof clonedValue === 'object') ? objectClone(clonedValue) : clonedValue;
+    bObject[key] = (typeof clonedValue === 'object') ? clone(clonedValue) : clonedValue;
   });
 
   return bObject;
@@ -147,16 +147,16 @@ export function objectClone(obj) {
  * @param {*} rest
  * @returns {*}
  */
-export function objectMerge(obj1, obj2, ...rest) {
+function merge(obj1, obj2, ...rest) {
   return Object.assign({}, obj1, obj2, ...rest);
 }
 
 export default {
   isEqual,
-  isEmpty:     objectIsEmpty,
-  propsFilter: objectPropsFilter,
-  forEach:     objectForEach,
-  map:         objectMap,
-  merge:       objectMerge,
-  clone:       objectClone
+  isEmpty,
+  propsFilter,
+  forEach,
+  map,
+  merge,
+  clone
 };

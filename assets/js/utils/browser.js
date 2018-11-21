@@ -2,10 +2,10 @@ import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
 
 /**
- * @param {string} title
+ * @param {string} t
  */
-export function browserTitle(title) {
-  document.title = title;
+function title(t) {
+  document.title = t;
 }
 
 /**
@@ -13,7 +13,7 @@ export function browserTitle(title) {
  * @param {string|number} behavior
  * @param {string} rest
  */
-export function browserScroll(top = 0, behavior = 'auto', rest = 'auto') {
+function scroll(top = 0, behavior = 'auto', rest = 'auto') {
   if (typeof top !== 'number' && typeof top !== 'string') {
     top.scroll({
       left:     0,
@@ -34,7 +34,7 @@ export function browserScroll(top = 0, behavior = 'auto', rest = 'auto') {
  * @param {*} location
  * @returns {*}
  */
-export function browserParseHash(location) {
+function parseHash(location) {
   if (location.hash) {
     return queryString.parse(location.hash.substr(1));
   }
@@ -47,7 +47,7 @@ export function browserParseHash(location) {
  * @param {*} defaultValue
  * @returns {*}
  */
-export function browserStorageGet(key, defaultValue = null) {
+function storageGet(key, defaultValue = null) {
   const value = localStorage.getItem(key);
   if (!value) {
     return defaultValue;
@@ -60,7 +60,7 @@ export function browserStorageGet(key, defaultValue = null) {
  * @param {*} value
  * @returns {*}
  */
-export function browserStorageSet(key, value) {
+function storageSet(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
   return value;
 }
@@ -71,9 +71,9 @@ export function browserStorageSet(key, value) {
  * @param {number} maxLength
  * @returns {Array}
  */
-export function browserStoragePush(key, value, maxLength = -1) {
+function storagePush(key, value, maxLength = -1) {
   let found  = false;
-  let values = browserStorageGet(key, []);
+  let values = storageGet(key, []);
 
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
@@ -99,7 +99,7 @@ export function browserStoragePush(key, value, maxLength = -1) {
     if (maxLength !== -1) {
       values = values.slice(0, maxLength);
     }
-    browserStorageSet(key, values);
+    storageSet(key, values);
   }
 
   return values;
@@ -109,7 +109,7 @@ export function browserStoragePush(key, value, maxLength = -1) {
  * @param {string} key
  * @returns {boolean}
  */
-export function browserStorageRemove(key) {
+function storageRemove(key) {
   localStorage.removeItem(key);
   return true;
 }
@@ -121,7 +121,7 @@ export function browserStorageRemove(key) {
  * @param {Function} fn
  * @param {Function} rest
  */
-export function browserOff(event, fn, rest = null) {
+function off(event, fn, rest = null) {
   if (typeof event !== 'string') {
     event.removeEventListener(fn, rest, true);
   } else {
@@ -149,7 +149,7 @@ export function browserOff(event, fn, rest = null) {
  * @param {Function} rest
  * @returns {Function}
  */
-export function browserOn(event, fn, rest = null) {
+function on(event, fn, rest = null) {
   if (typeof event !== 'string') {
     event.addEventListener(fn, rest, true);
   } else {
@@ -157,7 +157,7 @@ export function browserOn(event, fn, rest = null) {
   }
 
   return () => {
-    browserOff(event, fn, rest);
+    off(event, fn, rest);
   };
 }
 
@@ -165,7 +165,7 @@ export function browserOn(event, fn, rest = null) {
  * @param {string|HTMLElement} event
  * @param {string} rest
  */
-export function browserTrigger(event, rest =  null) {
+function trigger(event, rest =  '') {
   if (typeof event !== 'string') {
     event.dispatchEvent(new Event(rest));
   } else {
@@ -176,7 +176,7 @@ export function browserTrigger(event, rest =  null) {
 /**
  *
  */
-export function browserHideScrollbars() {
+function hideScrollbars() {
   // firefox, chrome
   document.documentElement.style.overflow = 'hidden';
   // ie only
@@ -186,7 +186,7 @@ export function browserHideScrollbars() {
 /**
  *
  */
-export function browserShowScrollbars() {
+function showScrollbars() {
   // firefox, chrome
   document.documentElement.style.overflow = 'auto';
   // ie only
@@ -196,7 +196,7 @@ export function browserShowScrollbars() {
 /**
  * @param {Function} cb
  */
-export function browserPosition(cb) {
+function position(cb) {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
@@ -210,20 +210,20 @@ export function browserPosition(cb) {
 }
 
 export default {
-  on:             browserOn,
-  off:            browserOff,
-  trigger:        browserTrigger,
-  title:          browserTitle,
-  scroll:         browserScroll,
-  hideScrollbars: browserHideScrollbars,
-  showScrollbars: browserShowScrollbars,
-  parseHash:      browserParseHash,
-  position:       browserPosition,
-  storage:        {
-    get:                browserStorageGet,
-    set:                browserStorageSet,
-    push:               browserStoragePush,
-    remove:             browserStorageRemove,
+  on,
+  off,
+  trigger,
+  title,
+  scroll,
+  hideScrollbars,
+  showScrollbars,
+  parseHash,
+  position,
+  storage: {
+    get:                storageGet,
+    set:                storageSet,
+    push:               storagePush,
+    remove:             storageRemove,
     KEY_USER:           'user',
     KEY_ID:             'UserID',
     KEY_DETAILS:        'Details',

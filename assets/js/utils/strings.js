@@ -4,7 +4,7 @@
  * @param {string} alt2
  * @returns {string}
  */
-export function stringRoundRobin(index, alt1, alt2) {
+function roundRobin(index, alt1, alt2) {
   if (index % 2 === 0) {
     return alt1;
   }
@@ -14,7 +14,7 @@ export function stringRoundRobin(index, alt1, alt2) {
 /**
  * @param {string|Array} pieces
  */
-export function stringSpaceCommas(pieces) {
+function spaceCommas(pieces) {
   if (!pieces) {
     return null;
   }
@@ -29,7 +29,7 @@ export function stringSpaceCommas(pieces) {
 /**
  * @param {string} str
  */
-export function stringUcWords(str) {
+function ucWords(str) {
   return str
     .replace(/^(.)|\s+(.)/g, ($1) => {
       return $1.toUpperCase();
@@ -42,7 +42,7 @@ export function stringUcWords(str) {
  * @param {string} postfix
  * @returns {string}
  */
-export function stringTruncate(str, maxLen, postfix = '...') {
+function truncate(str, maxLen, postfix = '...') {
   if (str.length <= maxLen) {
     return str;
   }
@@ -54,7 +54,7 @@ export function stringTruncate(str, maxLen, postfix = '...') {
  * @param {number} count
  * @returns {string}
  */
-export function stringRepeat(str, count) {
+function repeat(str, count) {
   let result = '';
   for (let i = 0; i < count; i++) {
     result += str;
@@ -66,7 +66,7 @@ export function stringRepeat(str, count) {
  * @param {string} str
  * @returns {string}
  */
-export function stringEncodeURI(str) {
+function encodeURI(str) {
   return encodeURIComponent(str).replace(/%20/g, '+');
 }
 
@@ -74,16 +74,16 @@ export function stringEncodeURI(str) {
  * @param {string} str
  * @returns {string}
  */
-export function stringDecodeURI(str) {
+function decodeURI(str) {
   return decodeURIComponent(str).replace(/\+/g, ' ');
 }
 
 export default {
-  roundRobin:  stringRoundRobin,
-  spaceCommas: stringSpaceCommas,
-  repeat:      stringRepeat,
-  truncate:    stringTruncate,
-  ucWords:     stringUcWords,
-  encodeURI:   stringEncodeURI,
-  decodeURI:   stringDecodeURI
+  roundRobin,
+  spaceCommas,
+  repeat,
+  truncate,
+  ucWords,
+  encodeURI,
+  decodeURI
 };

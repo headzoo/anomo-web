@@ -40,6 +40,8 @@ export const ACTIVITY_TRENDING_HASHTAGS    = 'ACTIVITY_TRENDING_HASHTAGS';
 
 const { CancelToken } = axios;
 
+const activityCache = {};
+
 const feedBuffers = {
   recent:    [],
   popular:   [],
@@ -284,6 +286,9 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       .then((data) => {
         return anomo.activities.setImageDimensions(data.Activities)
           .then((activities) => {
+            activities.forEach((a) => {
+              activityCache[a.RefID] = a;
+            });
             dispatch({
               type: ACTIVITY_FEED_FETCH,
               activities,
@@ -626,6 +631,15 @@ export function activityGet(refID, actionType) {
       activityIsLikeListLoading(true)
     ));
 
+    // Pre-load the cached activity, but continue fetching it from
+    // anomo to get any changes to likes, comments, etc.
+    if (activityCache[refID]) {
+      dispatch(batch(
+        activityIsActivityLoading(false),
+        activitySet(activityCache[refID])
+      ));
+    }
+
     const urlGet = endpoints.create('activityGet', {
       actionType,
       refID
@@ -640,12 +654,20 @@ export function activityGet(refID, actionType) {
       .then((responses) => {
         const activity    = responses[0].Activity;
         activity.LikeList = responses[1].likes;
-        dispatch(activitySet(activity));
+
+        anomo.activities.setImageDimensions([activity])
+          .then((activities) => {
+            activityCache[refID] = activities[0]; // eslint-disable-line
+            dispatch(batch(
+              activitySet(activities[0]),
+              activityIsActivityLoading(false),
+              activityIsCommentsLoading(false),
+              activityIsLikeListLoading(false)
+            ));
+          });
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(batch(
           activityIsActivityLoading(false),
           activityIsCommentsLoading(false),

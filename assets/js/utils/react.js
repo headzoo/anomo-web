@@ -4,7 +4,7 @@ import React from 'react';
  * @param {React.Component} WrappedComponent
  * @returns {string}
  */
-export function reactDisplayName(WrappedComponent) {
+function displayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
@@ -12,12 +12,12 @@ export function reactDisplayName(WrappedComponent) {
  * @param {*} children
  * @param {Function} cb
  */
-export function reactTraverseChildren(children, cb) {
+function traverseChildren(children, cb) {
   React.Children.map(children, (child) => {
     if (child) {
       cb(child);
       if (child.props && child.props.children) {
-        reactTraverseChildren(child.props.children, cb);
+        traverseChildren(child.props.children, cb);
       }
     }
   });
@@ -28,7 +28,7 @@ export function reactTraverseChildren(children, cb) {
  * @param {string} unityFormType
  * @returns {boolean}
  */
-export function reactIsFormType(component, unityFormType = '') {
+function isFormType(component, unityFormType = '') {
   if (component.type === undefined || component.type.unityFormType === undefined) {
     return false;
   }
@@ -39,7 +39,7 @@ export function reactIsFormType(component, unityFormType = '') {
 }
 
 export default {
-  displayName:      reactDisplayName,
-  traverseChildren: reactTraverseChildren,
-  isFormType:       reactIsFormType
+  displayName,
+  traverseChildren,
+  isFormType
 };

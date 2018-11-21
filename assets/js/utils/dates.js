@@ -1,10 +1,10 @@
-export const datesDaysInAMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const daysInAMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 /**
  * @param {Date} date
  * @returns {number}
  */
-export function datesGetYear(date = null) {
+function getYear(date = null) {
   return (date || new Date()).getFullYear();
 }
 
@@ -12,7 +12,7 @@ export function datesGetYear(date = null) {
  * @param {Date} date
  * @returns {number}
  */
-export function datesGetMonth(date = null) {
+function getMonth(date = null) {
   date = date || new Date();
   return date.getMonth() + 1;
 }
@@ -21,7 +21,7 @@ export function datesGetMonth(date = null) {
  * @param {Date} date
  * @returns {number}
  */
-export function datesGetDayOfMonth(date = null) {
+function getDayOfMonth(date = null) {
   return (date || new Date()).getDate();
 }
 
@@ -29,12 +29,12 @@ export function datesGetDayOfMonth(date = null) {
  * @param {Date} date
  * @returns {{year: number, month: number, day: number}}
  */
-export function datesGetCalendarDate(date = null) {
+function getCalendarDate(date = null) {
   date = date || new Date();
   return {
-    year:  datesGetYear(date),
-    month: datesGetMonth(date),
-    day:   datesGetDayOfMonth(date)
+    year:  getYear(date),
+    month: getMonth(date),
+    day:   getDayOfMonth(date)
   };
 }
 
@@ -44,7 +44,7 @@ export function datesGetCalendarDate(date = null) {
  * @param {boolean} recurse
  * @returns {{weeks: Array}}
  */
-export function datesGetCalendar(year = 0, month = 0, recurse = true) {
+function getCalendar(year = 0, month = 0, recurse = true) {
   year = year || (new Date()).getFullYear();
   if (month) {
     month -= 1;
@@ -68,7 +68,7 @@ export function datesGetCalendar(year = 0, month = 0, recurse = true) {
   const firstDay    = new Date(currYear, currMonth, 1);
   const startingDay = firstDay.getDay();
 
-  let monthLength = datesDaysInAMonth[currMonth];
+  let monthLength = daysInAMonth[currMonth];
   if (currMonth === 1) {
     if ((currYear % 4 === 0 && currYear % 100 !== 0) || currYear % 400 === 0) {
       monthLength = 29;
@@ -82,7 +82,7 @@ export function datesGetCalendar(year = 0, month = 0, recurse = true) {
 
     // Fill in leading days from previous month.
     if (recurse && day === 1 && startingDay !== 0) {
-      const prevDays = datesGetCalendar(prevYear, prevMonth + 1, false).weeks.pop().reverse();
+      const prevDays = getCalendar(prevYear, prevMonth + 1, false).weeks.pop().reverse();
       for (let g = 0; g < startingDay; g++) {
         row.push({
           year:  prevYear,
@@ -112,7 +112,7 @@ export function datesGetCalendar(year = 0, month = 0, recurse = true) {
       if (recurse && weeksRemaining > 0) {
         const lastWeek      = weeks[weeks.length - 1];
         let daysRemaining   = 7 - lastWeek.length;
-        const extraCalendar = datesGetCalendar(nextYear, nextMonth + 1, false).weeks.slice(0, weeksRemaining);
+        const extraCalendar = getCalendar(nextYear, nextMonth + 1, false).weeks.slice(0, weeksRemaining);
 
         if (daysRemaining === 0) {
           row = [];
@@ -154,7 +154,7 @@ export function datesGetCalendar(year = 0, month = 0, recurse = true) {
  * @param {Date|string} date
  * @returns {number}
  */
-export function datesGetAge(date) {
+function getAge(date) {
   if (typeof date === 'string') {
     date = new Date(date);
   }
@@ -165,11 +165,11 @@ export function datesGetAge(date) {
 }
 
 export default {
-  getAge:          datesGetAge,
-  getYear:         datesGetYear,
-  getMonth:        datesGetMonth,
-  getDayOfMonth:   datesGetDayOfMonth,
-  getCalendarDate: datesGetCalendarDate,
-  getCalendar:     datesGetCalendar,
-  daysInMonth:     datesDaysInAMonth
+  getAge,
+  getYear,
+  getMonth,
+  getDayOfMonth,
+  getCalendarDate,
+  getCalendar,
+  daysInAMonth
 };
