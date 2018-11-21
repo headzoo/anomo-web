@@ -4,7 +4,7 @@
  * @param {number} number
  * @returns {string}
  */
-export function numberAddCommas(number) {
+function addCommas(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
@@ -14,7 +14,7 @@ export function numberAddCommas(number) {
  * @param {number} min
  * @param {number} max
  */
-export function numberRandom(min, max) {
+function random(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
@@ -22,16 +22,16 @@ export function numberRandom(min, max) {
  * @param {number} number
  * @returns {string}
  */
-export function numberMoney(number) {
-  return `$${numberAddCommas(number)}`;
+function money(number) {
+  return `$${addCommas(number)}`;
 }
 
 /**
  * @param {number} number
  * @returns {string}
  */
-export function numberPercent(number) {
-  return `${numberAddCommas(number)}%`;
+function percent(number) {
+  return `${addCommas(number)}%`;
 }
 
 /**
@@ -39,7 +39,7 @@ export function numberPercent(number) {
  * @param {number} precision
  * @returns {number}
  */
-export function numberToPrecision(number, precision) {
+function toPrecision(number, precision) {
   const power = 10 ** precision;
   return Math.round(number * power) / power;
 }
@@ -49,7 +49,7 @@ export function numberToPrecision(number, precision) {
  * @param {boolean} strict
  * @returns {boolean}
  */
-export function numberIsInt(value, strict = false) {
+function isInt(value, strict = false) {
   if (value === undefined) {
     return false;
   }
@@ -65,7 +65,7 @@ export function numberIsInt(value, strict = false) {
  * @param {boolean} strict
  * @returns {boolean}
  */
-export function numberIsFloat(value, strict = false) {
+function isFloat(value, strict = false) {
   if (value === undefined) {
     return false;
   }
@@ -81,26 +81,26 @@ export function numberIsFloat(value, strict = false) {
  * @param {number} radix
  * @returns {number}
  */
-export function numberParseAny(value, radix = 10) {
+function parseAny(value, radix = 10) {
   if (value === undefined) {
     return 0;
   }
-  if (numberIsInt(value)) {
+  if (isInt(value)) {
     return parseInt(value, radix);
   }
-  if (numberIsFloat(value)) {
+  if (isFloat(value)) {
     return parseFloat(value);
   }
   return 0;
 }
 
 export default {
-  parseAny:    numberParseAny,
-  isInt:       numberIsInt,
-  isFloat:     numberIsFloat,
-  addCommas:   numberAddCommas,
-  random:      numberRandom,
-  money:       numberMoney,
-  percent:     numberPercent,
-  toPrecision: numberToPrecision
+  parseAny,
+  isInt,
+  isFloat,
+  addCommas,
+  random,
+  money,
+  percent,
+  toPrecision
 };

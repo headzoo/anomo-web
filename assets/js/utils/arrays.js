@@ -4,7 +4,7 @@
  * @param {Array} array
  * @returns {Array}
  */
-export function arrayShuffle(array) {
+function shuffle(array) {
   const newArray = array.slice(0);
   for (let i = newArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -15,5 +15,5 @@ export function arrayShuffle(array) {
 }
 
 export default {
-  shuffle: arrayShuffle
+  shuffle
 };

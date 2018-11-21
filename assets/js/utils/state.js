@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { objectClone } from 'utils/objects';
+import { objects } from 'utils';
 
 export { connect };
 
@@ -12,7 +12,7 @@ export function mapStateToProps(...props) {
   return (state) => {
     const mapped = {};
     for (let i = 0; i < props.length; i++) {
-      mapped[props[i]] = objectClone(state[props[i]]);
+      mapped[props[i]] = objects.clone(state[props[i]]);
     }
 
     return mapped;
