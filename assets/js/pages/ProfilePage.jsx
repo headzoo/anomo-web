@@ -300,7 +300,7 @@ class ProfilePage extends React.PureComponent {
       return (
         <Page title="Loading">
           <Row>
-            <Column className="gutter-lg text-center" md={4} offsetMd={4} xs={12}>
+            <Column className="gutter-lg text-center">
               <Loading />
             </Column>
           </Row>
@@ -311,7 +311,7 @@ class ProfilePage extends React.PureComponent {
     return (
       <Page title={profile.UserName}>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             <Card className="card-profile">
               <CardBody>
                 {this.renderInfo()}
@@ -320,12 +320,12 @@ class ProfilePage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             {this.renderNav()}
           </Column>
         </Row>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             {{
               'activity':  this.renderActivityPanel(),
               'pics':      this.renderPicsPanel(),

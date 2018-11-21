@@ -145,7 +145,7 @@ class FeedPage extends React.PureComponent {
       <Page title={title}>
         {!isMobile && (
           <Row>
-            <Column md={4} offsetMd={4} xs={12}>
+            <Column>
               <PostForm
                 id="feed-post-card"
                 name="post"
@@ -156,7 +156,7 @@ class FeedPage extends React.PureComponent {
           </Row>
         )}
         <Row>
-          <Column md={4} xs={12} offsetMd={4} className="gutter-bottom">
+          <Column className="gutter-bottom">
             {this.renderNav()}
           </Column>
         </Row>
@@ -164,7 +164,7 @@ class FeedPage extends React.PureComponent {
           <TrendingHashtags />
         )}
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             {feeds[activeFeed].isRefreshing && (
               <Loading className="text-center gutter-bottom" />
             )}

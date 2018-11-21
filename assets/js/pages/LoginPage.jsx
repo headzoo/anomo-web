@@ -128,7 +128,7 @@ class LoginPage extends React.PureComponent {
     return (
       <Page title="Login">
         <Row>
-          <Column className="gutter-top-lg" sm={4} xs={12} offsetSm={4}>
+          <Column className="gutter-top-lg">
             <Card fullWidth>
               <CardBody>
                 <CardText>
@@ -139,7 +139,7 @@ class LoginPage extends React.PureComponent {
           </Column>
         </Row>
         <Row>
-          <Column className="gutter-top" sm={4} xs={12} offsetSm={4}>
+          <Column className="gutter-top">
             <Card fullWidth>
               <CardBody>
                 <CardText>

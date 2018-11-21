@@ -412,7 +412,7 @@ class EditProfilePage extends React.PureComponent {
     return (
       <Page title="Edit Profile">
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             <Card className="card-profile">
               <CardBody>
                 <CardText>

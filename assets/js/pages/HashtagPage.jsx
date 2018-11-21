@@ -103,7 +103,7 @@ class HashtagPage extends React.PureComponent {
     return (
       <Page title={`#${match.params.hashtag}`}>
         <Row>
-          <Column className="gutter-bottom" md={4} offsetMd={4} xs={12}>
+          <Column className="gutter-bottom">
             <PostForm
               name="post"
               id="feed-post-card"
@@ -118,7 +118,7 @@ class HashtagPage extends React.PureComponent {
           <TrendingHashtags />
         )}
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column>
             <Feed
               onNext={this.handleNext}
               activities={hashtagFeed.activities}
