@@ -72,7 +72,7 @@ class Anomo
                 $params['form_params'] = $body;
             }
         }
-print_r($params);die();
+
         return $this->send('POST', $url, $params);
     }
 

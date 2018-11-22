@@ -25,49 +25,40 @@ class ActivitiesController extends Controller
      */
     public function submitAction(Anomo $anomo, Request $request)
     {
-        /** @var UploadedFile $photo */
-        $photo = $request->files->get('Photo');
-        if ($photo) {
-            $post = $request->request->all();
+        /** @var UploadedFile[] $files */
+        $files = $request->files->all();
+        if ($files) {
             $body = [];
-            $body['multipart'] = [
-                [
-                    'name'     => 'Photo',
-                    'filename' => $photo->getClientOriginalName(),
-                    'contents' => fopen($photo->getPathname(), 'r'),
-                    'headers'  => [
-                        'Content-Type' => $photo->getClientMimeType()
-                    ]
-                ]
-            ];
 
-            $video = $request->files->get('Video');
-            if ($video) {
-                $body['multipart'][] = [
-                    'name'     => 'Video',
-                    'filename' => $video->getClientOriginalName(),
-                    'contents' => fopen($video->getPathname(), 'r'),
-                    'headers'  => [
-                        'Content-Type' => $video->getClientMimeType()
+            foreach($files as $fieldName => $file) {
+                $body['multipart'] = [
+                    [
+                        'name'     => $fieldName,
+                        'filename' => $file->getClientOriginalName(),
+                        'contents' => fopen($file->getPathname(), 'r'),
+                        'headers'  => [
+                            'Content-Type' => $file->getClientMimeType()
+                        ]
                     ]
                 ];
             }
-
-            foreach($post as $name => $contents) {
+            foreach($request->request->all() as $fieldName => $contents) {
                 $body['multipart'][] = [
-                    'name'     => $name,
+                    'name'     => $fieldName,
                     'contents' => $contents
                 ];
             }
+
+            return $anomo->post('userPicture', [], $body);
         } else {
             $body = $this->getRequired($request->json->all(), [
                 'ProfileStatus',
                 'IsAnonymous',
                 'TopicID'
             ]);
-        }
 
-        return $anomo->post('userStatus', [], $body);
+            return $anomo->post('userStatus', [], $body);
+        }
     }
 
     /**

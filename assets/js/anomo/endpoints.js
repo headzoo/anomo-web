@@ -5,9 +5,7 @@ const base = 'https://ws.anomo.com/v101/index.php/webservice';
 const urls = {
   userBlock:                 `${base}/user/block_user/{token}/{userID}`,
   userBlocked:               `${base}/user/get_blocked_users/{token}/{userID}`,
-  userStatus:                `${base}/user/post_status/{token}`,
   userSearch:                `${base}/user/search_user/{token}/{userID}/{latitude}/{longitude}/1/0/18/100`,
-  userPicture:               `${base}/user/post_picture_activity/{token}`,
   userUpdate:                `${base}/user/update/{token}`,
   userUpdatePassword:        `${base}/profile/change_password/{token}`,
   userUpdatePrivacy:         `${base}/user/update_privacy/{token}/{userID}`,
