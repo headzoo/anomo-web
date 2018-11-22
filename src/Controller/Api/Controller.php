@@ -17,7 +17,7 @@ class Controller extends AbstractController
     protected function getRequired(array $values, array $required)
     {
         foreach($required as $name) {
-            if (empty($values[$name])) {
+            if (!isset($values[$name])) {
                 throw $this->createBadRequestException();
             }
         }

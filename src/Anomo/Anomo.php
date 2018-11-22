@@ -71,8 +71,14 @@ class Anomo
         $url    = $this->endpoints->create($endpoint, $endpointParams);
         $params = [];
         if ($body) {
-            $params['form_params'] = $body;
+            if (isset($body['multipart'])) {
+                $params = $body;
+            } else {
+                $params['form_params'] = $body;
+            }
         }
+        $this->logger->debug("ANOMO: POST ${url}", $params);
+
         $response = $this->guzzle->request('POST', $url, $params);
         $body     = trim((string)$response->getBody());
 

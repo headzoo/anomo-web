@@ -55,14 +55,16 @@ const deleteUserID = () => {
 };
 
 /**
+ * @param {string} contentType
  * @returns {AxiosInstance}
  */
-const instance = () => {
-  const headers = {
-    'Content-Type': 'application/json'
-  };
+const instance = (contentType = 'application/json') => {
+  const headers = {};
+  if (contentType) {
+    headers['Content-Type'] = contentType;
+  }
   if (token) {
-    headers.Authorization = `token ${token}`;
+    headers['Authorization'] = `token ${token}`;
   }
 
   return axios.create({
@@ -77,7 +79,8 @@ const instance = () => {
  * @returns {Promise}
  */
 const get = (url, config = {}) => {
-  return instance().get(url, config)
+  return instance()
+    .get(url, config)
     .then(resp => resp.data)
     .then((data) => {
       if (data.code !== 'OK') {
@@ -99,7 +102,17 @@ const get = (url, config = {}) => {
  * @returns {Promise}
  */
 const post = (url, body = {}, config = {}) => {
-  return instance().post(url, JSON.stringify(body), config)
+  let bodyData    = '';
+  let contentType = 'application/json';
+  if (body instanceof FormData) {
+    bodyData    = body;
+    contentType = '';
+  } else {
+    bodyData = JSON.stringify(body);
+  }
+
+  return instance(contentType)
+    .post(url, bodyData, config)
     .then(resp => resp.data)
     .then((data) => {
       if (data.code !== 'OK') {
@@ -121,7 +134,8 @@ const post = (url, body = {}, config = {}) => {
  * @returns {Promise}
  */
 const put = (url, body = {}, config = {}) => {
-  return instance().put(url, JSON.stringify(body), config)
+  return instance()
+    .put(url, JSON.stringify(body), config)
     .then(resp => resp.data)
     .then((data) => {
       if (data.code !== 'OK') {
@@ -142,7 +156,8 @@ const put = (url, body = {}, config = {}) => {
  * @returns {Promise}
  */
 const del = (url, config = {}) => {
-  return instance().delete(url, config)
+  return instance()
+    .delete(url, config)
     .then(resp => resp.data)
     .then((data) => {
       if (data.code !== 'OK') {

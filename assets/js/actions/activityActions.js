@@ -496,16 +496,14 @@ export function activityFeedPrepend(feedType, activity) {
  * @returns {function(*, *, {endpoints: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { proxy, endpoints, activities, batch }) => {
+  return (dispatch, getState, { activities, batch }) => {
     dispatch(batch(
       activityIsSubmitting(true),
       formSubmitting(formName, true)
     ));
 
-    let url  = '';
     let body = {};
     if (photo || video) {
-      url  = endpoints.create('userPicture');
       body = new FormData();
       body.append('PictureCaption', activities.createMessage(message));
       if (video) {
@@ -519,8 +517,6 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         dispatch(formError(formName, 'There was an error.'));
         return;
       }
-
-      url  = endpoints.create('userStatus');
       body = {
         'ProfileStatus': activities.createMessage(message),
         'IsAnonymous':   0,
@@ -528,17 +524,19 @@ export function activitySubmit(formName, message, photo = '', video = '') {
       };
     }
 
-    proxy.post(url, body)
-      .then((resp) => {
-        if (resp.code === 'OK') {
-          dispatch(batch(
-            formReset(formName),
-            activityFeedFetch('recent', true, false)
-          ));
-        } else {
-          dispatch(formError(formName, 'There was an error.'));
-        }
-      }).finally(() => {
+    api.request('api_activities_submit')
+      .post(body)
+      .then(() => {
+        dispatch(batch(
+          formReset(formName),
+          activityFeedFetch('recent', true, false)
+        ));
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(formError(formName, 'There was an error.'));
+      })
+      .finally(() => {
         dispatch(activityIsSubmitting(false));
       });
   };
@@ -547,21 +545,18 @@ export function activitySubmit(formName, message, photo = '', video = '') {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function activityLikeList(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     dispatch(activityIsLikeListLoading(true));
 
-    const url = endpoints.create('activityLikeList', {
-      actionType,
-      refID
-    });
-    proxy.get(url)
-      .then((data) => {
+    api.request('api_activities_likes', { refID, actionType })
+      .get()
+      .then((resp) => {
         dispatch({
           type:  ACTIVITY_LIKE_LIST,
-          likes: data.likes || [],
+          likes: resp.likes || [],
           actionType,
           refID
         });
@@ -589,10 +584,10 @@ export function activitySet(activity) {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {anomo: *})}
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function activityGet(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityReset(),
       activityIsLikeListLoading(true)
@@ -607,16 +602,10 @@ export function activityGet(refID, actionType) {
       ));
     }
 
-    const urlGet = endpoints.create('activityGet', {
-      actionType,
-      refID
-    });
-    const urlLikes = endpoints.create('activityLikeList', {
-      actionType,
-      refID
-    });
+    const reqFetch = api.request('api_activities_fetch', { refID, actionType });
+    const reqLikes = api.request('api_activities_likes', { refID, actionType });
+    const promises = [reqFetch.get(), reqLikes.get()];
 
-    const promises = [proxy.get(urlGet), proxy.get(urlLikes)];
     Promise.all(promises)
       .then((responses) => {
         const activity    = responses[0].Activity;
