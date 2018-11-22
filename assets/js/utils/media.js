@@ -71,9 +71,10 @@ export function getImageDimensions(src) {
       });
     };
     if (getConfig().https) {
-      src = src.replace('http://', 'https://');
+      img.src = src.replace('http://', 'https://');
+    } else {
+      img.src = src;
     }
-    img.src = src;
   });
 }
 
