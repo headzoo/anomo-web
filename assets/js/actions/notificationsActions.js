@@ -1,3 +1,4 @@
+import axios from 'axios';
 import * as constants from 'anomo/constants';
 import { redux } from 'utils';
 import api from 'api';
@@ -7,6 +8,22 @@ export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
 export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 
 let isClearing = false;
+let fetchSource = null;
+const { CancelToken } = axios;
+
+/**
+ * @returns {{cancelToken: *}}
+ */
+function getAxiosConfig() {
+  if (fetchSource) {
+    fetchSource.cancel();
+  }
+  fetchSource = CancelToken.source();
+
+  return {
+    cancelToken: fetchSource.token
+  };
+}
 
 /**
  * @returns {function(*, *)}
@@ -23,14 +40,17 @@ export function notificationsFetch() {
       status: constants.NOTIFICATION_STATUS_UNREAD,
       page:   1
     })
-      .send()
+      .send({}, getAxiosConfig())
       .then((resp) => {
         dispatch({
           type:          NOTIFICATIONS_FETCH,
           notifications: resp.NotificationHistory
         });
       })
-      .catch(redux.actionCatch);
+      .catch(redux.actionCatch)
+      .finally(() => {
+        fetchSource = null;
+      });
   };
 }
 
