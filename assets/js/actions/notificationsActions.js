@@ -8,7 +8,7 @@ export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 let isClearing = false;
 
 /**
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *)}
  */
 export function notificationsFetch() {
   return (dispatch, getState) => {
@@ -37,7 +37,7 @@ export function notificationsFetch() {
 
 /**
  * @param {number} notificationID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function notificationsRead(notificationID) {
   return (dispatch) => {
@@ -59,7 +59,7 @@ export function notificationsRead(notificationID) {
 }
 
 /**
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function notificationsReadAll() {
   return (dispatch) => {

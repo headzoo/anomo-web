@@ -1,3 +1,7 @@
-import Client from './Client';
+import Activities from './Activities';
+import * as constants from './constants';
 
-export default new Client();
+export default {
+  constants,
+  activities: new Activities()
+};

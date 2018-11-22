@@ -5,11 +5,12 @@ import thunk from 'redux-thunk';
 import deepmerge from 'deepmerge';
 import defaultState from 'store/defaultState';
 import faviconMiddleware from 'store/middleware/faviconMiddleware';
-import anomo from 'anomo';
+import Activities from 'anomo/Activities';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-anomo.batch = (...actions) => {
+const activities = new Activities();
+const batch = (...actions) => {
   if (Array.isArray(actions[0])) {
     return batchActions(actions[0]);
   }
@@ -27,7 +28,7 @@ export default function configureStore(initialState = {}) {
     composeEnhancers(
       applyMiddleware(
         batchDispatchMiddleware,
-        thunk.withExtraArgument(anomo),
+        thunk.withExtraArgument({ activities, batch }),
         faviconMiddleware
       )
     )

@@ -79,7 +79,7 @@ export function userIsSearchSending(isSearchSending) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function userFollowers(userID, page = 1, fetchAll = false) {
   return (dispatch) => {
@@ -105,7 +105,7 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function userFollowing(userID, page = 1, fetchAll = false) {
   return (dispatch) => {
@@ -159,28 +159,29 @@ export function userBlockedIsLoading(isBlockedLoading) {
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userBlocked(userID = 0) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
     const { user } = getState();
 
     dispatch(userBlockedIsLoading(true));
 
-    const url = endpoints.create('userBlocked', {
+    api.request('api_users_blocked', {
       userID: userID || user.UserID
-    });
-    proxy.get(url)
-      .then((data) => {
-        dispatch({
-          type:    USER_BLOCKED,
-          blocked: data.results
-        });
+    })
+      .send()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:    USER_BLOCKED,
+            blocked: resp.results
+          },
+          userBlockedIsLoading(false)
+        ));
       })
       .catch((error) => {
         console.warn(error);
-      })
-      .finally(() => {
         dispatch(userBlockedIsLoading(false));
       });
   };
@@ -200,23 +201,22 @@ export function userBlockedIsSubmitting(isBlockedSubmitting) {
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userBlock(userID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(userBlockedIsSubmitting(true));
 
-    const url = endpoints.create('userBlock', {
-      userID
-    });
-    proxy.get(url)
+    api.request('api_users_block')
+      .send({ userID })
       .then(() => {
-        dispatch(userBlocked(userID));
+        dispatch(batch(
+          userBlocked(userID),
+          userBlockedIsSubmitting(false)
+        ));
       })
       .catch((error) => {
         console.warn(error);
-      })
-      .finally(() => {
         dispatch(userBlockedIsSubmitting(false));
       });
   };
@@ -368,83 +368,87 @@ export function userRefresh() {
 /**
  * @param {string} oldPassword
  * @param {string} newPassword
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userUpdatePassword(oldPassword, newPassword) {
-  return (dispatch, getState, { proxy, endpoints }) => {
-    dispatch(userIsSettingsSending(true));
-
-    const url = endpoints.create('userUpdatePassword');
-    const body = {
-      OldPassword: md5(oldPassword),
-      NewPassword: md5(newPassword)
-    };
-    proxy.post(url, body)
-      .then(() => {
-        dispatch(formSuccess('password', 'Password updated successfully.'));
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        dispatch(userIsSettingsSending(false));
-      });
-  };
-}
-
-/**
- * @param {*} values
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
- */
-export function userUpdateSettings(values) {
-  return (dispatch, getState, { proxy, endpoints }) => {
-    dispatch(userIsSettingsSending(true));
-
-    const url = endpoints.create('userUpdate');
-    proxy.post(url, values)
-      .then((data) => {
-        dispatch(userSet(data));
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        dispatch(userIsSettingsSending(false));
-      });
-  };
-}
-
-/**
- * @param {*} values
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
- */
-export function userUpdatePrivacy(values) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     const { user } = getState();
 
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdatePrivacy', {
-      userID: user.UserID
-    });
-    proxy.post(url, values)
+    api.request('api_users_password', { userID: user.UserID })
+      .send({
+        OldPassword: oldPassword,
+        NewPassword: newPassword
+      })
       .then(() => {
-        dispatch(userSet(values));
+        dispatch(batch(
+          userIsSettingsSending(false),
+          formSuccess('password', 'Password updated successfully.')
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(userIsSettingsSending(false));
       });
   };
 }
 
 /**
- * @returns {function(*=, *, {user: *, proxy: *, endpoints: *})}
+ * @param {*} values
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userUpdateSettings(values) {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
+    dispatch(userIsSettingsSending(true));
+
+    api.request('api_users_update', { userID: user.UserID })
+      .send(values)
+      .then((resp) => {
+        dispatch(batch(
+          userSet(resp),
+          userIsSettingsSending(false)
+        ));
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(userIsSettingsSending(false));
+      });
+  };
+}
+
+/**
+ * @param {*} values
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userUpdatePrivacy(values) {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
+    dispatch(userIsSettingsSending(true));
+
+    api.request('api_users_privacy', { userID: user.UserID })
+      .send(values)
+      .then(() => {
+        dispatch(batch(
+          userSet(values),
+          userIsSettingsSending(false)
+        ));
+      })
+      .catch((error) => {
+        console.error(error);
+        dispatch(userIsSettingsSending(false));
+      });
+  };
+}
+
+/**
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function userSearch() {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     const { user } = getState();
 
     /**
@@ -454,22 +458,23 @@ export function userSearch() {
     browser.position((latitude, longitude) => {
       dispatch(userIsSearchSending(true));
 
-      const url = endpoints.create('userSearch', {
+      api.request('api_search_users', {
         userID: user.UserID,
         latitude,
         longitude
-      });
-      proxy.get(url)
-        .then((data) => {
-          dispatch({
-            type:          USER_SEARCH_RESULTS,
-            searchResults: data.results.ListUser || []
-          });
+      })
+        .send()
+        .then((resp) => {
+          dispatch(batch(
+            {
+              type:          USER_SEARCH_RESULTS,
+              searchResults: resp.results.ListUser || []
+            },
+            userIsSearchSending(false)
+          ));
         })
         .catch((error) => {
           console.warn(error);
-        })
-        .finally(() => {
           dispatch(userIsSearchSending(false));
         });
     });

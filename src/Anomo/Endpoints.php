@@ -23,7 +23,7 @@ class Endpoints
         'userFollowers'        => '/user/get_list_follower/{token}/{userID}/{page}',
         'userFollowing'        => '/user/get_list_following/{token}/{userID}/{page}',
         'userStatus'           => '/user/post_status/{token}',
-        'userSearch'           => '/user/search_user/{token}/{userID}/{latitude}/{longitude}/1/0/18/100',
+        'userSearch'           => '/user/search_user/{token}/{userID}/{latitude}/{longitude}/1/0/{minAge}/{maxAge}',
         'userPicture'          => '/user/post_picture_activity/{token}',
         'userUpdate'           => '/user/update/{token}',
         'userUpdatePassword'   => '/profile/change_password/{token}',

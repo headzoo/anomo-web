@@ -31,6 +31,50 @@ class UsersController extends Controller
     }
 
     /**
+     * @Route("/{userID}", name="update", methods={"POST"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function updateAction(Anomo $anomo, Request $request)
+    {
+        return $anomo->post('userUpdate', [], $request->json->all());
+    }
+
+    /**
+     * @Route("/{userID}/password", name="password", methods={"POST"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function passwordAction(Anomo $anomo, Request $request)
+    {
+        $body = $this->getRequired($request->json->all(), [
+            'OldPassword',
+            'NewPassword'
+        ]);
+
+        return $anomo->post('userUpdatePassword', [], [
+            'OldPassword' => md5($body['OldPassword']),
+            'NewPassword' => md5($body['NewPassword'])
+        ]);
+    }
+
+    /**
+     * @Route("/{userID}/privacy", name="privacy", methods={"POST"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function privacyAction(Anomo $anomo, Request $request)
+    {
+        return $anomo->post('userUpdatePrivacy', [], $request->json->all());
+    }
+
+    /**
      * @Route("/login", name="login", methods={"POST"})
      *
      * @param Anomo $anomo
@@ -84,6 +128,7 @@ class UsersController extends Controller
      *
      * @param Anomo $anomo
      * @param int $userID
+     * @param int $page
      * @return array
      */
     public function followingAction(Anomo $anomo, $userID, $page)
@@ -99,6 +144,7 @@ class UsersController extends Controller
      *
      * @param Anomo $anomo
      * @param int $userID
+     * @param int $page
      * @return array
      */
     public function followersAction(Anomo $anomo, $userID, $page)
@@ -121,5 +167,35 @@ class UsersController extends Controller
         return $anomo->get('userFollow', [
             'userID' => $userID
         ]);
+    }
+
+    /**
+     * @Route("/{userID}/blocked", name="blocked", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param int $userID
+     * @return array
+     */
+    public function blockedAction(Anomo $anomo, $userID)
+    {
+        return $anomo->get('userBlocked', [
+            'userID' => $userID
+        ]);
+    }
+
+    /**
+     * @Route("/{userID}/blocked", name="block", methods={"PUT"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function blockAction(Anomo $anomo, Request $request)
+    {
+        $body = $this->getRequired($request->json->all(), [
+            'userID'
+        ]);
+
+        return $anomo->post('userBlock', [], $body);
     }
 }

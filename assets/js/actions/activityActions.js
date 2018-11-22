@@ -360,7 +360,7 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
 }
 
 /**
- * @returns {function(*, *, {endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function activityTrendingHashtags() {
   return (dispatch) => {
@@ -485,7 +485,7 @@ export function activityFeedPrepend(feedType, activity) {
  * @param {string} message
  * @param {*} photo
  * @param {*} video
- * @returns {function(*, *, {endpoints: *})}
+ * @returns {function(*, *, {activities: *, batch: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
   return (dispatch, getState, { activities, batch }) => {
