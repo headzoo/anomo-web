@@ -282,7 +282,7 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       name: feedType,
       lastActivityID
     })
-      .get(getFeedFetchConfig(feedType))
+      .send(getFeedFetchConfig(feedType))
       .then((data) => {
         return anomo.activities.setImageDimensions(data.Activities)
           .then((activities) => {
@@ -333,7 +333,7 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
       page: activity.feeds.hashtag.page,
       hashtag
     })
-      .get()
+      .send()
       .then((resp) => {
         const hasMore = resp.Page < resp.TotalPage;
         return anomo.activities.setImageDimensions(resp.Activities)
@@ -365,7 +365,7 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
 export function activityTrendingHashtags() {
   return (dispatch) => {
     api.request('api_feeds_hashtags_trending')
-      .get()
+      .send()
       .then((resp) => {
         const trendingHashtags = resp.ListTrending.map((h) => {
           return h.HashTag;
@@ -427,7 +427,7 @@ export function activityFeedFetchNewNumber(feedType) {
       name:           feedType,
       lastActivityID: 0
     })
-      .get(getFeedFetchConfig(feedType))
+      .send(getFeedFetchConfig(feedType))
       .then((data) => {
         feedBuffers[feedType] = [];
         for (let i = 0; i < data.Activities.length; i++) {
@@ -517,7 +517,7 @@ export function activitySubmit(formName, message, photo = '', video = '') {
     }
 
     api.request('api_activities_submit')
-      .post(body)
+      .send(body)
       .then(() => {
         dispatch(batch(
           formReset(formName),
@@ -545,7 +545,7 @@ export function activityLikeList(refID, actionType) {
     dispatch(activityIsLikeListLoading(true));
 
     api.request('api_activities_likes', { refID, actionType })
-      .get()
+      .send()
       .then((resp) => {
         dispatch({
           type:  ACTIVITY_LIKE_LIST,
@@ -597,7 +597,7 @@ export function activityGet(refID, actionType) {
 
     const reqFetch = api.request('api_activities_fetch', { refID, actionType });
     const reqLikes = api.request('api_activities_likes', { refID, actionType });
-    const promises = [reqFetch.get(), reqLikes.get()];
+    const promises = [reqFetch.send(), reqLikes.send()];
 
     Promise.all(promises)
       .then((responses) => {
@@ -635,7 +635,7 @@ export function activityDelete(activityID) {
     dispatch(activityIsDeleteSending(true, activityID));
 
     api.request('api_activities_delete', { activityID })
-      .delete()
+      .send()
       .then(() => {
         dispatch(batch(
           {
@@ -678,7 +678,7 @@ export function activityLike(refID, actionType) {
     ));
 
     api.request('api_activities_like', { refID, actionType })
-      .put()
+      .send()
       .then(() => {
         dispatch(batch(
           activityLikeList(refID, actionType),
@@ -725,7 +725,7 @@ export function activityLikeComment(commentID, refID, actionType) {
     ));
 
     api.request('api_comments_like', { commentID, actionType })
-      .put()
+      .send()
       .catch((error) => {
         console.error(error);
         dispatch(activityLikeCommentToggle(commentID, refID));
@@ -784,7 +784,7 @@ export function activitySubmitComment(options) {
     ));
 
     api.request('api_comments_submit')
-      .put({
+      .send({
         'RefID':       values.refID,
         'ActionType':  values.actionType,
         'Content':     values.message,
@@ -808,7 +808,7 @@ export function activityDeleteComment(commentID) {
     });
 
     api.request('api_comments_delete', { commentID })
-      .delete();
+      .send();
   };
 }
 
@@ -820,7 +820,7 @@ export function activityDeleteComment(commentID) {
 export function activityCommentStopNotify(refID, actionType) {
   return (dispatch) => {
     api.request('api_activities_stop_notify', { refID, actionType })
-      .put();
+      .send();
   };
 }
 
@@ -835,7 +835,7 @@ export function activityCommentLikeList(commentID, refID, actionType) {
     dispatch(activityIsCommentListLoading(true, refID, commentID));
 
     api.request('api_comments_likes', { commentID, actionType })
-      .get()
+      .send()
       .then((resp) => {
         dispatch(batch(
           {
@@ -865,7 +865,7 @@ export function activityAnswerPoll(pollID, answerID) {
     dispatch(activityIsPollSending(true));
 
     api.request('api_activities_polls_answer', { pollID, answerID })
-      .put()
+      .send()
       .finally(() => {
         dispatch(activityIsPollSending(false));
       });

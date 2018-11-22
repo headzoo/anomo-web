@@ -84,7 +84,7 @@ export function userIsSearchSending(isSearchSending) {
 export function userFollowers(userID, page = 1, fetchAll = false) {
   return (dispatch) => {
     api.request('api_users_followers', { userID, page })
-      .get()
+      .send()
       .then((resp) => {
         dispatch({
           type:      USER_FOLLOWERS,
@@ -110,7 +110,7 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
 export function userFollowing(userID, page = 1, fetchAll = false) {
   return (dispatch) => {
     api.request('api_users_following', { userID, page })
-      .get()
+      .send()
       .then((resp) => {
         dispatch({
           type:      USER_FOLLOWING,
@@ -136,7 +136,7 @@ export function userFollow(userID) {
     const { user } = getState();
 
     api.request('api_users_follow', { userID })
-      .put()
+      .send()
       .then(() => {
         dispatch(userFollowing(user.UserID, 1, true));
       })
@@ -252,7 +252,7 @@ export function userStart(user) {
 export function userLogout() {
   return (dispatch) => {
     api.request('api_users_logout')
-      .post()
+      .send()
       .finally(() => {
         api.deleteToken();
         api.deleteUserID();
@@ -276,7 +276,7 @@ export function userLogin(username, password) {
     ));
 
     api.request('api_users_login')
-      .post({
+      .send({
         UserName: username,
         Password: password
       })
@@ -308,7 +308,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
     ));
 
     api.request('api_users_login_facebook')
-      .post({
+      .send({
         Email:         facebookEmail,
         FacebookID:    facebookUserID,
         FbAccessToken: accessToken
@@ -342,7 +342,7 @@ export function userRefresh() {
       ));
 
       api.request('api_users_fetch', { userID })
-        .get()
+        .send()
         .then((resp) => {
           const user = objects.merge(resp.results, {
             token

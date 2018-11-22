@@ -64,7 +64,7 @@ const instance = (contentType = 'application/json') => {
     headers['Content-Type'] = contentType;
   }
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers.Authorization = `token ${token}`;
   }
 
   return axios.create({
@@ -178,10 +178,32 @@ const del = (url, config = {}) => {
 class Request {
   /**
    * @param {string} url
+   * @param {string} method
    */
-  constructor(url) {
-    this.url  = url;
+  constructor(url, method = 'GET') {
+    this.url    = url;
+    this.method = method;
   }
+
+  /**
+   * @param {*} body
+   * @param {*} config
+   * @returns {Promise}
+   */
+  send = (body = {}, config = {}) => {
+    switch (this.method) {
+      case 'GET':
+        return this.get(config);
+      case 'POST':
+        return this.post(body, config);
+      case 'PUT':
+        return this.put(body, config);
+      case 'DELETE':
+        return this.delete(config);
+      default:
+        throw new Error(`Unknown method ${this.method}`);
+    }
+  };
 
   /**
    * @param {*} config
@@ -224,7 +246,10 @@ class Request {
  * @param {boolean} absolute
  */
 const request = (route, params = {}, absolute = false) => {
-  return new Request(Routing.generate(route, params, absolute));
+  return new Request(
+    Routing.generate(route, params, absolute),
+    routes.routes[route].methods[0]
+  );
 };
 
 export default {

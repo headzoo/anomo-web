@@ -22,7 +22,7 @@ export function notificationsFetch() {
       status: constants.NOTIFICATION_STATUS_UNREAD,
       page:   1
     })
-      .get()
+      .send()
       .then((resp) => {
         dispatch({
           type:          NOTIFICATIONS_FETCH,
@@ -48,7 +48,7 @@ export function notificationsRead(notificationID) {
     });
 
     api.request('api_notifications_delete', { notificationID })
-      .delete()
+      .send()
       .catch((error) => {
         console.error(error);
       })
@@ -72,7 +72,7 @@ export function notificationsReadAll() {
       status: constants.NOTIFICATION_STATUS_READ,
       page:   1
     })
-      .get()
+      .send()
       .catch((error) => {
         console.error(error);
       })
