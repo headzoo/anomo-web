@@ -10,8 +10,7 @@ const urls = {
   userUpdatePassword:        `${base}/profile/change_password/{token}`,
   userUpdatePrivacy:         `${base}/user/update_privacy/{token}/{userID}`,
   anomoListIntent:           `${base}/user/list_intent`,
-  anomoListInterest:         `${base}/user/list_interests`,
-  profilePosts:              `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`
+  anomoListInterest:         `${base}/user/list_interests`
 };
 
 class Endpoints {

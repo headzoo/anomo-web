@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *     name="api_feeds_",
  *     options={"expose"=true},
  *     defaults={"lastActivityID": 0, "page": 1},
- *     requirements={"lastActivityID": "\d+"}
+ *     requirements={"lastActivityID": "\d+", "userID": "\d+"}
  * )
  */
 class FeedsController extends Controller
@@ -21,6 +21,22 @@ class FeedsController extends Controller
     public function indexAction()
     {
         return ['recent', 'following', 'popular', 'hashtags'];
+    }
+
+    /**
+     * @Route("/users/{userID}/{lastActivityID}", name="user", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param int $userID
+     * @param int $lastActivityID
+     * @return array
+     */
+    public function userAction(Anomo $anomo, $userID, $lastActivityID)
+    {
+        return $anomo->get('feedProfile', [
+            'userID'         => $userID,
+            'lastActivityID' => $lastActivityID
+        ]);
     }
 
     /**

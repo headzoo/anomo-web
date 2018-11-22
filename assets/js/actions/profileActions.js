@@ -1,3 +1,5 @@
+import api from 'api';
+
 export const PROFILE_SENDING       = 'PROFILE_SENDING';
 export const PROFILE_POSTS_LOADING = 'PROFILE_POSTS_LOADING';
 export const PROFILE_LIKE_LOADING  = 'PROFILE_LIKE_LOADING';
@@ -68,32 +70,34 @@ export function profilePostsReset() {
  * @returns {function(*, *, {user: *})}
  */
 export function profileFetch(userID) {
-  return (dispatch, getState, { user }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(profileIsSending(true));
 
-/*    user.info(userID)
-      .then((data) => {
-        dispatch({
-          type:    PROFILE_FETCH,
-          profile: data.results
-        });
+    api.request('api_users_fetch', { userID })
+      .send()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:    PROFILE_FETCH,
+            profile: resp.results
+          },
+          profileIsSending(false)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(profileIsSending(false));
-      });*/
+      });
   };
 }
 
 /**
  * @param {number} userID
  * @param {boolean} refresh
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function profilePosts(userID, refresh = false) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(profileIsPostsLoading(true));
 
     let lastActivityID = 0;
@@ -101,23 +105,21 @@ export function profilePosts(userID, refresh = false) {
       lastActivityID = getState().profile.lastActivityID; // eslint-disable-line
     }
 
-    const url = endpoints.create('profilePosts', {
-      lastActivityID,
-      userID
-    });
-    proxy.get(url)
+    api.request('api_feeds_user', { userID, lastActivityID })
+      .send()
       .then((data) => {
-        dispatch({
-          type:       PROFILE_POSTS_FETCH,
-          activities: data.Activities,
-          isLastPage: data.Activities.length < 10,
-          refresh
-        });
+        dispatch(batch(
+          {
+            type:       PROFILE_POSTS_FETCH,
+            activities: data.Activities,
+            isLastPage: data.Activities.length < 10,
+            refresh
+          },
+          profileIsPostsLoading(false)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(profileIsPostsLoading(false));
       });
   };
@@ -127,22 +129,19 @@ export function profilePosts(userID, refresh = false) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function profileFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowers', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_followers', { userID, page })
+      .send()
+      .then((resp) => {
         dispatch({
           type:      PROFILE_FOLLOWERS,
-          followers: data.ListFollower,
+          followers: resp.ListFollower,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(profileFollowers(userID, page + 1));
         }
       })
@@ -156,22 +155,19 @@ export function profileFollowers(userID, page = 1, fetchAll = false) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function profileFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowing', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_following', { userID, page })
+      .send()
+      .then((resp) => {
         dispatch({
           type:      PROFILE_FOLLOWING,
-          following: data.ListFollowing,
+          following: resp.ListFollowing,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(profileFollowing(userID, page + 1));
         }
       })
