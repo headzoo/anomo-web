@@ -8,9 +8,7 @@ const urls = {
   userSearch:                `${base}/user/search_user/{token}/{userID}/{latitude}/{longitude}/1/0/18/100`,
   userUpdate:                `${base}/user/update/{token}`,
   userUpdatePassword:        `${base}/profile/change_password/{token}`,
-  userUpdatePrivacy:         `${base}/user/update_privacy/{token}/{userID}`,
-  anomoListIntent:           `${base}/user/list_intent`,
-  anomoListInterest:         `${base}/user/list_interests`
+  userUpdatePrivacy:         `${base}/user/update_privacy/{token}/{userID}`
 };
 
 class Endpoints {

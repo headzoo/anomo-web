@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FeedsController extends Controller
 {
     /**
-     * @Route("", name="index")
+     * @Route("", name="index", methods={"GET"})
      */
     public function indexAction()
     {

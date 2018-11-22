@@ -1,4 +1,5 @@
 import { browser } from 'utils';
+import api from 'api';
 
 export const ANOMO_TAGS            = 'ANOMO_TAGS';
 export const ANOMO_TAGS_LOADING    = 'ANOMO_TAGS_LOADING';
@@ -28,50 +29,50 @@ export function anomoIsTagsLoading(isTagsLoading) {
 }
 
 /**
- * @returns {function(*, *, {proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function anomoIntentsFetch() {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(anomoIsIntentsLoading(true));
 
-    const url = endpoints.create('anomoListIntent');
-    proxy.get(url)
-      .then((data) => {
-        dispatch({
-          type:    ANOMO_INTENTS,
-          intents: data.ListIntent
-        });
+    api.request('api_anomo_intents')
+      .send()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:    ANOMO_INTENTS,
+            intents: resp.ListIntent
+          },
+          anomoIsIntentsLoading(false)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(anomoIsIntentsLoading(false));
       });
   };
 }
 
 /**
- * @returns {function(*, *, {proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function anomoTagsFetch() {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     let tags = browser.storage.get(browser.storage.KEY_TAGS);
     if (tags) {
-      dispatch({
+      return dispatch({
         type: ANOMO_TAGS,
         tags
       });
-      return;
     }
 
     dispatch(anomoIsTagsLoading(true));
 
-    const url = endpoints.create('anomoListInterest');
-    proxy.get(url)
-      .then((data) => {
+    return api.request('api_anomo_interests')
+      .send()
+      .then((resp) => {
         tags = [];
-        data.ListInterests.forEach((group) => {
+        resp.ListInterests.forEach((group) => {
           group.TagList.forEach((tag) => {
             tags.push({
               TagID:    tag.TagID,
@@ -82,15 +83,16 @@ export function anomoTagsFetch() {
         });
 
         browser.storage.set(browser.storage.KEY_TAGS, tags);
-        dispatch({
-          type: ANOMO_TAGS,
-          tags
-        });
+        dispatch(batch(
+          {
+            type: ANOMO_TAGS,
+            tags
+          },
+          anomoIsTagsLoading(false)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(anomoIsTagsLoading(false));
       });
   };
