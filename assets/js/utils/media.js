@@ -1,5 +1,3 @@
-import { getConfig } from 'store/config';
-
 /**
  *
  * @param {string} src
@@ -58,9 +56,10 @@ export function dataURItoBlob(dataURI) {
 
 /**
  * @param {string} src
+ * @param {boolean} https
  * @returns {Promise}
  */
-export function getImageDimensions(src) {
+export function getImageDimensions(src, https = false) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -70,7 +69,7 @@ export function getImageDimensions(src) {
         src
       });
     };
-    if (getConfig().https) {
+    if (https) {
       img.src = src.replace('http://', 'https://');
     } else {
       img.src = src;

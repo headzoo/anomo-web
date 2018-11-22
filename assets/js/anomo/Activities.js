@@ -1,4 +1,5 @@
 import { objects, media } from 'utils';
+import { getConfig } from 'store/config';
 
 /**
  *
@@ -108,10 +109,11 @@ class Activities {
    * @returns {Promise}
    */
   setImageDimensions = (activities) => {
-    const promises = [];
+    const { https } = getConfig();
+    const promises  = [];
     activities.forEach((a) => {
       if (a.Image) {
-        promises.push(media.getImageDimensions(a.Image));
+        promises.push(media.getImageDimensions(a.Image, https));
       }
     });
 
