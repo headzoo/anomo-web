@@ -2,7 +2,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { profileIsLikeLoading, profileLikeToggle } from 'actions/profileActions';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 import anomo from 'anomo';
 import api from 'api';
 import * as constants from 'anomo/constants';
@@ -297,9 +297,7 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
             });
           });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         feedBuffers[feedType] = [];
         feedFetchSources[feedType] = null;
@@ -347,9 +345,7 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
             });
           });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         dispatch(activityIsFeedLoading(feedType, false));
         if (refresh) {
@@ -375,9 +371,7 @@ export function activityTrendingHashtags() {
           trendingHashtags
         });
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -445,9 +439,7 @@ export function activityFeedFetchNewNumber(feedType) {
             ));
           });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         feedFetchSources[feedType] = null;
       });
@@ -526,7 +518,7 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(batch(
           formError(formName, 'There was an error.'),
           activityIsSubmitting(false)
@@ -554,9 +546,7 @@ export function activityLikeList(refID, actionType) {
           refID
         });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         dispatch(activityIsLikeListLoading(false));
       });
@@ -616,7 +606,7 @@ export function activityGet(refID, actionType) {
           });
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(batch(
           activityIsActivityLoading(false),
           activityIsCommentsLoading(false),
@@ -646,7 +636,7 @@ export function activityDelete(activityID) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(activityIsDeleteSending(false, activityID));
       });
   };
@@ -687,7 +677,7 @@ export function activityLike(refID, actionType) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(batch(
           activityLikeToggle(refID),
           profileLikeToggle(refID),
@@ -727,7 +717,7 @@ export function activityLikeComment(commentID, refID, actionType) {
     api.request('api_comments_like', { commentID, actionType })
       .send()
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(activityLikeCommentToggle(commentID, refID));
       })
       .finally(() => {
@@ -849,7 +839,7 @@ export function activityCommentLikeList(commentID, refID, actionType) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(activityIsCommentListLoading(false, refID, commentID));
       });
   };

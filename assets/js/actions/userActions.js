@@ -1,5 +1,4 @@
-import md5 from 'md5';
-import { objects, browser } from 'utils';
+import { objects, browser, redux } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
@@ -95,9 +94,7 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
           dispatch(userFollowers(userID, page + 1, false));
         }
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -121,9 +118,7 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
           dispatch(userFollowing(userID, page + 1, true));
         }
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -140,9 +135,7 @@ export function userFollow(userID) {
       .then(() => {
         dispatch(userFollowing(user.UserID, 1, true));
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -181,7 +174,7 @@ export function userBlocked(userID = 0) {
         ));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
         dispatch(userBlockedIsLoading(false));
       });
   };
@@ -216,7 +209,7 @@ export function userBlock(userID) {
         ));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
         dispatch(userBlockedIsSubmitting(false));
       });
   };
@@ -284,7 +277,7 @@ export function userLogin(username, password) {
         dispatch(userStart(resp));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
         dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
       })
@@ -317,7 +310,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
         dispatch(userStart(resp));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
         dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
       })
@@ -350,7 +343,7 @@ export function userRefresh() {
           dispatch(userStart(user));
         })
         .catch((error) => {
-          console.warn(error);
+          redux.actionCatch(error);
           dispatch(userLogout());
         })
         .finally(() => {
@@ -388,7 +381,7 @@ export function userUpdatePassword(oldPassword, newPassword) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
@@ -413,7 +406,7 @@ export function userUpdateSettings(values) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
@@ -438,7 +431,7 @@ export function userUpdatePrivacy(values) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
@@ -474,7 +467,7 @@ export function userSearch() {
           ));
         })
         .catch((error) => {
-          console.warn(error);
+          redux.actionCatch(error);
           dispatch(userIsSearchSending(false));
         });
     });

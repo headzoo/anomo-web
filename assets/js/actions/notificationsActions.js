@@ -1,4 +1,5 @@
 import * as constants from 'anomo/constants';
+import { redux } from 'utils';
 import api from 'api';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
@@ -29,9 +30,7 @@ export function notificationsFetch() {
           notifications: resp.NotificationHistory
         });
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -49,9 +48,7 @@ export function notificationsRead(notificationID) {
 
     api.request('api_notifications_delete', { notificationID })
       .send()
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         isClearing = false;
       });
@@ -73,9 +70,7 @@ export function notificationsReadAll() {
       page:   1
     })
       .send()
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         isClearing = false;
       });

@@ -1,4 +1,4 @@
-import { browser } from 'utils';
+import { browser, redux } from 'utils';
 import api from 'api';
 
 export const ANOMO_TAGS            = 'ANOMO_TAGS';
@@ -47,7 +47,7 @@ export function anomoIntentsFetch() {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(anomoIsIntentsLoading(false));
       });
   };
@@ -92,7 +92,7 @@ export function anomoTagsFetch() {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(anomoIsTagsLoading(false));
       });
   };

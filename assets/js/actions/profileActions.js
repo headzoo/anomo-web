@@ -1,3 +1,4 @@
+import { redux } from 'utils';
 import api from 'api';
 
 export const PROFILE_SENDING       = 'PROFILE_SENDING';
@@ -85,7 +86,7 @@ export function profileFetch(userID) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(profileIsSending(false));
       });
   };
@@ -119,7 +120,7 @@ export function profilePosts(userID, refresh = false) {
         ));
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(profileIsPostsLoading(false));
       });
   };
@@ -145,9 +146,7 @@ export function profileFollowers(userID, page = 1, fetchAll = false) {
           dispatch(profileFollowers(userID, page + 1));
         }
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -171,8 +170,6 @@ export function profileFollowing(userID, page = 1, fetchAll = false) {
           dispatch(profileFollowing(userID, page + 1));
         }
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }

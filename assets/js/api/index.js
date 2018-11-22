@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { browser } from 'utils';
+import { getConfig } from 'store/config';
 import Routing from '../../../public/bundles/fosjsrouting/js/router';
 import routes from '../../../public/build/js/routes.json';
 
@@ -68,7 +69,7 @@ const instance = (contentType = 'application/json') => {
   }
 
   return axios.create({
-    timeout: 10000,
+    timeout: getConfig().axios.timeout,
     headers
   });
 };

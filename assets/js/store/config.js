@@ -12,6 +12,9 @@ let config = {
   anomo: {
     maxChars: 520
   },
+  axios: {
+    timeout: 10000
+  },
   facebook: {
     appID:  '1581500341950614',
     fields: 'name,email,picture'
