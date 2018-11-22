@@ -62,6 +62,22 @@ class ActivitiesController extends Controller
     }
 
     /**
+     * @Route("/polls/{pollID}/{answerID}", name="polls_answer", methods={"PUT"})
+     *
+     * @param Anomo $anomo
+     * @param int $pollID
+     * @param int $answerID
+     * @return array
+     */
+    public function answerPollAction(Anomo $anomo, $pollID, $answerID)
+    {
+        return $anomo->get('activityAnswerPoll', [
+            'pollID'   => $pollID,
+            'answerID' => $answerID
+        ]);
+    }
+
+    /**
      * @Route("/{activityID}", name="delete", methods={"DELETE"})
      *
      * @param Anomo $anomo
@@ -118,6 +134,22 @@ class ActivitiesController extends Controller
     public function likeAction(Anomo $anomo, $refID, $actionType)
     {
         return $anomo->get('activityLike', [
+            'refID'      => $refID,
+            'actionType' => $actionType
+        ]);
+    }
+
+    /**
+     * @Route("/{refID}/{actionType}/notifications", name="stop_notify", methods={"PUT"})
+     *
+     * @param Anomo $anomo
+     * @param int $refID
+     * @param int $actionType
+     * @return array
+     */
+    public function notificationsAction(Anomo $anomo, $refID, $actionType)
+    {
+        return $anomo->get('commentStopNotify', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);

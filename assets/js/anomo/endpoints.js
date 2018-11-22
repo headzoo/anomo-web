@@ -11,11 +11,7 @@ const urls = {
   userUpdatePrivacy:         `${base}/user/update_privacy/{token}/{userID}`,
   anomoListIntent:           `${base}/user/list_intent`,
   anomoListInterest:         `${base}/user/list_interests`,
-  profilePosts:              `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`,
-  activityCommentLikeList:   `${base}/comment/likelist/{token}/{commentID}/{actionType}`,
-  activityCommentDelete:     `${base}/comment/delete/{token}/{commentID}`,
-  activityCommentStopNotify: `${base}/comment/stop_receive_notify/{token}/{refID}/{actionType}`,
-  activityAnswerPoll:        `${base}/poll/answer_poll/{token}/{pollID}/{answerID}`
+  profilePosts:              `${base}/profile/get_user_post/{token}/{userID}/0/{lastActivityID}`
 };
 
 class Endpoints {

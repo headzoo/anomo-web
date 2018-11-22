@@ -798,34 +798,29 @@ export function activitySubmitComment(options) {
 
 /**
  * @param {number} commentID
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityDeleteComment(commentID) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch) => {
     dispatch({
       type: ACTIVITY_COMMENT_DELETE,
       commentID
     });
 
-    const url = endpoints.create('activityCommentDelete', {
-      commentID
-    });
-    proxy.get(url);
+    api.request('api_comments_delete', { commentID })
+      .delete();
   };
 }
 
 /**
  * @param {number} refID
  * @param {string} actionType
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityCommentStopNotify(refID, actionType) {
-  return (dispatch, getState, { proxy, endpoints }) => {
-    const url = endpoints.create('activityCommentStopNotify', {
-      actionType,
-      refID
-    });
-    proxy.get(url);
+  return (dispatch) => {
+    api.request('api_activities_stop_notify', { refID, actionType })
+      .put();
   };
 }
 
@@ -833,30 +828,28 @@ export function activityCommentStopNotify(refID, actionType) {
  * @param {number} commentID
  * @param {number} refID
  * @param {string} actionType
- * @returns {function(*, *, {proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityCommentLikeList(commentID, refID, actionType) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(activityIsCommentListLoading(true, refID, commentID));
 
-    const url = endpoints.create('activityCommentLikeList', {
-      actionType,
-      commentID
-    });
-    proxy.get(url)
-      .then((data) => {
-        dispatch({
-          type:  ACTIVITY_COMMENT_LIKE_LIST,
-          likes: data.likes,
-          refID,
-          commentID,
-          actionType
-        });
+    api.request('api_comments_likes', { commentID, actionType })
+      .get()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:  ACTIVITY_COMMENT_LIKE_LIST,
+            likes: resp.likes,
+            refID,
+            commentID,
+            actionType
+          },
+          activityIsCommentListLoading(false, refID, commentID)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(activityIsCommentListLoading(false, refID, commentID));
       });
   };
@@ -865,17 +858,14 @@ export function activityCommentLikeList(commentID, refID, actionType) {
 /**
  * @param {number} pollID
  * @param {number} answerID
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityAnswerPoll(pollID, answerID) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch) => {
     dispatch(activityIsPollSending(true));
 
-    const url = endpoints.create('activityAnswerPoll', {
-      answerID,
-      pollID
-    });
-    proxy.get(url)
+    api.request('api_activities_polls_answer', { pollID, answerID })
+      .put()
       .finally(() => {
         dispatch(activityIsPollSending(false));
       });
