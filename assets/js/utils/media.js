@@ -1,3 +1,5 @@
+import { getConfig } from 'store/config';
+
 /**
  *
  * @param {string} src
@@ -68,6 +70,9 @@ export function getImageDimensions(src) {
         src
       });
     };
+    if (getConfig().https) {
+      src = src.replace('http://', 'https://');
+    }
     img.src = src;
   });
 }
