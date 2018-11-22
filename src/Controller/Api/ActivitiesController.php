@@ -62,6 +62,20 @@ class ActivitiesController extends Controller
     }
 
     /**
+     * @Route("/{activityID}", name="delete", methods={"DELETE"})
+     *
+     * @param Anomo $anomo
+     * @param int $activityID
+     * @return array
+     */
+    public function deleteAction(Anomo $anomo, $activityID)
+    {
+        return $anomo->get('activityDelete', [
+            'activityID' => $activityID
+        ]);
+    }
+
+    /**
      * @Route("/{refID}/{actionType}", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
@@ -88,6 +102,22 @@ class ActivitiesController extends Controller
     public function likesAction(Anomo $anomo, $refID, $actionType)
     {
         return $anomo->get('activityLikeList', [
+            'refID'      => $refID,
+            'actionType' => $actionType
+        ]);
+    }
+
+    /**
+     * @Route("/{refID}/{actionType}/likes", name="like", methods={"PUT"})
+     *
+     * @param Anomo $anomo
+     * @param int $refID
+     * @param int $actionType
+     * @return array
+     */
+    public function likeAction(Anomo $anomo, $refID, $actionType)
+    {
+        return $anomo->get('activityLike', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);

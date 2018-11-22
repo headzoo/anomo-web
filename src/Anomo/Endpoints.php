@@ -32,7 +32,7 @@ class Endpoints
         'anomoListInterest'    => '/user/list_interests',
         'feed'                 => '/activity/get_activities/{token}/{actionType}/{feedType}/-1/{gender}/{minAge}/{maxAge}/{lastActivityID}/0',
         'feedProfile'          => '/profile/get_user_post/{token}/{userID}/0/{lastActivityID}',
-        'feedHashtag'          => '/activity/get_activities/{token}/{page}/0/-1/0/{minAge}/100/0/0',
+        'feedHashtag'          => '/activity/get_activities/{token}/{page}/0/-1/0/{minAge}/{maxAge}/0/0',
         'activity'             => '/activity/detail/{token}/{refID}/{actionType}',
         'activityDelete'       => '/user/delete_activity/{token}/{activityID}',
         'activityLike'         => '/activity/like/{token}/{refID}/{actionType}/false',

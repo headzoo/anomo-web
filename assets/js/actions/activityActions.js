@@ -317,10 +317,10 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
 /**
  * @param {string} hashtag
  * @param {boolean} refresh
- * @returns {function(*=, *, {endpoints: *, proxy: *})}
+ * @returns {function(*=, *)}
  */
 export function activityFetchByHashtag(hashtag, refresh = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState) => {
     const { activity } = getState();
     const feedType = 'hashtag';
 
@@ -329,22 +329,14 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
       dispatch(activityIsFeedRefreshing(feedType, true));
     }
 
-    const url = endpoints.create('activityFeedHashtag', {
-      page: activity.feeds.hashtag.page
-    });
-    const body = {
-      'HashTag': hashtag
-    };
-
-    proxy.post(url, body)
-      .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
-        const hasMore = data.Page < data.TotalPage;
-
-        return anomo.activities.setImageDimensions(data.Activities)
+    api.request('api_feeds_hashtag', {
+      page: activity.feeds.hashtag.page,
+      hashtag
+    })
+      .get()
+      .then((resp) => {
+        const hasMore = resp.Page < resp.TotalPage;
+        return anomo.activities.setImageDimensions(resp.Activities)
           .then((activities) => {
             dispatch({
               type: ACTIVITY_FEED_FETCH,
@@ -636,26 +628,25 @@ export function activityGet(refID, actionType) {
 
 /**
  * @param {number} activityID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityDelete(activityID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(activityIsDeleteSending(true, activityID));
 
-    const url = endpoints.create('activityDelete', {
-      activityID
-    });
-    proxy.get(url)
+    api.request('api_activities_delete', { activityID })
+      .delete()
       .then(() => {
-        dispatch({
-          type: ACTIVITY_DELETE,
-          activityID
-        });
+        dispatch(batch(
+          {
+            type: ACTIVITY_DELETE,
+            activityID
+          },
+          activityIsDeleteSending(false, activityID)
+        ));
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
         dispatch(activityIsDeleteSending(false, activityID));
       });
   };
@@ -675,10 +666,10 @@ export function activityLikeToggle(refID) {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {anomo: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityLike(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityIsLikeLoading(true, refID),
       profileIsLikeLoading(true, refID),
@@ -686,23 +677,20 @@ export function activityLike(refID, actionType) {
       profileLikeToggle(refID)
     ));
 
-    const url = endpoints.create('activityLike', {
-      actionType,
-      refID
-    });
-    proxy.get(url)
+    api.request('api_activities_like', { refID, actionType })
+      .put()
       .then(() => {
-        dispatch(activityLikeList(refID, actionType));
+        dispatch(batch(
+          activityLikeList(refID, actionType),
+          activityIsLikeLoading(false, refID),
+          profileIsLikeLoading(false, refID)
+        ));
       })
       .catch((error) => {
         console.error(error);
         dispatch(batch(
           activityLikeToggle(refID),
-          profileLikeToggle(refID)
-        ));
-      })
-      .finally(() => {
-        dispatch(batch(
+          profileLikeToggle(refID),
           activityIsLikeLoading(false, refID),
           profileIsLikeLoading(false, refID)
         ));
@@ -727,20 +715,17 @@ export function activityLikeCommentToggle(commentID, refID) {
  * @param {number} commentID
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityLikeComment(commentID, refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityIsLikeCommentLoading(true, commentID),
       activityLikeCommentToggle(commentID, refID)
     ));
 
-    const url = endpoints.create('activityCommentLike', {
-      actionType,
-      commentID
-    });
-    proxy.get(url)
+    api.request('api_comments_like', { commentID, actionType })
+      .put()
       .catch((error) => {
         console.error(error);
         dispatch(activityLikeCommentToggle(commentID, refID));
@@ -765,10 +750,10 @@ export function activityReport(refID, actionType) {
 
 /**
  * @param {*} options
- * @returns {function(*, *, {endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activitySubmitComment(options) {
-  return (dispatch, getState, { proxy, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     const values = objects.merge({
       formName:    '',
       message:     '',
@@ -798,20 +783,16 @@ export function activitySubmitComment(options) {
       }
     ));
 
-    const url = endpoints.create('activityComment', {
-      actionType: values.actionType,
-      refID:      values.refID
-    });
-    proxy.post(url, {
-      'Content':     values.message,
-      'IsAnonymous': values.isAnonymous
-    }).then((resp) => {
-      if (resp.code !== 'OK') {
-        dispatch(formError(values.formName, 'There was an error.'));
-      }
-    }).finally(() => {
-      dispatch(formSubmitting(values.formName, false));
-    });
+    api.request('api_comments_submit')
+      .put({
+        'RefID':       values.refID,
+        'ActionType':  values.actionType,
+        'Content':     values.message,
+        'IsAnonymous': values.isAnonymous
+      })
+      .finally(() => {
+        dispatch(formSubmitting(values.formName, false));
+      });
   };
 }
 

@@ -24,14 +24,33 @@ class FeedsController extends Controller
     }
 
     /**
-     * @Route("/hashtags/trending", name="hashtags_trending", methods={"GET"})
+     * @Route("/hashtags/_trending", name="hashtags_trending", methods={"GET"})
      *
      * @param Anomo $anomo
      * @return array
      */
-    public function hashtagsAction(Anomo $anomo)
+    public function trendingHashtagsAction(Anomo $anomo)
     {
         return $anomo->get('trendingHashtags');
+    }
+
+    /**
+     * @Route("/hashtags/{hashtag}/{page}", name="hashtag", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param string $hashtag
+     * @param int $page
+     * @return array
+     */
+    public function hashtagAction(Anomo $anomo, $hashtag, $page = 1)
+    {
+        return $anomo->post('feedHashtag', [
+            'page'   => $page,
+            'minAge' => 13,
+            'maxAge' => 100
+        ], [
+            'HashTag' => $hashtag
+        ]);
     }
 
     /**
