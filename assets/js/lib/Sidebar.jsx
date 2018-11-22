@@ -200,7 +200,7 @@ class Sidebar extends React.PureComponent {
 
     if (notifications.notifications.length === 0) {
       return (
-        <div className="gutter">
+        <div className="gutter text-center text-dim">
           No notifications.
         </div>
       );

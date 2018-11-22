@@ -29,7 +29,13 @@
 
 .drawer-content-wrapper {
   color: #FFF;
-  background-color: #343A40;
+  background-color: #282b35;
+  border-right: 1px solid #5a5a5a;
+  box-shadow: 1px 0 5px 0 rgba(0, 0, 0, 0.21);
+
+  .btn {
+    border: 0;
+  }
 }
 
 .drawer-header {
