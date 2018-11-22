@@ -115,6 +115,49 @@ const post = (url, body = {}, config = {}) => {
 };
 
 /**
+ * @param {string} url
+ * @param {*} body
+ * @param {*} config
+ * @returns {Promise}
+ */
+const put = (url, body = {}, config = {}) => {
+  return instance().put(url, JSON.stringify(body), config)
+    .then(resp => resp.data)
+    .then((data) => {
+      if (data.code !== 'OK') {
+        throw new Error(data.code);
+      }
+      return data;
+    })
+    .catch((error) => {
+      if (!axios.isCancel(error)) {
+        throw error;
+      }
+    });
+};
+
+/**
+ * @param {string} url
+ * @param {*} config
+ * @returns {Promise}
+ */
+const del = (url, config = {}) => {
+  return instance().delete(url, config)
+    .then(resp => resp.data)
+    .then((data) => {
+      if (data.code !== 'OK') {
+        throw new Error(data.code);
+      }
+      return data;
+    })
+    .catch((error) => {
+      if (!axios.isCancel(error)) {
+        throw error;
+      }
+    });
+};
+
+/**
  *
  */
 class Request {
@@ -140,7 +183,24 @@ class Request {
    */
   post = (body = {}, config = {}) => {
     return post(this.url, body, config);
-  }
+  };
+
+  /**
+   * @param {*} body
+   * @param {*} config
+   * @returns {Promise}
+   */
+  put = (body = {}, config = {}) => {
+    return put(this.url, body, config);
+  };
+
+  /**
+   * @param {*} config
+   * @returns {Promise}
+   */
+  'delete' = (config = {}) => {
+    return del(this.url, config);
+  };
 }
 
 /**
@@ -154,6 +214,8 @@ const request = (route, params = {}, absolute = false) => {
 
 export default {
   get,
+  put,
+  del,
   post,
   request,
   setToken,

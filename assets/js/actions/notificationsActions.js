@@ -1,4 +1,5 @@
 import * as constants from 'anomo/constants';
+import api from 'api';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
 export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
@@ -10,22 +11,22 @@ let isClearing = false;
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsFetch() {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState) => {
     const { user } = getState();
 
     if (isClearing || !user.isAuthenticated) {
       return;
     }
 
-    const url = endpoints.create('notificationsHistory', {
+    api.request('api_notifications_fetch', {
       status: constants.NOTIFICATION_STATUS_UNREAD,
       page:   1
-    });
-    proxy.get(url)
-      .then((data) => {
+    })
+      .get()
+      .then((resp) => {
         dispatch({
           type:          NOTIFICATIONS_FETCH,
-          notifications: data.NotificationHistory
+          notifications: resp.NotificationHistory
         });
       })
       .catch((error) => {
@@ -39,19 +40,17 @@ export function notificationsFetch() {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsRead(notificationID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     isClearing = true;
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
     });
 
-    const url = endpoints.create('notificationsRead', {
-      notificationID
-    });
-    proxy.get(url)
+    api.request('api_notifications_delete', { notificationID })
+      .delete()
       .catch((error) => {
-        console.warn(error);
+        console.error(error);
       })
       .finally(() => {
         isClearing = false;
@@ -63,19 +62,19 @@ export function notificationsRead(notificationID) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function notificationsReadAll() {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     isClearing = true;
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });
 
-    const url = endpoints.create('notificationsHistory', {
+    api.request('api_notifications_fetch', {
       status: constants.NOTIFICATION_STATUS_READ,
       page:   1
-    });
-    proxy.get(url)
+    })
+      .get()
       .catch((error) => {
-        console.warn(error);
+        console.error(error);
       })
       .finally(() => {
         isClearing = false;

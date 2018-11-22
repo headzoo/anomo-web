@@ -5,7 +5,13 @@ use App\Anomo\Anomo;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/feeds", name="api_feeds_", options={"expose"=true})
+ * @Route(
+ *     "/feeds",
+ *     name="api_feeds_",
+ *     options={"expose"=true},
+ *     defaults={"lastActivityID": 0, "page": 1},
+ *     requirements={"lastActivityID": "\d+"}
+ * )
  */
 class FeedsController extends Controller
 {
@@ -14,23 +20,29 @@ class FeedsController extends Controller
      */
     public function indexAction()
     {
-        return ['recent', 'following', 'popular'];
+        return ['recent', 'following', 'popular', 'hashtags'];
     }
 
     /**
-     * @Route(
-     *     "/anomo/{name}/{lastActivityID<\d+>}",
-     *     defaults={"lastActivityID": 0},
-     *     name="anomo",
-     *     methods={"GET"}
-     * )
+     * @Route("/hashtags/trending", name="hashtags_trending", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @return array
+     */
+    public function hashtagsAction(Anomo $anomo)
+    {
+        return $anomo->get('trendingHashtags');
+    }
+
+    /**
+     * @Route("/{name}/{lastActivityID}", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
      * @param string $name
      * @param int $lastActivityID
      * @return array
      */
-    public function anomoAction(Anomo $anomo, $name, $lastActivityID)
+    public function fetchAction(Anomo $anomo, $name, $lastActivityID)
     {
         $name = strtolower($name);
         $feedTypes = [

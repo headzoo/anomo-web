@@ -82,19 +82,16 @@ export function userIsSearchSending(isSearchSending) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowers', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_followers', { userID, page })
+      .get()
+      .then((resp) => {
         dispatch({
           type:      USER_FOLLOWERS,
-          followers: data.ListFollower,
+          followers: resp.ListFollower,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(userFollowers(userID, page + 1, false));
         }
       })
@@ -111,19 +108,16 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
  * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
  */
 export function userFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowing', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_following', { userID, page })
+      .get()
+      .then((resp) => {
         dispatch({
           type:      USER_FOLLOWING,
-          following: data.ListFollowing,
+          following: resp.ListFollowing,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(userFollowing(userID, page + 1, true));
         }
       })
@@ -135,16 +129,16 @@ export function userFollowing(userID, page = 1, fetchAll = false) {
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *)}
  */
 export function userFollow(userID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollow', {
-      userID
-    });
-    proxy.get(url)
+  return (dispatch, getState) => {
+    const { user } = getState();
+
+    api.request('api_users_follow', { userID })
+      .put()
       .then(() => {
-        dispatch(userFollowing(userID, 1, true));
+        dispatch(userFollowing(user.UserID, 1, true));
       })
       .catch((error) => {
         console.warn(error);
@@ -257,7 +251,7 @@ export function userStart(user) {
  */
 export function userLogout() {
   return (dispatch) => {
-    api.request('api_users_anomo_logout')
+    api.request('api_users_logout')
       .post()
       .finally(() => {
         api.deleteToken();
@@ -281,7 +275,7 @@ export function userLogin(username, password) {
       userIsSending(true)
     ));
 
-    api.request('api_users_anomo_login')
+    api.request('api_users_login')
       .post({
         UserName: username,
         Password: password
@@ -313,7 +307,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
       userIsSending(true)
     ));
 
-    api.request('api_users_anomo_login_facebook')
+    api.request('api_users_login_facebook')
       .post({
         Email:         facebookEmail,
         FacebookID:    facebookUserID,
@@ -347,12 +341,12 @@ export function userRefresh() {
         userIsSending(true)
       ));
 
-      api.request('api_users_anomo_info', { userID })
+      api.request('api_users_fetch', { userID })
         .get()
         .then((resp) => {
-          const user = userStart(objects.merge(resp.results, {
+          const user = objects.merge(resp.results, {
             token
-          }));
+          });
           dispatch(userStart(user));
         })
         .catch((error) => {

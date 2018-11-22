@@ -104,6 +104,9 @@
             "ref": "509b1542f3180a1cfe248ade8b7bf5092c2d4127"
         }
     },
+    "monolog/monolog": {
+        "version": "1.24.0"
+    },
     "namshi/jose": {
         "version": "7.2.3"
     },
@@ -202,6 +205,18 @@
     },
     "symfony/inflector": {
         "version": "v4.1.6"
+    },
+    "symfony/monolog-bridge": {
+        "version": "v4.1.7"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.1",
+            "ref": "18ebf5a940573a20de06f9c4060101eeb438cf3d"
+        }
     },
     "symfony/orm-pack": {
         "version": "v1.0.5"

@@ -6,18 +6,38 @@ use App\Http\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/users", name="api_users_", options={"expose"=true})
+ * @Route(
+ *     "/users",
+ *     name="api_users_",
+ *     options={"expose"=true},
+ *     defaults={"page": 1},
+ *     requirements={"userID": "\d+", "page": "\d+"}
+ * )
  */
 class UsersController extends Controller
 {
     /**
-     * @Route("/anomo/login", name="anomo_login", methods={"POST"})
+     * @Route("/{userID}", name="fetch", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param int $userID
+     * @return array
+     */
+    public function fetchAction(Anomo $anomo, $userID)
+    {
+        return $anomo->get('user', [
+            'userID' => $userID
+        ]);
+    }
+
+    /**
+     * @Route("/login", name="login", methods={"POST"})
      *
      * @param Anomo $anomo
      * @param Request $request
      * @return array
      */
-    public function anomoLoginAction(Anomo $anomo, Request $request)
+    public function loginAction(Anomo $anomo, Request $request)
     {
         $body = $this->getRequired($request->json->all(), [
             'UserName',
@@ -31,13 +51,13 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/anomo/login/facebook", name="anomo_login_facebook", methods={"POST"})
+     * @Route("/login/facebook", name="login_facebook", methods={"POST"})
      *
      * @param Anomo $anomo
      * @param Request $request
      * @return array
      */
-    public function anomoFacebookLoginAction(Anomo $anomo, Request $request)
+    public function facebookLoginAction(Anomo $anomo, Request $request)
     {
         $body = $this->getRequired($request->json->all(), [
             'Email',
@@ -49,26 +69,56 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/anomo/logout", name="anomo_logout", methods={"POST"})
+     * @Route("/logout", name="logout", methods={"POST"})
      *
      * @param Anomo $anomo
      * @return array
      */
-    public function anomoLogoutAction(Anomo $anomo)
+    public function logoutAction(Anomo $anomo)
     {
         return $anomo->post('userLogout');
     }
 
     /**
-     * @Route("/anomo/{userID}", name="anomo_info", methods={"GET"})
+     * @Route("/{userID}/following/{page}", name="following", methods={"GET"})
      *
      * @param Anomo $anomo
      * @param int $userID
      * @return array
      */
-    public function anomoInfoAction(Anomo $anomo, $userID)
+    public function followingAction(Anomo $anomo, $userID, $page)
     {
-        return $anomo->get('user', [
+        return $anomo->get('userFollowing', [
+            'userID' => $userID,
+            'page'   => $page
+        ]);
+    }
+
+    /**
+     * @Route("/{userID}/followers/{page}", name="followers", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param int $userID
+     * @return array
+     */
+    public function followersAction(Anomo $anomo, $userID, $page)
+    {
+        return $anomo->get('userFollowers', [
+            'userID' => $userID,
+            'page'   => $page
+        ]);
+    }
+
+    /**
+     * @Route("/{userID}/followers", name="follow", methods={"PUT"})
+     *
+     * @param Anomo $anomo
+     * @param int $userID
+     * @return array
+     */
+    public function followAction(Anomo $anomo, $userID)
+    {
+        return $anomo->get('userFollow', [
             'userID' => $userID
         ]);
     }

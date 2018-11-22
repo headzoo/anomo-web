@@ -2,6 +2,7 @@
 namespace App\Anomo;
 
 use GuzzleHttp;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Anomo
@@ -19,10 +20,18 @@ class Anomo
     protected $endpoints;
 
     /**
-     * Constructor
+     * @var LoggerInterface
      */
-    public function __construct()
+    protected $logger;
+
+    /**
+     * Constructor
+     *
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
     {
+        $this->logger    = $logger;
         $this->guzzle    = new GuzzleHttp\Client();
         $this->endpoints = new Endpoints();
     }
@@ -42,7 +51,9 @@ class Anomo
      */
     public function get($endpoint, $endpointParams = [])
     {
-        $url      = $this->endpoints->create($endpoint, $endpointParams);
+        $url = $this->endpoints->create($endpoint, $endpointParams);
+        $this->logger->debug("ANOMO: GET ${url}");
+
         $response = $this->guzzle->request('GET', $url);
         $body     = trim((string)$response->getBody());
 

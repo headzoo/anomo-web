@@ -6,7 +6,6 @@ import { objects } from 'utils';
 import anomo from 'anomo';
 import api from 'api';
 import * as constants from 'anomo/constants';
-import Routing from '../../../public/bundles/fosjsrouting/js/router';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
 export const ACTIVITY_SET                  = 'ACTIVITY_SET';
@@ -49,12 +48,6 @@ const feedBuffers = {
 };
 
 const feedFetchSources = {
-  recent:    null,
-  popular:   null,
-  following: null
-};
-
-const feedFetchNewNumberSources = {
   recent:    null,
   popular:   null,
   following: null
@@ -285,7 +278,7 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
     }
 
     const lastActivityID = refresh ? 0 : getState().activity.feeds[feedType].lastActivityID;
-    return api.request('api_feeds_anomo', {
+    return api.request('api_feeds_fetch', {
       name: feedType,
       lastActivityID
     })
@@ -378,9 +371,9 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
  * @returns {function(*, *, {endpoints: *, proxy: *})}
  */
 export function activityTrendingHashtags() {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('activityTrendingHashtags');
-    proxy.get(url)
+  return (dispatch) => {
+    api.request('api_feeds_hashtags_trending')
+      .get()
       .then((resp) => {
         const trendingHashtags = resp.ListTrending.map((h) => {
           return h.HashTag;
@@ -423,56 +416,27 @@ export function activityFeedUpdate(activities) {
 
 /**
  * @param {string} feedType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function activityFeedFetchNewNumber(feedType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     const { activity } = getState();
     const { firstActivityID } = activity.feeds[feedType];
 
     if (firstActivityID === 0) {
-      dispatch({
+      return dispatch({
         type:      ACTIVITY_FEED_NEW_NUMBER,
         newNumber: 0,
         feedType
       });
-      return;
     }
 
-    if (feedFetchNewNumberSources[feedType]) {
-      feedFetchNewNumberSources[feedType].cancel();
-    }
-    feedFetchNewNumberSources[feedType] = CancelToken.source();
-
-    const config = {
-      cancelToken: feedFetchNewNumberSources[feedType].token
-    };
-
-    let url = '';
-    switch (feedType) {
-      case 'recent':
-        url = endpoints.create('activityFeedRecent', {
-          lastActivityID: 0
-        });
-        break;
-      case 'popular':
-        url = endpoints.create('activityFeedPopular', {
-          lastActivityID: 0
-        });
-        break;
-      case 'following':
-        url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: 0
-        });
-        break;
-    }
-
-    proxy.get(url, config)
+    return api.request('api_feeds_fetch', {
+      name:           feedType,
+      lastActivityID: 0
+    })
+      .get(getFeedFetchConfig(feedType))
       .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
         feedBuffers[feedType] = [];
         for (let i = 0; i < data.Activities.length; i++) {
           const a = data.Activities[i];
@@ -489,13 +453,11 @@ export function activityFeedFetchNewNumber(feedType) {
             ));
           });
       })
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          throw err;
-        }
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
-        feedFetchNewNumberSources[feedType] = null;
+        feedFetchSources[feedType] = null;
       });
   };
 }
