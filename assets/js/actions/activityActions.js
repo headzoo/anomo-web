@@ -498,8 +498,8 @@ export function activityFeedPrepend(feedType, activity) {
 export function activitySubmit(formName, message, photo = '', video = '') {
   return (dispatch, getState, { activities, batch }) => {
     dispatch(batch(
-      activityIsSubmitting(true),
-      formSubmitting(formName, true)
+      formSubmitting(formName, true),
+      activityIsSubmitting(true)
     ));
 
     let body = {};
@@ -529,15 +529,16 @@ export function activitySubmit(formName, message, photo = '', video = '') {
       .then(() => {
         dispatch(batch(
           formReset(formName),
+          activityIsSubmitting(false),
           activityFeedFetch('recent', true, false)
         ));
       })
       .catch((error) => {
         console.error(error);
-        dispatch(formError(formName, 'There was an error.'));
-      })
-      .finally(() => {
-        dispatch(activityIsSubmitting(false));
+        dispatch(batch(
+          formError(formName, 'There was an error.'),
+          activityIsSubmitting(false)
+        ));
       });
   };
 }

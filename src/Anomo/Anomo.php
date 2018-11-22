@@ -52,12 +52,7 @@ class Anomo
     public function get($endpoint, $endpointParams = [])
     {
         $url = $this->endpoints->create($endpoint, $endpointParams);
-        $this->logger->debug("ANOMO: GET ${url}");
-
-        $response = $this->guzzle->request('GET', $url);
-        $body     = trim((string)$response->getBody());
-
-        return json_decode($body, true);
+        return $this->send('GET', $url);
     }
 
     /**
@@ -68,7 +63,7 @@ class Anomo
      */
     public function post($endpoint, $endpointParams = [], $body = [])
     {
-        $url    = $this->endpoints->create($endpoint, $endpointParams);
+        $url = $this->endpoints->create($endpoint, $endpointParams);
         $params = [];
         if ($body) {
             if (isset($body['multipart'])) {
@@ -77,11 +72,21 @@ class Anomo
                 $params['form_params'] = $body;
             }
         }
-        $this->logger->debug("ANOMO: POST ${url}", $params);
+print_r($params);die();
+        return $this->send('POST', $url, $params);
+    }
 
-        $response = $this->guzzle->request('POST', $url, $params);
-        $body     = trim((string)$response->getBody());
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array $body
+     * @return mixed
+     */
+    protected function send($method, $url, $body = [])
+    {
+        $this->logger->debug("ANOMO: ${method} ${url}", $body);
+        $response = $this->guzzle->request($method, $url, $body);
 
-        return json_decode($body, true);
+        return json_decode(trim((string)$response->getBody()), true);
     }
 }

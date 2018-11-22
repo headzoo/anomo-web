@@ -1,6 +1,6 @@
 proxy:
     path: /proxy
-    controller: App\Controller\DefaultController:proxyAction
+    controller: App\Controller\DefaultController::proxyAction
 
 api:
   prefix: /api/v1
@@ -9,7 +9,7 @@ api:
 
 catch_all:
     path: "{catchAll}"
-    controller: App\Controller\DefaultController:indexAction
+    controller: App\Controller\DefaultController::indexAction
     requirements:
         catchAll: ".*"
 
