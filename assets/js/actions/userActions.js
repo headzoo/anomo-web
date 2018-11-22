@@ -1,9 +1,9 @@
-import md5 from 'md5';
-import { objects, browser } from 'utils';
+import { objects, browser, redux } from 'utils';
 import { formSuccess } from 'actions/formActions';
 import { uiIsLoading } from 'actions/uiActions';
 import { activityFeedFetchAll, activityTrendingHashtags, activityIntervalStart } from 'actions/activityActions';
-import { notificationsFetch, notificationsIntervalStart } from './notificationsActions';
+import { notificationsFetch, notificationsIntervalStart } from 'actions/notificationsActions';
+import api from 'api';
 
 export const USER_ERROR              = 'USER_ERROR';
 export const USER_SENDING            = 'USER_SENDING';
@@ -78,28 +78,23 @@ export function userIsSearchSending(isSearchSending) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function userFollowers(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowers', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_followers', { userID, page })
+      .send()
+      .then((resp) => {
         dispatch({
           type:      USER_FOLLOWERS,
-          followers: data.ListFollower,
+          followers: resp.ListFollower,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(userFollowers(userID, page + 1, false));
         }
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -107,47 +102,40 @@ export function userFollowers(userID, page = 1, fetchAll = false) {
  * @param {number} userID
  * @param {number} page
  * @param {boolean} fetchAll
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function userFollowing(userID, page = 1, fetchAll = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('userFollowing', {
-      userID,
-      page
-    });
-    proxy.get(url)
-      .then((data) => {
+  return (dispatch) => {
+    api.request('api_users_following', { userID, page })
+      .send()
+      .then((resp) => {
         dispatch({
           type:      USER_FOLLOWING,
-          following: data.ListFollowing,
+          following: resp.ListFollowing,
           page
         });
-        if (fetchAll && data.CurrentPage < data.TotalPage) {
+        if (fetchAll && resp.CurrentPage < resp.TotalPage) {
           dispatch(userFollowing(userID, page + 1, true));
         }
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *)}
  */
 export function userFollow(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
-    const url = endpoints.create('userFollow', {
-      userID
-    });
-    proxy.get(url)
+  return (dispatch, getState) => {
+    const { user } = getState();
+
+    api.request('api_users_follow', { userID })
+      .send()
       .then(() => {
-        dispatch(userFollowing(user.getID(), 1, true));
+        dispatch(userFollowing(user.UserID, 1, true));
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -164,26 +152,29 @@ export function userBlockedIsLoading(isBlockedLoading) {
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userBlocked(userID = 0) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
     dispatch(userBlockedIsLoading(true));
 
-    const url = endpoints.create('userBlocked', {
-      userID: userID || user.getID()
-    });
-    proxy.get(url)
-      .then((data) => {
-        dispatch({
-          type:    USER_BLOCKED,
-          blocked: data.results
-        });
+    api.request('api_users_blocked', {
+      userID: userID || user.UserID
+    })
+      .send()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:    USER_BLOCKED,
+            blocked: resp.results
+          },
+          userBlockedIsLoading(false)
+        ));
       })
       .catch((error) => {
-        console.warn(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(userBlockedIsLoading(false));
       });
   };
@@ -203,24 +194,64 @@ export function userBlockedIsSubmitting(isBlockedSubmitting) {
 
 /**
  * @param {number} userID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userBlock(userID) {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(userBlockedIsSubmitting(true));
 
-    const url = endpoints.create('userBlock', {
-      userID
-    });
-    proxy.get(url)
+    api.request('api_users_block')
+      .send({ userID })
       .then(() => {
-        dispatch(userBlocked(user.getID()));
+        dispatch(batch(
+          userBlocked(userID),
+          userBlockedIsSubmitting(false)
+        ));
       })
       .catch((error) => {
-        console.warn(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(userBlockedIsSubmitting(false));
+      });
+  };
+}
+
+/**
+ * @param {*} user
+ * @returns {function(*, *, {batch: *})}
+ */
+export function userStart(user) {
+  return (dispatch, getState, { batch }) => {
+    api.setToken(user.token);
+    api.setUserID(user.UserID);
+
+    dispatch({
+      type: USER_LOGIN,
+      user
+    });
+    dispatch(activityFeedFetchAll());
+    dispatch(notificationsFetch());
+    dispatch(userFollowing(user.UserID, 1, true));
+    dispatch(activityTrendingHashtags());
+    dispatch(batch(
+      activityIntervalStart(),
+      notificationsIntervalStart()
+    ));
+  };
+}
+
+/**
+ * @returns {function(*, *, {anomo: *})}
+ */
+export function userLogout() {
+  return (dispatch) => {
+    api.request('api_users_logout')
+      .send()
+      .finally(() => {
+        api.deleteToken();
+        api.deleteUserID();
+        dispatch({
+          type: USER_LOGOUT
+        });
       });
   };
 }
@@ -231,26 +262,24 @@ export function userBlock(userID) {
  * @returns {function(*, *, {anomo: *})}
  */
 export function userLogin(username, password) {
-  return (dispatch, getState, { user, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
     ));
 
-    user.login(username, password)
-      .then((u) => {
-        user.isAuthenticated = true;
-        endpoints.addDefaultParam('token', user.getToken());
-        dispatch({
-          type: USER_LOGIN,
-          user: u
-        });
-        dispatch(userStart(u.UserID)); // eslint-disable-line
+    api.request('api_users_login')
+      .send({
+        UserName: username,
+        Password: password
+      })
+      .then((resp) => {
+        dispatch(userStart(resp));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
+        dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
-        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -265,26 +294,25 @@ export function userLogin(username, password) {
  * @returns {function(*, *, {user: *})}
  */
 export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
-  return (dispatch, getState, { user, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       userError(''),
       userIsSending(true)
     ));
 
-    user.facebookLogin(facebookEmail, facebookUserID, accessToken)
-      .then((u) => {
-        user.isAuthenticated = true;
-        endpoints.addDefaultParam('token', user.getToken());
-        dispatch({
-          type: USER_LOGIN,
-          user: u
-        });
-        dispatch(userStart(u.UserID)); // eslint-disable-line
+    api.request('api_users_login_facebook')
+      .send({
+        Email:         facebookEmail,
+        FacebookID:    facebookUserID,
+        FbAccessToken: accessToken
+      })
+      .then((resp) => {
+        dispatch(userStart(resp));
       })
       .catch((error) => {
-        console.warn(error);
+        redux.actionCatch(error);
+        dispatch(userLogout());
         dispatch(userError('Username or password is incorrect.'));
-        user.logout(true);
       })
       .finally(() => {
         dispatch(userIsSending(false));
@@ -295,40 +323,28 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
 /**
  * @returns {function(*, *, {anomo: *})}
  */
-export function userLogout() {
-  return (dispatch, getState, { user }) => {
-    user.logout();
-    dispatch({
-      type: USER_LOGOUT
-    });
-  };
-}
-
-/**
- * @returns {function(*, *, {anomo: *})}
- */
 export function userRefresh() {
-  return (dispatch, getState, { user, endpoints, batch }) => {
-    const id = user.getID();
-    if (id && user.hasToken()) {
+  return (dispatch, getState, { batch }) => {
+    const token  = api.getToken();
+    const userID = api.getUserID();
+
+    if (userID && token) {
       dispatch(batch(
         userError('test'),
         userIsSending(true)
       ));
 
-      user.info(id)
-        .then((data) => {
-          user.isAuthenticated = true;
-          endpoints.addDefaultParam('token', user.getToken());
-          dispatch({
-            type: USER_LOGIN,
-            user: objects.merge(user.getDetails(), data.results)
+      api.request('api_users_fetch', { userID })
+        .send()
+        .then((resp) => {
+          const user = objects.merge(resp.results, {
+            token
           });
-          dispatch(userStart(id)); // eslint-disable-line
+          dispatch(userStart(user));
         })
         .catch((error) => {
-          console.warn(error);
-          user.logout(true);
+          redux.actionCatch(error);
+          dispatch(userLogout());
         })
         .finally(() => {
           dispatch(batch(
@@ -345,25 +361,27 @@ export function userRefresh() {
 /**
  * @param {string} oldPassword
  * @param {string} newPassword
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userUpdatePassword(oldPassword, newPassword) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdatePassword');
-    const body = {
-      OldPassword: md5(oldPassword),
-      NewPassword: md5(newPassword)
-    };
-    proxy.post(url, body)
+    api.request('api_users_password', { userID: user.UserID })
+      .send({
+        OldPassword: oldPassword,
+        NewPassword: newPassword
+      })
       .then(() => {
-        dispatch(formSuccess('password', 'Password updated successfully.'));
+        dispatch(batch(
+          userIsSettingsSending(false),
+          formSuccess('password', 'Password updated successfully.')
+        ));
       })
       .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
@@ -371,21 +389,24 @@ export function userUpdatePassword(oldPassword, newPassword) {
 
 /**
  * @param {*} values
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userUpdateSettings(values) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdate');
-    proxy.post(url, values)
-      .then((data) => {
-        dispatch(userSet(data));
+    api.request('api_users_update', { userID: user.UserID })
+      .send(values)
+      .then((resp) => {
+        dispatch(batch(
+          userSet(resp),
+          userIsSettingsSending(false)
+        ));
       })
       .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
@@ -393,35 +414,36 @@ export function userUpdateSettings(values) {
 
 /**
  * @param {*} values
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function userUpdatePrivacy(values) {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
     dispatch(userIsSettingsSending(true));
 
-    const url = endpoints.create('userUpdatePrivacy', {
-      userID: user.getID()
-    });
-    proxy.post(url, values)
+    api.request('api_users_privacy', { userID: user.UserID })
+      .send(values)
       .then(() => {
-        const details = objects.merge(user.getDetails(), values);
-        user.setDetails(details);
-        dispatch(userSet(details));
+        dispatch(batch(
+          userSet(values),
+          userIsSettingsSending(false)
+        ));
       })
       .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(userIsSettingsSending(false));
       });
   };
 }
 
 /**
- * @returns {function(*=, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function userSearch() {
-  return (dispatch, getState, { user, proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
+    const { user } = getState();
+
     /**
      * @param {number} latitude
      * @param {number} longitude
@@ -429,41 +451,25 @@ export function userSearch() {
     browser.position((latitude, longitude) => {
       dispatch(userIsSearchSending(true));
 
-      const url = endpoints.create('userSearch', {
-        userID: user.getID(),
+      api.request('api_search_users', {
+        userID: user.UserID,
         latitude,
         longitude
-      });
-      proxy.get(url)
-        .then((data) => {
-          dispatch({
-            type:          USER_SEARCH_RESULTS,
-            searchResults: data.results.ListUser || []
-          });
+      })
+        .send()
+        .then((resp) => {
+          dispatch(batch(
+            {
+              type:          USER_SEARCH_RESULTS,
+              searchResults: resp.results.ListUser || []
+            },
+            userIsSearchSending(false)
+          ));
         })
         .catch((error) => {
-          console.warn(error);
-        })
-        .finally(() => {
+          redux.actionCatch(error);
           dispatch(userIsSearchSending(false));
         });
     });
-  };
-}
-
-/**
- * @param {number} userID
- * @returns {function(*, *, {batch: *})}
- */
-export function userStart(userID) {
-  return (dispatch, getState, { batch }) => {
-    dispatch(activityFeedFetchAll());
-    dispatch(notificationsFetch());
-    dispatch(userFollowing(userID, 1, true));
-    dispatch(activityTrendingHashtags());
-    dispatch(batch(
-      activityIntervalStart(),
-      notificationsIntervalStart()
-    ));
   };
 }

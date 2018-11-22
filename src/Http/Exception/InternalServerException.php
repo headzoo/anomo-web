@@ -1,12 +1,10 @@
 <?php
 namespace App\Http\Exception;
 
-use Symfony\Component\Security\Core\Exception\RuntimeException;
-
 /**
  * Class InternalServerException
  */
-class InternalServerException extends RuntimeException
+class InternalServerException extends HttpException
 {
     /**
      * Constructor

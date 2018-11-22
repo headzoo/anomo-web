@@ -1,4 +1,6 @@
 import * as constants from 'anomo/constants';
+import { redux } from 'utils';
+import api from 'api';
 
 export const NOTIFICATIONS_FETCH    = 'NOTIFICATIONS_FETCH';
 export const NOTIFICATIONS_READ     = 'NOTIFICATIONS_READ';
@@ -7,50 +9,46 @@ export const NOTIFICATIONS_READ_ALL = 'NOTIFICATIONS_READ_ALL';
 let isClearing = false;
 
 /**
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *)}
  */
 export function notificationsFetch() {
-  return (dispatch, getState, { user, endpoints, proxy }) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+
     if (isClearing || !user.isAuthenticated) {
       return;
     }
 
-    const url = endpoints.create('notificationsHistory', {
+    api.request('api_notifications_fetch', {
       status: constants.NOTIFICATION_STATUS_UNREAD,
       page:   1
-    });
-    proxy.get(url)
-      .then((data) => {
+    })
+      .send()
+      .then((resp) => {
         dispatch({
           type:          NOTIFICATIONS_FETCH,
-          notifications: data.NotificationHistory
+          notifications: resp.NotificationHistory
         });
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
 /**
  * @param {number} notificationID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function notificationsRead(notificationID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     isClearing = true;
     dispatch({
       type: NOTIFICATIONS_READ,
       notificationID
     });
 
-    const url = endpoints.create('notificationsRead', {
-      notificationID
-    });
-    proxy.get(url)
-      .catch((error) => {
-        console.warn(error);
-      })
+    api.request('api_notifications_delete', { notificationID })
+      .send()
+      .catch(redux.actionCatch)
       .finally(() => {
         isClearing = false;
       });
@@ -58,23 +56,21 @@ export function notificationsRead(notificationID) {
 }
 
 /**
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function notificationsReadAll() {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     isClearing = true;
     dispatch({
       type: NOTIFICATIONS_READ_ALL
     });
 
-    const url = endpoints.create('notificationsHistory', {
+    api.request('api_notifications_fetch', {
       status: constants.NOTIFICATION_STATUS_READ,
       page:   1
-    });
-    proxy.get(url)
-      .catch((error) => {
-        console.warn(error);
-      })
+    })
+      .send()
+      .catch(redux.actionCatch)
       .finally(() => {
         isClearing = false;
       });

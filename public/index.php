@@ -1,9 +1,8 @@
 <?php
-
 use App\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Component\HttpFoundation\Request;
+use App\Http\Request;
 
 require __DIR__.'/../vendor/autoload.php';
 

@@ -68,6 +68,15 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "friendsofsymfony/jsrouting-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "370bcf99b04c0dfd0b545745aad622d757af5e1b"
+        }
+    },
     "gesdinet/jwt-refresh-token-bundle": {
         "version": "v0.5.3"
     },
@@ -94,6 +103,9 @@
             "version": "2.5",
             "ref": "509b1542f3180a1cfe248ade8b7bf5092c2d4127"
         }
+    },
+    "monolog/monolog": {
+        "version": "1.24.0"
     },
     "namshi/jose": {
         "version": "7.2.3"
@@ -194,6 +206,18 @@
     "symfony/inflector": {
         "version": "v4.1.6"
     },
+    "symfony/monolog-bridge": {
+        "version": "v4.1.7"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.1",
+            "ref": "18ebf5a940573a20de06f9c4060101eeb438cf3d"
+        }
+    },
     "symfony/orm-pack": {
         "version": "v1.0.5"
     },
@@ -229,6 +253,9 @@
             "version": "3.3",
             "ref": "f8a63faa0d9521526499c0a8f403c9964ecb0527"
         }
+    },
+    "symfony/serializer": {
+        "version": "v4.1.7"
     },
     "symfony/translation": {
         "version": "3.3",
@@ -286,6 +313,9 @@
     },
     "twig/twig": {
         "version": "v2.5.0"
+    },
+    "willdurand/jsonp-callback-validator": {
+        "version": "v1.1.0"
     },
     "yzalis/identicon": {
         "version": "1.2.0"

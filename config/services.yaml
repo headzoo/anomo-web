@@ -26,3 +26,11 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    App\EventListener\ApiResponseListener:
+        tags:
+            - { name: kernel.event_listener, method: onKernelView, event: kernel.view }
+
+    App\EventListener\ApiRequestListener:
+        tags:
+            - { name: kernel.event_listener, method: onKernelRequest, event: kernel.request }

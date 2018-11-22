@@ -22,7 +22,23 @@ function createReducer(reducers) {
   };
 }
 
+/**
+ * @param {*} error
+ * @returns {*}
+ */
+function actionCatch(error) {
+  const message = error.toString();
+  if (message.indexOf('timeout')) {
+    console.warn(message);
+  } else {
+    console.error(message);
+  }
+
+  return error;
+}
+
 export default {
   reduce,
+  actionCatch,
   createReducer
 };

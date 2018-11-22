@@ -2,8 +2,9 @@ import axios from 'axios';
 import moment from 'moment';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { profileIsLikeLoading, profileLikeToggle } from 'actions/profileActions';
-import { objects } from 'utils';
+import { objects, redux } from 'utils';
 import anomo from 'anomo';
+import api from 'api';
 import * as constants from 'anomo/constants';
 
 export const ACTIVITY_RESET                = 'ACTIVITY_RESET';
@@ -52,13 +53,22 @@ const feedFetchSources = {
   following: null
 };
 
-const feedFetchNewNumberSources = {
-  recent:    null,
-  popular:   null,
-  following: null
-};
-
 const hiddenActionTypes = [constants.ACTION_TYPE_JOIN];
+
+/**
+ * @param {string} feedType
+ * @returns {{cancelToken: string | string | *}}
+ */
+function getFeedFetchConfig(feedType) {
+  if (feedFetchSources[feedType]) {
+    feedFetchSources[feedType].cancel();
+  }
+  feedFetchSources[feedType] = CancelToken.source();
+
+  return {
+    cancelToken: feedFetchSources[feedType].token
+  };
+}
 
 /**
  * @returns {{type: string}}
@@ -176,7 +186,6 @@ export function activityIsSubmitting(isSubmitting) {
   };
 }
 
-
 /**
  * @param {boolean} isPollSending
  * @returns {{type: string, isLoading: *}}
@@ -244,16 +253,15 @@ export function activityIsFeedRefreshing(feedType, isRefreshing) {
  * @param {string} feedType
  * @param {boolean} refresh
  * @param {boolean} buffered
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: function})}
  */
 export function activityFeedFetch(feedType, refresh = false, buffered = true) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
-    const { activity } = getState();
-
+  return (dispatch, getState, { batch }) => {
     if (buffered && refresh && feedBuffers[feedType].length > 0) {
       const activities = objects.clone(feedBuffers[feedType]);
       feedBuffers[feedType] = [];
-      dispatch(batch(
+
+      return dispatch(batch(
         {
           type:    ACTIVITY_FEED_FETCH,
           prepend: true,
@@ -262,7 +270,6 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
         },
         activityFeedNewNumber(feedType, 0)
       ));
-      return;
     }
 
     dispatch(activityIsFeedLoading(feedType, true));
@@ -270,40 +277,13 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       dispatch(activityIsFeedRefreshing(feedType, true));
     }
 
-    if (feedFetchSources[feedType]) {
-      feedFetchSources[feedType].cancel();
-    }
-    feedFetchSources[feedType] = CancelToken.source();
-
-    let url = '';
-    switch (feedType) {
-      case 'recent':
-        url = endpoints.create('activityFeedRecent', {
-          lastActivityID: refresh ? 0 : activity.feeds.recent.lastActivityID
-        });
-        break;
-      case 'popular':
-        url = endpoints.create('activityFeedPopular', {
-          lastActivityID: refresh ? 0 : activity.feeds.popular.lastActivityID
-        });
-        break;
-      case 'following':
-        url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: refresh ? 0 : activity.feeds.following.lastActivityID
-        });
-        break;
-    }
-
-    const config = {
-      cancelToken: feedFetchSources[feedType].token
-    };
-
-    proxy.get(url, config)
+    const lastActivityID = refresh ? 0 : getState().activity.feeds[feedType].lastActivityID;
+    return api.request('api_feeds_fetch', {
+      name: feedType,
+      lastActivityID
+    })
+      .send(getFeedFetchConfig(feedType))
       .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
         return anomo.activities.setImageDimensions(data.Activities)
           .then((activities) => {
             activities.forEach((a) => {
@@ -317,11 +297,7 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
             });
           });
       })
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          throw err;
-        }
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         feedBuffers[feedType] = [];
         feedFetchSources[feedType] = null;
@@ -339,10 +315,10 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
 /**
  * @param {string} hashtag
  * @param {boolean} refresh
- * @returns {function(*=, *, {endpoints: *, proxy: *})}
+ * @returns {function(*=, *)}
  */
 export function activityFetchByHashtag(hashtag, refresh = false) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState) => {
     const { activity } = getState();
     const feedType = 'hashtag';
 
@@ -351,22 +327,14 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
       dispatch(activityIsFeedRefreshing(feedType, true));
     }
 
-    const url = endpoints.create('activityFeedHashtag', {
-      page: activity.feeds.hashtag.page
-    });
-    const body = {
-      'HashTag': hashtag
-    };
-
-    proxy.post(url, body)
-      .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
-        const hasMore = data.Page < data.TotalPage;
-
-        return anomo.activities.setImageDimensions(data.Activities)
+    api.request('api_feeds_hashtag', {
+      page: activity.feeds.hashtag.page,
+      hashtag
+    })
+      .send()
+      .then((resp) => {
+        const hasMore = resp.Page < resp.TotalPage;
+        return anomo.activities.setImageDimensions(resp.Activities)
           .then((activities) => {
             dispatch({
               type: ACTIVITY_FEED_FETCH,
@@ -377,9 +345,7 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
             });
           });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         dispatch(activityIsFeedLoading(feedType, false));
         if (refresh) {
@@ -390,12 +356,12 @@ export function activityFetchByHashtag(hashtag, refresh = false) {
 }
 
 /**
- * @returns {function(*, *, {endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function activityTrendingHashtags() {
-  return (dispatch, getState, { endpoints, proxy }) => {
-    const url = endpoints.create('activityTrendingHashtags');
-    proxy.get(url)
+  return (dispatch) => {
+    api.request('api_feeds_hashtags_trending')
+      .send()
       .then((resp) => {
         const trendingHashtags = resp.ListTrending.map((h) => {
           return h.HashTag;
@@ -405,9 +371,7 @@ export function activityTrendingHashtags() {
           trendingHashtags
         });
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(redux.actionCatch);
   };
 }
 
@@ -438,56 +402,27 @@ export function activityFeedUpdate(activities) {
 
 /**
  * @param {string} feedType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function activityFeedFetchNewNumber(feedType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     const { activity } = getState();
     const { firstActivityID } = activity.feeds[feedType];
 
     if (firstActivityID === 0) {
-      dispatch({
+      return dispatch({
         type:      ACTIVITY_FEED_NEW_NUMBER,
         newNumber: 0,
         feedType
       });
-      return;
     }
 
-    if (feedFetchNewNumberSources[feedType]) {
-      feedFetchNewNumberSources[feedType].cancel();
-    }
-    feedFetchNewNumberSources[feedType] = CancelToken.source();
-
-    const config = {
-      cancelToken: feedFetchNewNumberSources[feedType].token
-    };
-
-    let url = '';
-    switch (feedType) {
-      case 'recent':
-        url = endpoints.create('activityFeedRecent', {
-          lastActivityID: 0
-        });
-        break;
-      case 'popular':
-        url = endpoints.create('activityFeedPopular', {
-          lastActivityID: 0
-        });
-        break;
-      case 'following':
-        url = endpoints.create('activityFeedFollowing', {
-          lastActivityID: 0
-        });
-        break;
-    }
-
-    proxy.get(url, config)
+    return api.request('api_feeds_fetch', {
+      name:           feedType,
+      lastActivityID: 0
+    })
+      .send(getFeedFetchConfig(feedType))
       .then((data) => {
-        if (data.code !== 'OK') {
-          return null;
-        }
-
         feedBuffers[feedType] = [];
         for (let i = 0; i < data.Activities.length; i++) {
           const a = data.Activities[i];
@@ -504,13 +439,9 @@ export function activityFeedFetchNewNumber(feedType) {
             ));
           });
       })
-      .catch((err) => {
-        if (!axios.isCancel(err)) {
-          throw err;
-        }
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
-        feedFetchNewNumberSources[feedType] = null;
+        feedFetchSources[feedType] = null;
       });
   };
 }
@@ -546,19 +477,17 @@ export function activityFeedPrepend(feedType, activity) {
  * @param {string} message
  * @param {*} photo
  * @param {*} video
- * @returns {function(*, *, {endpoints: *})}
+ * @returns {function(*, *, {activities: *, batch: *})}
  */
 export function activitySubmit(formName, message, photo = '', video = '') {
-  return (dispatch, getState, { proxy, endpoints, activities, batch }) => {
+  return (dispatch, getState, { activities, batch }) => {
     dispatch(batch(
-      activityIsSubmitting(true),
-      formSubmitting(formName, true)
+      formSubmitting(formName, true),
+      activityIsSubmitting(true)
     ));
 
-    let url  = '';
     let body = {};
     if (photo || video) {
-      url  = endpoints.create('userPicture');
       body = new FormData();
       body.append('PictureCaption', activities.createMessage(message));
       if (video) {
@@ -572,8 +501,6 @@ export function activitySubmit(formName, message, photo = '', video = '') {
         dispatch(formError(formName, 'There was an error.'));
         return;
       }
-
-      url  = endpoints.create('userStatus');
       body = {
         'ProfileStatus': activities.createMessage(message),
         'IsAnonymous':   0,
@@ -581,18 +508,21 @@ export function activitySubmit(formName, message, photo = '', video = '') {
       };
     }
 
-    proxy.post(url, body)
-      .then((resp) => {
-        if (resp.code === 'OK') {
-          dispatch(batch(
-            formReset(formName),
-            activityFeedFetch('recent', true, false)
-          ));
-        } else {
-          dispatch(formError(formName, 'There was an error.'));
-        }
-      }).finally(() => {
-        dispatch(activityIsSubmitting(false));
+    api.request('api_activities_submit')
+      .send(body)
+      .then(() => {
+        dispatch(batch(
+          formReset(formName),
+          activityIsSubmitting(false),
+          activityFeedFetch('recent', true, false)
+        ));
+      })
+      .catch((error) => {
+        redux.actionCatch(error);
+        dispatch(batch(
+          formError(formName, 'There was an error.'),
+          activityIsSubmitting(false)
+        ));
       });
   };
 }
@@ -600,28 +530,23 @@ export function activitySubmit(formName, message, photo = '', video = '') {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*)}
  */
 export function activityLikeList(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch) => {
     dispatch(activityIsLikeListLoading(true));
 
-    const url = endpoints.create('activityLikeList', {
-      actionType,
-      refID
-    });
-    proxy.get(url)
-      .then((data) => {
+    api.request('api_activities_likes', { refID, actionType })
+      .send()
+      .then((resp) => {
         dispatch({
           type:  ACTIVITY_LIKE_LIST,
-          likes: data.likes || [],
+          likes: resp.likes || [],
           actionType,
           refID
         });
       })
-      .catch((error) => {
-        console.error(error);
-      })
+      .catch(redux.actionCatch)
       .finally(() => {
         dispatch(activityIsLikeListLoading(false));
       });
@@ -642,10 +567,10 @@ export function activitySet(activity) {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {anomo: *})}
+ * @returns {function(*=, *, {batch?: *})}
  */
 export function activityGet(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityReset(),
       activityIsLikeListLoading(true)
@@ -660,16 +585,10 @@ export function activityGet(refID, actionType) {
       ));
     }
 
-    const urlGet = endpoints.create('activityGet', {
-      actionType,
-      refID
-    });
-    const urlLikes = endpoints.create('activityLikeList', {
-      actionType,
-      refID
-    });
+    const reqFetch = api.request('api_activities_fetch', { refID, actionType });
+    const reqLikes = api.request('api_activities_likes', { refID, actionType });
+    const promises = [reqFetch.send(), reqLikes.send()];
 
-    const promises = [proxy.get(urlGet), proxy.get(urlLikes)];
     Promise.all(promises)
       .then((responses) => {
         const activity    = responses[0].Activity;
@@ -687,7 +606,7 @@ export function activityGet(refID, actionType) {
           });
       })
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(batch(
           activityIsActivityLoading(false),
           activityIsCommentsLoading(false),
@@ -699,26 +618,25 @@ export function activityGet(refID, actionType) {
 
 /**
  * @param {number} activityID
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityDelete(activityID) {
-  return (dispatch, getState, { endpoints, proxy }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(activityIsDeleteSending(true, activityID));
 
-    const url = endpoints.create('activityDelete', {
-      activityID
-    });
-    proxy.get(url)
+    api.request('api_activities_delete', { activityID })
+      .send()
       .then(() => {
-        dispatch({
-          type: ACTIVITY_DELETE,
-          activityID
-        });
+        dispatch(batch(
+          {
+            type: ACTIVITY_DELETE,
+            activityID
+          },
+          activityIsDeleteSending(false, activityID)
+        ));
       })
       .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(activityIsDeleteSending(false, activityID));
       });
   };
@@ -738,10 +656,10 @@ export function activityLikeToggle(refID) {
 /**
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {anomo: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityLike(refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityIsLikeLoading(true, refID),
       profileIsLikeLoading(true, refID),
@@ -749,23 +667,20 @@ export function activityLike(refID, actionType) {
       profileLikeToggle(refID)
     ));
 
-    const url = endpoints.create('activityLike', {
-      actionType,
-      refID
-    });
-    proxy.get(url)
+    api.request('api_activities_like', { refID, actionType })
+      .send()
       .then(() => {
-        dispatch(activityLikeList(refID, actionType));
-      })
-      .catch((error) => {
-        console.error(error);
         dispatch(batch(
-          activityLikeToggle(refID),
-          profileLikeToggle(refID)
+          activityLikeList(refID, actionType),
+          activityIsLikeLoading(false, refID),
+          profileIsLikeLoading(false, refID)
         ));
       })
-      .finally(() => {
+      .catch((error) => {
+        redux.actionCatch(error);
         dispatch(batch(
+          activityLikeToggle(refID),
+          profileLikeToggle(refID),
           activityIsLikeLoading(false, refID),
           profileIsLikeLoading(false, refID)
         ));
@@ -790,22 +705,19 @@ export function activityLikeCommentToggle(commentID, refID) {
  * @param {number} commentID
  * @param {number} refID
  * @param {number} actionType
- * @returns {function(*, *, {user: *, endpoints: *, proxy: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityLikeComment(commentID, refID, actionType) {
-  return (dispatch, getState, { endpoints, proxy, batch }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(batch(
       activityIsLikeCommentLoading(true, commentID),
       activityLikeCommentToggle(commentID, refID)
     ));
 
-    const url = endpoints.create('activityCommentLike', {
-      actionType,
-      commentID
-    });
-    proxy.get(url)
+    api.request('api_comments_like', { commentID, actionType })
+      .send()
       .catch((error) => {
-        console.error(error);
+        redux.actionCatch(error);
         dispatch(activityLikeCommentToggle(commentID, refID));
       })
       .finally(() => {
@@ -828,10 +740,10 @@ export function activityReport(refID, actionType) {
 
 /**
  * @param {*} options
- * @returns {function(*, *, {endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activitySubmitComment(options) {
-  return (dispatch, getState, { proxy, endpoints, batch }) => {
+  return (dispatch, getState, { batch }) => {
     const values = objects.merge({
       formName:    '',
       message:     '',
@@ -861,53 +773,44 @@ export function activitySubmitComment(options) {
       }
     ));
 
-    const url = endpoints.create('activityComment', {
-      actionType: values.actionType,
-      refID:      values.refID
-    });
-    proxy.post(url, {
-      'Content':     values.message,
-      'IsAnonymous': values.isAnonymous
-    }).then((resp) => {
-      if (resp.code !== 'OK') {
-        dispatch(formError(values.formName, 'There was an error.'));
-      }
-    }).finally(() => {
-      dispatch(formSubmitting(values.formName, false));
-    });
+    api.request('api_comments_submit')
+      .send({
+        'RefID':       values.refID,
+        'ActionType':  values.actionType,
+        'Content':     values.message,
+        'IsAnonymous': values.isAnonymous
+      })
+      .finally(() => {
+        dispatch(formSubmitting(values.formName, false));
+      });
   };
 }
 
 /**
  * @param {number} commentID
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityDeleteComment(commentID) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch) => {
     dispatch({
       type: ACTIVITY_COMMENT_DELETE,
       commentID
     });
 
-    const url = endpoints.create('activityCommentDelete', {
-      commentID
-    });
-    proxy.get(url);
+    api.request('api_comments_delete', { commentID })
+      .send();
   };
 }
 
 /**
  * @param {number} refID
  * @param {string} actionType
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityCommentStopNotify(refID, actionType) {
-  return (dispatch, getState, { proxy, endpoints }) => {
-    const url = endpoints.create('activityCommentStopNotify', {
-      actionType,
-      refID
-    });
-    proxy.get(url);
+  return (dispatch) => {
+    api.request('api_activities_stop_notify', { refID, actionType })
+      .send();
   };
 }
 
@@ -915,30 +818,28 @@ export function activityCommentStopNotify(refID, actionType) {
  * @param {number} commentID
  * @param {number} refID
  * @param {string} actionType
- * @returns {function(*, *, {proxy: *, endpoints: *})}
+ * @returns {function(*, *, {batch: *})}
  */
 export function activityCommentLikeList(commentID, refID, actionType) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch, getState, { batch }) => {
     dispatch(activityIsCommentListLoading(true, refID, commentID));
 
-    const url = endpoints.create('activityCommentLikeList', {
-      actionType,
-      commentID
-    });
-    proxy.get(url)
-      .then((data) => {
-        dispatch({
-          type:  ACTIVITY_COMMENT_LIKE_LIST,
-          likes: data.likes,
-          refID,
-          commentID,
-          actionType
-        });
+    api.request('api_comments_likes', { commentID, actionType })
+      .send()
+      .then((resp) => {
+        dispatch(batch(
+          {
+            type:  ACTIVITY_COMMENT_LIKE_LIST,
+            likes: resp.likes,
+            refID,
+            commentID,
+            actionType
+          },
+          activityIsCommentListLoading(false, refID, commentID)
+        ));
       })
       .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
+        redux.actionCatch(error);
         dispatch(activityIsCommentListLoading(false, refID, commentID));
       });
   };
@@ -947,17 +848,14 @@ export function activityCommentLikeList(commentID, refID, actionType) {
 /**
  * @param {number} pollID
  * @param {number} answerID
- * @returns {function(*, *, {user: *, proxy: *, endpoints: *})}
+ * @returns {function(*)}
  */
 export function activityAnswerPoll(pollID, answerID) {
-  return (dispatch, getState, { proxy, endpoints }) => {
+  return (dispatch) => {
     dispatch(activityIsPollSending(true));
 
-    const url = endpoints.create('activityAnswerPoll', {
-      answerID,
-      pollID
-    });
-    proxy.get(url)
+    api.request('api_activities_polls_answer', { pollID, answerID })
+      .send()
       .finally(() => {
         dispatch(activityIsPollSending(false));
       });
