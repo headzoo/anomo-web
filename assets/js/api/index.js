@@ -4,17 +4,19 @@ import { getConfig } from 'store/config';
 import routes from 'store/routes.json';
 import Routing from '../../../public/bundles/fosjsrouting/js/router';
 
+const { storage } = browser;
 Routing.setRoutingData(routes);
 
-let token  = browser.storage.get(browser.storage.KEY_TOKEN, '');
-let userID = browser.storage.get(browser.storage.KEY_ID, 0);
+let token   = storage.get(storage.KEY_TOKEN, '');
+let userID  = storage.get(storage.KEY_ID, 0);
+let details = storage.get(storage.KEY_DETAILS, {});
 
 /**
  * @param {string} tok
  */
 const setToken = (tok) => {
   token = tok;
-  browser.storage.set(browser.storage.KEY_TOKEN, token);
+  storage.set(storage.KEY_TOKEN, token);
 };
 
 /**
@@ -29,7 +31,7 @@ const getToken = () => {
  */
 const deleteToken = () => {
   token = '';
-  browser.storage.remove(browser.storage.KEY_TOKEN);
+  storage.remove(storage.KEY_TOKEN);
 };
 
 /**
@@ -37,7 +39,7 @@ const deleteToken = () => {
  */
 const setUserID = (ui) => {
   userID = ui;
-  browser.storage.set(browser.storage.KEY_ID, userID);
+  storage.set(storage.KEY_ID, userID);
 };
 
 /**
@@ -52,7 +54,30 @@ const getUserID = () => {
  */
 const deleteUserID = () => {
   userID = 0;
-  browser.storage.remove(browser.storage.KEY_ID);
+  storage.remove(storage.KEY_ID);
+};
+
+/**
+ * @param {*} d
+ */
+const setDetails = (d) => {
+  details = d;
+  storage.set(storage.KEY_DETAILS, d);
+};
+
+/**
+ * @returns {*}
+ */
+const getDetails = () => {
+  return details;
+};
+
+/**
+ *
+ */
+const deleteDetails = () => {
+  details = {};
+  storage.remove(storage.KEY_DETAILS);
 };
 
 /**
@@ -264,5 +289,8 @@ export default {
   deleteToken,
   setUserID,
   getUserID,
-  deleteUserID
+  deleteUserID,
+  setDetails,
+  getDetails,
+  deleteDetails
 };

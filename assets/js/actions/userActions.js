@@ -274,6 +274,7 @@ export function userLogin(username, password) {
         Password: password
       })
       .then((resp) => {
+        api.setDetails(resp);
         dispatch(userStart(resp));
       })
       .catch((error) => {
@@ -307,6 +308,7 @@ export function userFacebookLogin(facebookEmail, facebookUserID, accessToken) {
         FbAccessToken: accessToken
       })
       .then((resp) => {
+        api.setDetails(resp);
         dispatch(userStart(resp));
       })
       .catch((error) => {
@@ -337,7 +339,7 @@ export function userRefresh() {
       api.request('api_users_fetch', { userID })
         .send()
         .then((resp) => {
-          const user = objects.merge(resp.results, {
+          const user = objects.merge(api.getDetails(), resp.results, {
             token
           });
           dispatch(userStart(user));
