@@ -10,9 +10,9 @@
   },
   "jest": {
     "browser": true,
-    "testRegex": "assets/tests/jest/.*",
+    "testRegex": "assets/js/tests/.*?\\.test\\.jsx?$",
     "setupFiles": [
-      "<rootDir>/assets/tests/setup.js"
+      "<rootDir>/assets/js/tests/setup.js"
     ],
     "moduleDirectories": [
       "<rootDir>/node_modules",

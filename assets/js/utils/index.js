@@ -11,6 +11,7 @@ export { default as dates } from './dates';
 export { default as feeds } from './feeds';
 export { default as media } from './media';
 export { default as favicon } from './favicon';
+export { default as messages } from './messages';
 export {
   connect,
   redux,
