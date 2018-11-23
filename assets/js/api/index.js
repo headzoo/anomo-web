@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { browser } from 'utils';
 import { getConfig } from 'store/config';
+import routes from 'store/routes.json';
 import Routing from '../../../public/bundles/fosjsrouting/js/router';
-import routes from '../../../public/build/js/routes.json';
 
 Routing.setRoutingData(routes);
 
