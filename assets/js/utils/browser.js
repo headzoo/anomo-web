@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
+import { getConfig } from 'store/config';
 
 /**
  * @param {string} t
@@ -209,12 +210,24 @@ function position(cb) {
   }
 }
 
+/**
+ * @param {string} src
+ * @returns {string}
+ */
+function toHttps(src) {
+  if (getConfig().https) {
+    return src.replace('http://', 'https://');
+  }
+  return src;
+}
+
 export default {
   on,
   off,
   trigger,
   title,
   scroll,
+  toHttps,
   hideScrollbars,
   showScrollbars,
   parseHash,

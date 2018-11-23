@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, mapActionsToProps } from 'utils';
+import { connect, browser, mapActionsToProps } from 'utils';
 import { Row, Column, Card, CardBody, CardText, Badge, ButtonGroup, Button } from 'lib/bootstrap';
 import { Page, Feed, Loading, Avatar, Icon, LinkButton, Number, Age, withRouter } from 'lib';
 import { UserCard } from 'lib/cards';
@@ -117,7 +117,7 @@ class ProfilePage extends React.PureComponent {
 
     const isFollowing  = followingUserNames.indexOf(profile.UserName) !== -1;
     const coverStyles  = {
-      backgroundImage: `url(${profile.CoverPicture})`
+      backgroundImage: `url(${browser.toHttps(profile.CoverPicture)})`
     };
 
     return (

@@ -32,7 +32,7 @@ class Image extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      src: (getConfig().https) ? props.data.src.replace('http://', 'https://') : props.data.src
+      src: browser.toHttps(props.data.src)
     };
     this.img = React.createRef();
     this.isErrored = false;
