@@ -93,7 +93,7 @@ const parseMentions = (tokens, tags) => {
 
   for (let i = 0; i < tokens.length; i++) {
     const nextToken = tokens[i + 1];
-    if (tokens[i] === '@' && nextToken && typeof nextToken === 'string' && nextToken.match(/^\w+$/)) {
+    if (tokens[i] === '@' && nextToken && typeof nextToken === 'string' && nextToken.match(/^\w+$/) && tags.length > 0) {
       const mention = `@${nextToken}`;
       const userID  = getUserIDFromMention(mention, tags);
       if (userID !== 0) {
@@ -182,7 +182,7 @@ const parseMarkdown = (tokens) => {
 const parseLinks = (tokens) => {
   const newTokens = [];
   let keyIndex = 0;
-  const breakChars = [' ', "\n", "\r", "\t"];
+  const breakChars = [' ', "\n", "\r", "\t"]; // eslint-disable-line
 
   for (let i = 0; i < tokens.length; i++) {
     if (typeof tokens[i] === 'string' && tokens.slice(i, i + 4).join('').match(/https?:\/\//)) {
@@ -196,6 +196,8 @@ const parseLinks = (tokens) => {
             newTokens.push(tokens[y]);
             break;
           }
+        } else {
+          newTokens.push(tokens[y]);
         }
       }
 
@@ -208,7 +210,7 @@ const parseLinks = (tokens) => {
           'className': 'anchor'
         }, href);
         keyIndex += 1;
-        i = y;
+        i = y + 1;
         newTokens.push(anchor);
       } else {
         newTokens.push(tokens[i]);
