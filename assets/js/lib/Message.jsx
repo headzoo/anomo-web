@@ -53,6 +53,7 @@ class Message extends React.Component {
     tokens     = this.parseEmoji(tokens);
     tokens     = this.parseMentions(tokens);
     tokens     = this.parseHashtags(tokens);
+    tokens     = this.parseLinks(tokens);
     // tokens     = this.parseMarkdown(tokens);
 
     let buffer = '';
@@ -98,7 +99,7 @@ class Message extends React.Component {
       tokens.push(buffer.join(''));
     }
 
-    return tokens;
+    return tokens.filter(n => n);
   };
 
   /**
@@ -227,6 +228,50 @@ class Message extends React.Component {
         newTokens.push(bold);
       } else {
         newTokens.push(token);
+      }
+    }
+
+    return newTokens;
+  };
+
+  /**
+   * @param {Array} tokens
+   * @returns {Array}
+   */
+  parseLinks = (tokens) => {
+    const newTokens = [];
+    let keyIndex = 0;
+
+    for (let i = 0; i < tokens.length; i++) {
+      if (typeof tokens[i] === 'string' && tokens.slice(i, i + 4).join('').match(/https?:\/\//)) {
+        let y = i;
+        const buffer = [];
+        for (; y < tokens.length; y++) {
+          if (typeof tokens[y] === 'string') {
+            if (tokens[y] !== ' ') {
+              buffer.push(tokens[y]);
+            } else if (tokens[y] !== ' ') {
+              break;
+            }
+          }
+        }
+
+        if (buffer.length > 0) {
+          const href   = buffer.join('');
+          const anchor = React.createElement('a', {
+            'key':       `link_${keyIndex}`,
+            'href':      href,
+            'target':    '_blank',
+            'className': 'anchor'
+          }, href);
+          keyIndex += 1;
+          i = y;
+          newTokens.push(anchor);
+        } else {
+          newTokens.push(tokens[i]);
+        }
+      } else {
+        newTokens.push(tokens[i]);
       }
     }
 
