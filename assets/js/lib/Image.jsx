@@ -32,7 +32,7 @@ class Image extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      src: props.data.src
+      src: (getConfig().https) ? props.data.src.replace('http://', 'https://') : props.data.src
     };
     this.img = React.createRef();
     this.isErrored = false;
@@ -92,15 +92,11 @@ class Image extends React.PureComponent {
    */
   render() {
     const { data, circle, className, ...props } = this.props;
-    let { src } = this.state;
+    const { src } = this.state;
 
     const classes = classNames(className, {
       'circle': circle
     });
-
-    if (getConfig().https) {
-      src = src.replace('http://', 'https://');
-    }
 
     return (
       <img
