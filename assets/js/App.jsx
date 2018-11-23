@@ -125,7 +125,7 @@ class App extends React.PureComponent {
     if (isLoading) {
       return (
         <Mask visible>
-          <Loading middle />
+          <Loading label="Loading app" middle />
         </Mask>
       );
     }

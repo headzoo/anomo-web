@@ -6,7 +6,7 @@ let config = {
   lang:       'en',
   imageTypes: 'image/*',
   styles:     {
-    primaryColor:     '#00d2d9',
+    primaryColor:     '#6882b4',
     placeholderImage: ''
   },
   anomo: {

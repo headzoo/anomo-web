@@ -158,7 +158,7 @@ class ActivityPage extends React.PureComponent {
       return (
         <FadeAndSlideTransition key={0} duration={FADE_DURATION}>
           <Column className="text-center gutter-bottom">
-            <Loading />
+            <Loading label="Loading comments" />
           </Column>
         </FadeAndSlideTransition>
       );

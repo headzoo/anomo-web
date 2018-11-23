@@ -10,6 +10,7 @@ class Loading extends React.PureComponent {
   static propTypes = {
     size:        PropTypes.number,
     color:       PropTypes.string,
+    label:       PropTypes.string,
     middle:      PropTypes.bool,
     strokeWidth: PropTypes.number
   };
@@ -17,6 +18,7 @@ class Loading extends React.PureComponent {
   static defaultProps = {
     size:        57,
     color:       '',
+    label:       '',
     middle:      false,
     strokeWidth: 10
   };
@@ -25,10 +27,15 @@ class Loading extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { size, color, middle, strokeWidth, ...props } = this.props;
+    const { size, color, middle, label, strokeWidth, ...props } = this.props;
 
     return (
       <div className={classNames('loader', { 'middle': middle })} {...props}>
+        {label && (
+          <span className="loader-label">
+            {label}
+          </span>
+        )}
         <svg
           width={size}
           height={size}
