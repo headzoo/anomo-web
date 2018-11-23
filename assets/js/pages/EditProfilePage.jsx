@@ -11,6 +11,7 @@ import * as constants from 'anomo/constants';
 import * as uiActions from 'actions/uiActions';
 import * as formActions from 'actions/formActions';
 import * as userActions from 'actions/userActions';
+import * as profileActions from 'actions/profileActions';
 import * as anomoActions from 'actions/anomoActions';
 
 /**
@@ -24,6 +25,7 @@ class EditProfilePage extends React.PureComponent {
     history:            PropTypes.object.isRequired,
     formChange:         PropTypes.func.isRequired,
     formChanges:        PropTypes.func.isRequired,
+    profileReset:       PropTypes.func.isRequired,
     uiVisibleModal:     PropTypes.func.isRequired,
     anomoIntentsFetch:  PropTypes.func.isRequired,
     userUpdateSettings: PropTypes.func.isRequired
@@ -198,7 +200,7 @@ class EditProfilePage extends React.PureComponent {
    * @param {*} values
    */
   handleSubmit = (e, values) => {
-    const { user, history, userUpdateSettings } = this.props;
+    const { user, history, profileReset, userUpdateSettings } = this.props;
 
     e.preventDefault();
 
@@ -223,6 +225,7 @@ class EditProfilePage extends React.PureComponent {
     delete values.avatar;
 
     userUpdateSettings(values);
+    profileReset(user.UserID);
     history.push(routes.route('profile', { id: user.UserID }));
   };
 
@@ -443,5 +446,5 @@ class EditProfilePage extends React.PureComponent {
 
 export default connect(
   mapStateToProps('ui', 'user', 'forms', 'anomo'),
-  mapActionsToProps(uiActions, formActions, userActions, anomoActions)
+  mapActionsToProps(uiActions, formActions, userActions, anomoActions, profileActions)
 )(withRouter(EditProfilePage));

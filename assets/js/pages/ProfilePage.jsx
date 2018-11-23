@@ -65,10 +65,11 @@ class ProfilePage extends React.PureComponent {
    *
    */
   handleUpdate = () => {
-    const { profileFetch, profilePosts, profileFollowers, profileFollowing, match } = this.props;
+    const { profileFetch, profilePosts, profileFollowers, profileFollowing, profilePostsReset, match } = this.props;
 
+    profilePostsReset();
     profileFetch(match.params.id);
-    profilePosts(match.params.id);
+    profilePosts(match.params.id, true);
     profileFollowers(match.params.id);
     profileFollowing(match.params.id);
   };
@@ -309,7 +310,7 @@ class ProfilePage extends React.PureComponent {
     }
 
     return (
-      <Page title={profile.UserName}>
+      <Page title={profile.UserName} key={`profile_${profile.UserID}`}>
         <Row>
           <Column>
             <Card className="card-profile">

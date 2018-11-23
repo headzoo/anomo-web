@@ -11,6 +11,8 @@ export const PROFILE_POSTS_RESET   = 'PROFILE_POSTS_RESET';
 export const PROFILE_FOLLOWERS     = 'PROFILE_FOLLOWERS';
 export const PROFILE_FOLLOWING     = 'PROFILE_FOLLOWING';
 
+const profileCache = {};
+
 /**
  * @param {boolean} isSending
  * @returns {{type, isSending: *}}
@@ -67,16 +69,32 @@ export function profilePostsReset() {
 }
 
 /**
+ * @returns {{type: string}}
+ */
+export function profileReset(userID) {
+  delete profileCache[userID];
+  return profilePostsReset();
+}
+
+/**
  * @param {number} userID
  * @returns {function(*, *, {user: *})}
  */
 export function profileFetch(userID) {
   return (dispatch, getState, { batch }) => {
+    if (profileCache[userID]) {
+      return dispatch({
+        type:    PROFILE_FETCH,
+        profile: profileCache[userID]
+      });
+    }
+
     dispatch(profileIsSending(true));
 
-    api.request('api_users_fetch', { userID })
+    return api.request('api_users_fetch', { userID })
       .send()
       .then((resp) => {
+        profileCache[userID] = resp.results;
         dispatch(batch(
           {
             type:    PROFILE_FETCH,
