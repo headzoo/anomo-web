@@ -30,7 +30,7 @@ class UserCard extends React.PureComponent {
             <Link name="profile" params={{ id: user.UserID }}>
               <div className="card-profile-cover-container" style={coverStyles}>
                 <div className="card-profile-cover-info">
-                  <Avatar src={user.Avatar} />
+                  <Avatar src={user.Avatar} lg />
                   <h1>{user.UserName}</h1>
                   <div className="card-profile-location">
                     <Age date={user.BirthDate} /> &middot; <Neighborhood name={user.NeighborhoodName} />

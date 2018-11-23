@@ -301,7 +301,7 @@ class ProfilePage extends React.PureComponent {
         <Page title="Loading">
           <Row>
             <Column className="gutter-lg text-center">
-              <Loading />
+              <Loading label="Loading profile" />
             </Column>
           </Row>
         </Page>
