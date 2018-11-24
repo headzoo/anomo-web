@@ -2,6 +2,7 @@
 namespace App\Controller\Api;
 
 use App\Anomo\Anomo;
+use App\Http\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -9,25 +10,24 @@ use Symfony\Component\Routing\Annotation\Route;
  *     "/notifications",
  *     name="api_notifications_",
  *     options={"expose"=true},
- *     defaults={"page": 1},
- *     requirements={"notificationID": "\d+", "page": "\d+"}
+ *     requirements={"notificationID": "\d+"}
  * )
  */
 class NotificationsController extends Controller
 {
     /**
-     * @Route("/{status}/{page}", name="fetch", methods={"GET"})
+     * @Route("/{status}", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param int $status
-     * @param int $page
      * @return array
      */
-    public function fetchAction(Anomo $anomo, $status, $page)
+    public function fetchAction(Anomo $anomo, Request $request, $status)
     {
         return $anomo->get('notificationsHistory', [
             'status' => $status,
-            'page'   => $page
+            'page'   => $request->query->get('page', 1)
         ]);
     }
 

@@ -10,8 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *     "/users",
  *     name="api_users_",
  *     options={"expose"=true},
- *     defaults={"page": 1},
- *     requirements={"userID": "\d+", "page": "\d+"}
+ *     requirements={"userID": "\d+"}
  * )
  */
 class UsersController extends Controller
@@ -124,34 +123,34 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/{userID}/following/{page}", name="following", methods={"GET"})
+     * @Route("/{userID}/following", name="following", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param int $userID
-     * @param int $page
      * @return array
      */
-    public function followingAction(Anomo $anomo, $userID, $page)
+    public function followingAction(Anomo $anomo, Request $request, $userID)
     {
         return $anomo->get('userFollowing', [
             'userID' => $userID,
-            'page'   => $page
+            'page'   => $request->query->get('page', 1)
         ]);
     }
 
     /**
-     * @Route("/{userID}/followers/{page}", name="followers", methods={"GET"})
+     * @Route("/{userID}/followers", name="followers", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param int $userID
-     * @param int $page
      * @return array
      */
-    public function followersAction(Anomo $anomo, $userID, $page)
+    public function followersAction(Anomo $anomo, Request $request, $userID)
     {
         return $anomo->get('userFollowers', [
             'userID' => $userID,
-            'page'   => $page
+            'page'   => $request->query->get('page', 1)
         ]);
     }
 

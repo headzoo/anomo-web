@@ -2,6 +2,7 @@
 namespace App\Controller\Api;
 
 use App\Anomo\Anomo;
+use App\Http\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -9,8 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *     "/feeds",
  *     name="api_feeds_",
  *     options={"expose"=true},
- *     defaults={"lastActivityID": 0, "page": 1},
- *     requirements={"lastActivityID": "\d+", "userID": "\d+"}
+ *     requirements={"userID": "\d+"}
  * )
  */
 class FeedsController extends Controller
@@ -24,18 +24,18 @@ class FeedsController extends Controller
     }
 
     /**
-     * @Route("/users/{userID}/{lastActivityID}", name="user", methods={"GET"})
+     * @Route("/users/{userID}", name="user", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param int $userID
-     * @param int $lastActivityID
      * @return array
      */
-    public function userAction(Anomo $anomo, $userID, $lastActivityID)
+    public function userAction(Anomo $anomo, Request $request, $userID)
     {
         return $anomo->get('feedProfile', [
             'userID'         => $userID,
-            'lastActivityID' => $lastActivityID
+            'lastActivityID' => $request->query->get('lastActivityID', 0)
         ]);
     }
 
@@ -51,17 +51,17 @@ class FeedsController extends Controller
     }
 
     /**
-     * @Route("/hashtags/{hashtag}/{page}", name="hashtag", methods={"GET"})
+     * @Route("/hashtags/{hashtag}", name="hashtag", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param string $hashtag
-     * @param int $page
      * @return array
      */
-    public function hashtagAction(Anomo $anomo, $hashtag, $page = 1)
+    public function hashtagAction(Anomo $anomo, Request $request, $hashtag)
     {
         return $anomo->post('feedHashtag', [
-            'page'   => $page,
+            'page'   => $request->query->get('page', 1),
             'minAge' => 13,
             'maxAge' => 100
         ], [
@@ -70,14 +70,14 @@ class FeedsController extends Controller
     }
 
     /**
-     * @Route("/{name}/{lastActivityID}", name="fetch", methods={"GET"})
+     * @Route("/{name}", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
+     * @param Request $request
      * @param string $name
-     * @param int $lastActivityID
      * @return array
      */
-    public function fetchAction(Anomo $anomo, $name, $lastActivityID)
+    public function fetchAction(Anomo $anomo, Request $request, $name)
     {
         $name = strtolower($name);
         $feedTypes = [
@@ -95,7 +95,7 @@ class FeedsController extends Controller
             'maxAge'         => 100,
             'actionType'     => 1,
             'feedType'       => $feedTypes[$name],
-            'lastActivityID' => $lastActivityID
+            'lastActivityID' => $request->query->get('lastActivityID', 0)
         ]);
     }
 }
