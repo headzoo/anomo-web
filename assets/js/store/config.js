@@ -13,7 +13,7 @@ let config = {
     maxChars: 520
   },
   axios: {
-    timeout: 10000
+    timeout: 20000
   },
   facebook: {
     appID:  '1581500341950614',
