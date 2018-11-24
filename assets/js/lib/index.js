@@ -4,7 +4,6 @@ export { default as types } from './types';
 export { default as Page } from './Page';
 export { default as PageTitle } from './PageTitle';
 export { default as Nav } from './Nav';
-export { default as Footer } from './Footer';
 export { default as Icon } from './Icon';
 export { default as Image } from './Image';
 export { default as ActivityImage } from './ActivityImage';

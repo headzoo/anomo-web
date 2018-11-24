@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import objects from 'utils/objects';
+import { objects } from 'utils';
 
 /**
  *
@@ -20,14 +20,6 @@ class Container extends React.PureComponent {
   };
 
   /**
-   * @param {*} props
-   */
-  constructor(props) {
-    super(props);
-    this.container = React.createRef();
-  }
-
-  /**
    * @returns {*}
    */
   render() {
@@ -41,7 +33,6 @@ class Container extends React.PureComponent {
     return (
       <div
         className={classes}
-        ref={this.container}
         {...objects.propsFilter(props, Container.propTypes)}
       >
         {children}

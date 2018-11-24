@@ -1,11 +1,8 @@
 @import "vars";
 @import "mixins";
 
-.page {
-  .container,
-  .container-fluid {
-    padding-top: ($header-height + $gutter-size);
-  }
+.page-container {
+  padding-top: ($header-height + $gutter-size);
 }
 
 .page-title {
