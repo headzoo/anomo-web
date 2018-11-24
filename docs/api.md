@@ -22,7 +22,7 @@ Returns a list of trending hashtags.
 Submits a new activity.
 
 POST params:
-* `ProfileStatus={string}`
+* `ProfileStatus={json}`
 * `IsAnonymous={number}`
 * `TopicID={number}`
 
@@ -35,7 +35,7 @@ When uploading a picture or video use the following POST params:
 Deletes the activity with the given ID.
 
 ##### GET /api/v1/activities/{refID}/{actionType}
-Fetches the activity with the given refID and actionType.
+Returns the activity with the given refID and actionType.
 
 ##### GET /api/v1/activities/{refID}/{actionType}/likes
 Returns a list of users that liked the activity.
