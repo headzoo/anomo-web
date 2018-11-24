@@ -34,3 +34,7 @@ services:
     App\EventListener\ApiRequestListener:
         tags:
             - { name: kernel.event_listener, method: onKernelRequest, event: kernel.request }
+
+    App\EventListener\ApiExceptionListener:
+        tags:
+            - { name: kernel.event_listener, method: onKernelException, event: kernel.exception }
