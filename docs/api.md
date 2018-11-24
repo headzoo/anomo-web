@@ -1,3 +1,12 @@
+## Authentication
+All endpoints except the login endpoints must have an `Authoriztion` header, which includes the token returned by the login endpoints. The format of the header is as follows:
+
+```
+Authorization: token {token}
+```
+
+Where `{token}` is the token value returned by the login endpoint.
+
 ## Feeds
 ##### GET /api/v1/feeds/{name}
 Returns a list of activities in the `{name}` feed. Possible values for `{name}` are "recent", "following", and "popular".
