@@ -18,6 +18,20 @@ const getUserIDFromMention = (mention, tags) => {
 };
 
 /**
+ * @param {string} url
+ * @param {number} keyIndex
+ * @returns {*}
+ */
+const handleURL = (url, keyIndex) => {
+  return React.createElement('a', {
+    'key':       `link_${keyIndex}`,
+    'href':      url,
+    'target':    '_blank',
+    'className': 'anchor'
+  }, url);
+};
+
+/**
  * @param {string} text
  * @returns {Array}
  */
@@ -202,13 +216,7 @@ const parseLinks = (tokens) => {
       }
 
       if (buffer.length > 0) {
-        const href   = buffer.join('');
-        const anchor = React.createElement('a', {
-          'key':       `link_${keyIndex}`,
-          'href':      href,
-          'target':    '_blank',
-          'className': 'anchor'
-        }, href);
+        const anchor = handleURL(buffer.join(''), keyIndex);
         keyIndex += 1;
         i = y + 1;
         newTokens.push(anchor);
@@ -229,6 +237,10 @@ const parseLinks = (tokens) => {
  * @returns {Array}
  */
 const parseText = (text, tags = []) => {
+  if (!text || text === '...') { // optimization for post preview
+    return [text];
+  }
+
   let tokens = tokenize(text);
   tokens     = parseEmoji(tokens);
   tokens     = parseMentions(tokens, tags);

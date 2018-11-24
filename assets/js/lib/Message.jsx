@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, messages } from 'utils';
+import { messages } from 'utils';
 
 /**
  *
@@ -32,7 +32,7 @@ class Message extends React.Component {
   componentDidUpdate = (prevProps) => {
     const { text, tags } = this.props;
 
-    if (!objects.isEqual(prevProps.text, text)) {
+    if (text !== prevProps.text) {
       this.setState({ parsed: messages.parseText(text, tags) });
     }
   };
