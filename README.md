@@ -20,3 +20,6 @@ You can use `npm install` and `npm run dev` if not using Yarn.
 ```
 bin/console server:run
 ```
+
+## API
+The API docs can be found in the [docs directory](docs/api.md).

@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentsController extends Controller
 {
     /**
-     * @Route("", name="submit", methods={"PUT"})
+     * @Route("", name="submit", methods={"POST"})
      *
      * @param Anomo $anomo
      * @param Request $request
