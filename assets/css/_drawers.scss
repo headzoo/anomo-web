@@ -132,10 +132,6 @@
   }
 }
 
-.drawer-notifications-avatar {
-  width: 42px;
-}
-
 .drawer-notifications-message {
   max-width: 100%;
   overflow: hidden;
@@ -143,6 +139,18 @@
 
   .icon {
     margin-right: 0.5rem;
+  }
+
+  .fa-star {
+    color: gold;
+  }
+
+  .fa-heart {
+    color: red;
+  }
+
+  .fa-comment {
+    color: $color-link;
   }
 }
 

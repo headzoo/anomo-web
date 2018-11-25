@@ -247,7 +247,7 @@ class Sidebar extends React.PureComponent {
                 onClick={e => this.handleNotificationClick(e, n)}
               >
                 <div className="drawer-notifications-avatar">
-                  <Avatar src={n.Avatar} following={followingUserNames.indexOf(UserName) !== -1} sm />
+                  <Avatar src={n.Avatar} following={followingUserNames.indexOf(UserName) !== -1} md />
                 </div>
                 <div className="drawer-notifications-message">
                   <Icon name={icon} />
