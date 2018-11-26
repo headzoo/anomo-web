@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class NotificationsController extends Controller
 {
     /**
-     * @Route("/", name="fetch", methods={"GET"})
+     * @Route("", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
      * @param Request $request
@@ -31,7 +31,7 @@ class NotificationsController extends Controller
     }
 
     /**
-     * @Route("/", name="delete_all", methods={"DELETE"})
+     * @Route("", name="delete_all", methods={"DELETE"})
      *
      * @param Anomo $anomo
      * @param Request $request
