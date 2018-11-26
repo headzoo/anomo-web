@@ -283,8 +283,8 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
       lastActivityID
     })
       .send(getFeedFetchConfig(feedType))
-      .then((data) => {
-        return anomo.activities.setImageDimensions(data.Activities)
+      .then((resp) => {
+        return anomo.activities.setImageDimensions(resp.Activities)
           .then((activities) => {
             activities.forEach((a) => {
               activityCache[a.RefID] = a;

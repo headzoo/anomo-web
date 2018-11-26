@@ -38,3 +38,7 @@ services:
     App\EventListener\ApiExceptionListener:
         tags:
             - { name: kernel.event_listener, method: onKernelException, event: kernel.exception }
+
+    App\Service\GeocodeService:
+        arguments:
+            - "AIzaSyD4__y9MYgxg8daYqQc9Ktoq0CrurBeTjE"

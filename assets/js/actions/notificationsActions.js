@@ -37,8 +37,7 @@ export function notificationsFetch() {
     }
 
     api.request('api_notifications_fetch', {
-      status: constants.NOTIFICATION_STATUS_UNREAD,
-      page:   1
+      page: 1
     })
       .send({}, getAxiosConfig())
       .then((resp) => {
@@ -85,9 +84,8 @@ export function notificationsReadAll() {
       type: NOTIFICATIONS_READ_ALL
     });
 
-    api.request('api_notifications_fetch', {
-      status: constants.NOTIFICATION_STATUS_READ,
-      page:   1
+    api.request('api_notifications_delete_all', {
+      page: 1
     })
       .send()
       .catch(redux.actionCatch)

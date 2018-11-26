@@ -16,17 +16,31 @@ use Symfony\Component\Routing\Annotation\Route;
 class NotificationsController extends Controller
 {
     /**
-     * @Route("/{status}", name="fetch", methods={"GET"})
+     * @Route("/", name="fetch", methods={"GET"})
      *
      * @param Anomo $anomo
      * @param Request $request
-     * @param int $status
      * @return array
      */
-    public function fetchAction(Anomo $anomo, Request $request, $status)
+    public function fetchAction(Anomo $anomo, Request $request)
     {
         return $anomo->get('notificationsHistory', [
-            'status' => $status,
+            'status' => 1,
+            'page'   => $request->query->get('page', 1)
+        ]);
+    }
+
+    /**
+     * @Route("/", name="delete_all", methods={"DELETE"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function deleteAllAction(Anomo $anomo, Request $request)
+    {
+        return $anomo->get('notificationsHistory', [
+            'status' => 0,
             'page'   => $request->query->get('page', 1)
         ]);
     }

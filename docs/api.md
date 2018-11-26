@@ -8,6 +8,7 @@ Authorization: token {token}
 Where `{token}` is the token value returned by the login endpoint.
 
 ## Feeds
+
 ##### GET /api/v1/feeds/{name}
 Returns a list of activities in the `{name}` feed. Possible values for `{name}` are "recent", "following", and "popular".
 
@@ -27,6 +28,7 @@ Returns a list of activities with the `{hashtag}` hashtag.
 Returns a list of trending hashtags.
 
 ## Activities
+
 ##### POST /api/v1/activities
 Submits a new activity.
 
@@ -59,6 +61,7 @@ Turns notifications on/off for the given activity.
 Answers the given poll with the given answer.
 
 ## Comments
+
 ##### POST /api/v1/comments
 Submits a new comment.
 
@@ -78,13 +81,18 @@ Returns a list of users who liked the given comment.
 Likes or unlikes the given comment.
 
 ## Notifications
-##### GET /api/v1/notifications/{status}
-Returns a list of notifications when `{status}` is '1'. Marks all notifications read when `{status}` is '0'.
+
+##### GET /api/v1/notifications
+Returns a list of unread notifications.
+
+##### DELETE /api/v1/notifications
+Marks all notifications as read.
 
 ##### DELETE /api/v1/notifications/{notificationID}
 Marks the given notifications as read.
 
 ## Users
+
 ##### POST /api/v1/users/login
 Logs a user into the app.
 
@@ -144,6 +152,7 @@ POST params:
 * `userID={number}` ID of the user to block
 
 ## Anomo
+
 ##### GET /api/v1/anomo/intents
 Returns a list of anomo intents.
 
@@ -151,5 +160,6 @@ Returns a list of anomo intents.
 Returns a list of anomo interests.
 
 ## Search
+
 ##### GET /api/v1/search/users/{userID}/{latitude}/{longitude}
 Searches for users.
