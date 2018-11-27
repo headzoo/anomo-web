@@ -2,6 +2,7 @@ export { withRouter } from 'react-router-dom';
 
 export { default as types } from './types';
 export { default as Page } from './Page';
+export { default as Layout } from './Layout';
 export { default as PageTitle } from './PageTitle';
 export { default as Nav } from './Nav';
 export { default as Icon } from './Icon';

@@ -52,13 +52,7 @@ class Page extends React.PureComponent {
 
     return (
       <div className={classes} {...objects.propsFilter(props, Page.propTypes, 'dispatch')}>
-        <Container className="page-container" fluid>
-          <Row>
-            <Column md={4} offsetMd={4} xs={12}>
-              {children}
-            </Column>
-          </Row>
-        </Container>
+        {children}
       </div>
     );
   }
