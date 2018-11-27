@@ -80,11 +80,7 @@ function storagePush(key, value, maxLength = -1) {
     const v = values[i];
 
     if (typeof v === 'object' && typeof value === 'object') {
-      if ((v.id !== undefined && value.id !== undefined) && (v.id === value.id)) {
-        found = true;
-        break;
-      } else if ((v.listing_key !== undefined && value.listing_key !== undefined)
-          && (v.listing_key === value.listing_key)) {
+      if ((v.ActivityID !== undefined && value.ActivityID !== undefined) && (v.ActivityID === value.ActivityID)) {
         found = true;
         break;
       }
@@ -233,16 +229,17 @@ export default {
   parseHash,
   position,
   storage: {
-    get:                storageGet,
-    set:                storageSet,
-    push:               storagePush,
-    remove:             storageRemove,
-    KEY_USER:           'user',
-    KEY_ID:             'UserID',
-    KEY_DETAILS:        'Details',
-    KEY_TOKEN:          'token',
-    KEY_TAGS:           'tags',
-    KEY_SHOW_PREVIEW:   'showPreview',
-    KEY_SIDEBAR_DOCKED: 'sidebarDocked'
+    get:                  storageGet,
+    set:                  storageSet,
+    push:                 storagePush,
+    remove:               storageRemove,
+    KEY_USER:             'user',
+    KEY_ID:               'UserID',
+    KEY_DETAILS:          'Details',
+    KEY_TOKEN:            'token',
+    KEY_TAGS:             'tags',
+    KEY_SHOW_PREVIEW:     'showPreview',
+    KEY_SIDEBAR_DOCKED:   'sidebarDocked',
+    KEY_ACTIVITY_HISTORY: 'activityHistory'
   }
 };

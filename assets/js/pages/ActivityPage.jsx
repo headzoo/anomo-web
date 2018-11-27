@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { objects, connect, mapActionsToProps } from 'utils';
+import { objects, browser, connect, mapActionsToProps } from 'utils';
 import { TransitionGroup, FadeAndSlideTransition } from 'lib/animation';
 import { ActivityCard, CommentCard } from 'lib/cards';
 import { ReplyModal } from 'lib/modals';
@@ -61,7 +61,9 @@ class ActivityPage extends React.PureComponent {
     } else if (this.props.activity.IsDeleted) {
       history.push(routes.route('home'));
     } else if (!objects.isEmpty(this.props.activity) && !objects.isEqual(this.props.activity, prevProps.activity)) {
-      this.setState({ activity: this.props.activity });
+      this.setState({ activity: this.props.activity }, () => {
+        browser.storage.push(browser.storage.KEY_ACTIVITY_HISTORY, this.props.activity, 12);
+      });
     } else if (location.hash && location.hash.indexOf(COMMENT_PREFIX) === 0) {
       if (isCommentsLoading !== prevProps.isCommentsLoading && prevProps.isCommentsLoading) {
         this.activateComment(location.hash);

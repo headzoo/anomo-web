@@ -28,7 +28,7 @@ class FeedPage extends React.PureComponent {
    */
   constructor(props) {
     super(props);
-
+    this.history = browser.storage.get(browser.storage.KEY_ACTIVITY_HISTORY, []);
     switch (props.location.pathname) {
       case routes.route('recent'):
         props.uiActiveFeed('recent');
@@ -39,6 +39,9 @@ class FeedPage extends React.PureComponent {
       case routes.route('following'):
         props.uiActiveFeed('following');
         break;
+      case routes.route('history'):
+        props.uiActiveFeed('history');
+        break;
     }
   }
 
@@ -48,7 +51,10 @@ class FeedPage extends React.PureComponent {
   componentDidUpdate = (prevProps) => {
     const { feeds, activeFeed } = this.props;
 
-    if (feeds[activeFeed].isRefreshing && !prevProps.feeds[activeFeed].isRefreshing) {
+    if (activeFeed === 'history' && prevProps.activeFeed !== 'history') {
+      browser.scroll();
+      this.history = browser.storage.get(browser.storage.KEY_ACTIVITY_HISTORY, []);
+    } else if (feeds[activeFeed].isRefreshing && !prevProps.feeds[activeFeed].isRefreshing) {
       browser.scroll();
     }
   };
@@ -81,7 +87,9 @@ class FeedPage extends React.PureComponent {
     const { history, uiActiveFeed, activityFeedFetch } = this.props;
 
     e.preventDefault();
-    activityFeedFetch(activeFeed, true);
+    if (activeFeed !== 'history') {
+      activityFeedFetch(activeFeed, true);
+    }
     uiActiveFeed(activeFeed);
     history.replace(routes.route(activeFeed));
   };
@@ -125,6 +133,15 @@ class FeedPage extends React.PureComponent {
               <Number value={feeds.popular.newNumber} />
             </Badge>
           </LinkButton>
+          {this.history.length > 0 && (
+            <LinkButton
+              name="history"
+              onClick={e => this.handleNavClick(e, 'history')}
+              className={activeFeed === 'history' ? 'active' : ''}
+            >
+              <div>History</div>
+            </LinkButton>
+          )}
         </ButtonGroup>
       </div>
     );
@@ -139,6 +156,12 @@ class FeedPage extends React.PureComponent {
     let title = 'scnstr';
     if (activeFeed !== 'recent') {
       title = strings.ucWords(activeFeed);
+    }
+    if (activeFeed === 'history') {
+      feeds.history = {
+        isRefreshing: false,
+        activities:   this.history
+      };
     }
 
     return (
@@ -171,7 +194,7 @@ class FeedPage extends React.PureComponent {
             <Feed
               onNext={this.handleNext}
               activities={feeds[activeFeed].activities}
-              hasMore
+              hasMore={activeFeed !== 'history'}
             />
           </Column>
         </Row>

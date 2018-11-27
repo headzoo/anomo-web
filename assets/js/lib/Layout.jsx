@@ -31,6 +31,7 @@ class Layout extends React.PureComponent {
               <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
               <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
               <PrivateRoute exact path={routes.path('following')} component={FeedPage} />
+              <PrivateRoute exact path={routes.path('history')} component={FeedPage} />
               <PrivateRoute exact path={routes.path('activity')} component={ActivityPage} />
               <PrivateRoute exact path={routes.path('hashtag')} component={HashtagPage} />
               <PrivateRoute exact path={routes.path('editProfile')} component={EditProfilePage} />

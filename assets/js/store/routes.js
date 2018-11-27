@@ -5,6 +5,7 @@ const pathsAndRoutes = {
   recent:                '/',
   popular:               '/popular',
   following:             '/following',
+  history:               '/history',
   activity:              '/activity/:refID/:actionType',
   profile:               '/profile/:id',
   editProfile:           '/profile/edit',
