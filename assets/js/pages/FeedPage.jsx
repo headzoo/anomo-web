@@ -129,9 +129,6 @@ class FeedPage extends React.PureComponent {
             className={activeFeed === 'popular' ? 'active' : ''}
           >
             <div>Popular</div>
-            <Badge>
-              <Number value={feeds.popular.newNumber} />
-            </Badge>
           </LinkButton>
           {this.history.length > 0 && (
             <LinkButton
