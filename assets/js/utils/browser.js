@@ -31,6 +31,26 @@ function scroll(top = 0, behavior = 'auto', rest = 'auto') {
 }
 
 /**
+ * @param {string} url
+ * @returns {{port: string, host: string, hash: string, search: string, origin: *|string, hostname: string, protocol: string, pathname: string}}
+ */
+function parseURL(url) {
+  const parser = document.createElement('a');
+  parser.href = url;
+
+  return {
+    port:     parser.port,
+    host:     parser.host,
+    hash:     parser.hash,
+    search:   parser.search,
+    origin:   parser.origin,
+    hostname: parser.hostname,
+    protocol: parser.protocol,
+    pathname: parser.pathname
+  };
+}
+
+/**
  *
  * @param {*} location
  * @returns {*}
@@ -228,6 +248,7 @@ export default {
   showScrollbars,
   parseHash,
   position,
+  parseURL,
   storage: {
     get:                  storageGet,
     set:                  storageSet,

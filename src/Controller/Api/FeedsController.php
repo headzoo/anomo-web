@@ -89,7 +89,7 @@ class FeedsController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $anomo->get('feed', [
+        $feeds = $anomo->get('feed', [
             'gender'         => 0,
             'minAge'         => 13,
             'maxAge'         => 100,
@@ -97,5 +97,46 @@ class FeedsController extends Controller
             'feedType'       => $feedTypes[$name],
             'lastActivityID' => $request->query->get('lastActivityID', 0)
         ]);
+
+        if ($name === 'recent') {
+            $activity = [
+                'ActivityID' => '1578597',
+                'FromUserID' => '316610',
+                'Image' => '',
+                'RefID' => '1433781',
+                'Type' => '27',
+                'ActionType' => '27',
+                'CreatedDate' => '2018-11-27 15:38:38',
+                'Gender' => '2',
+                'BirthDate' => '1985-03-11',
+                'NeighborhoodID' => '60296',
+                'Mention' => '',
+                'Avatar' => 'http://anomo-production1.s3.amazonaws.com/upload/36e8a60dba3c27955d8751c4babb0422.jpg',
+                'FromUserName' => 'fornicake',
+                'IsFavorite' => '1',
+                'Like' => '0',
+                'Comment' => '0',
+                'EventEndDate' => '',
+                'EventLat' => '0',
+                'EventLong' => '0',
+                'NumberIamGoing' => '0',
+                'AmIGoing' => '0',
+                'ImageHeight' => 300,
+                'ImageWidth' => 200,
+                'IsDeleted' => false,
+                'DeleteIsSending' => false,
+                'LikeIsLoading' => false,
+                'LikeList' => [],
+                'ListComment' => [],
+                'Message' => json_encode([
+                    'message' => 'Hi there. https://anomo-production1.s3.amazonaws.com/upload/9a0232e5e83db08e4c77f17d4ba9ca2d.jpg
+How goes it?',
+                    'message_tags' => []
+                ])
+            ];
+            // array_unshift($feeds['Activities'], $activity);
+        }
+
+        return $feeds;
     }
 }

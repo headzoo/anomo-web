@@ -1,6 +1,9 @@
 import React from 'react';
 import twemoji from 'twemoji';
+import { browser } from 'utils';
 import Link from 'lib/Link';
+import Image from 'lib/Image';
+import GifPlayer from 'lib/GifPlayer';
 
 /**
  * @param {string} mention
@@ -23,6 +26,31 @@ const getUserIDFromMention = (mention, tags) => {
  * @returns {*}
  */
 const handleURL = (url, keyIndex) => {
+  const { pathname } = browser.parseURL(url);
+  const extension = pathname.toLowerCase().split('.').pop();
+
+  if (extension === '.gif') {
+    return React.createElement(GifPlayer, {
+      'key':    `link_gif_${keyIndex}`,
+      'src':    url,
+      'poster': url
+    }, url);
+  }
+
+  if (['jpg', 'jpeg', 'png'].indexOf(extension) !== -1) {
+    const img = React.createElement(Image, {
+      'key':  `link_img_${keyIndex}`,
+      'data': { src: url, alt: '' }
+    });
+
+    return React.createElement('a', {
+      'key':       `link_${keyIndex}`,
+      'href':      url,
+      'target':    '_blank',
+      'className': 'anchor'
+    }, img);
+  }
+
   return React.createElement('a', {
     'key':       `link_${keyIndex}`,
     'href':      url,
@@ -197,29 +225,47 @@ const parseLinks = (tokens) => {
   const newTokens = [];
   let keyIndex = 0;
   const breakChars = [' ', "\n", "\r", "\t"]; // eslint-disable-line
+  const puncChars  = ['.', ',', '?'];
 
   for (let i = 0; i < tokens.length; i++) {
     if (typeof tokens[i] === 'string' && tokens.slice(i, i + 4).join('').match(/https?:\/\//)) {
+
       let y = i;
       const buffer = [];
       for (; y < tokens.length; y++) {
         if (typeof tokens[y] === 'string') {
+
+          // Slurp down tokens until break char.
           if (breakChars.indexOf(tokens[y]) === -1) {
             buffer.push(tokens[y]);
+
+          // We're done.
           } else {
-            newTokens.push(tokens[y]);
             break;
           }
+
+        // Objects, elements, functions, etc.
         } else {
           newTokens.push(tokens[y]);
         }
       }
 
       if (buffer.length > 0) {
-        const anchor = handleURL(buffer.join(''), keyIndex);
+        let url       = buffer.join('');
+        const last    = url.substr(url.length - 1, 1);
+        const hasPunc = puncChars.indexOf(last) !== -1;
+        if (hasPunc) {
+          url = url.substr(0, url.length - 1);
+        }
+
+        const anchor = handleURL(url, keyIndex);
+
+        i = y - 1;
         keyIndex += 1;
-        i = y + 1;
         newTokens.push(anchor);
+        if (hasPunc) {
+          newTokens.push(last);
+        }
       } else {
         newTokens.push(tokens[i]);
       }

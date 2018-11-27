@@ -101,6 +101,44 @@ class ActivitiesController extends Controller
      */
     public function fetchAction(Anomo $anomo, $refID, $actionType)
     {
+        if ($refID === '1433781') {
+            $activity = [
+                'ActivityID' => '1578597',
+                'FromUserID' => '316610',
+                'Image' => '',
+                'RefID' => '1433781',
+                'Type' => '27',
+                'ActionType' => '27',
+                'CreatedDate' => '2018-11-27 15:38:38',
+                'Gender' => '2',
+                'BirthDate' => '1985-03-11',
+                'NeighborhoodID' => '60296',
+                'Mention' => '',
+                'Avatar' => 'http://anomo-production1.s3.amazonaws.com/upload/36e8a60dba3c27955d8751c4babb0422.jpg',
+                'FromUserName' => 'fornicake',
+                'IsFavorite' => '1',
+                'Like' => '0',
+                'Comment' => '0',
+                'EventEndDate' => '',
+                'EventLat' => '0',
+                'EventLong' => '0',
+                'NumberIamGoing' => '0',
+                'AmIGoing' => '0',
+                'ImageHeight' => 300,
+                'ImageWidth' => 200,
+                'IsDeleted' => false,
+                'DeleteIsSending' => false,
+                'LikeIsLoading' => false,
+                'LikeList' => [],
+                'ListComment' => [],
+                'Message' => json_encode([
+                    'message' => 'Bye there',
+                    'message_tags' => []
+                ])
+            ];
+
+            return ['Activity' => $activity];
+        }
         return $anomo->get('activity', [
             'refID'      => $refID,
             'actionType' => $actionType

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, Icon, Loading } from 'lib';
+import Image from './Image';
+import Icon from './Icon';
+import Loading from './Loading';
 
 /**
  *
