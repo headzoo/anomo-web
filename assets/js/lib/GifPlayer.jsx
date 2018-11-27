@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Image from './Image';
 import Icon from './Icon';
 import Loading from './Loading';
@@ -9,8 +10,9 @@ import Loading from './Loading';
  */
 class GifPlayer extends React.PureComponent {
   static propTypes = {
-    src:    PropTypes.string.isRequired,
-    poster: PropTypes.string.isRequired,
+    src:          PropTypes.string.isRequired,
+    poster:       PropTypes.string.isRequired,
+    contentWidth: PropTypes.number.isRequired
   };
 
   /**
@@ -20,6 +22,7 @@ class GifPlayer extends React.PureComponent {
     super(props);
     this.state = {
       src:     props.src,
+      styles:  { height: 250 },
       loaded:  false,
       playing: false
     };
@@ -35,6 +38,25 @@ class GifPlayer extends React.PureComponent {
   };
 
   /**
+   * @param {number} width
+   * @param {number} height
+   * @returns {*}
+   */
+  getImageStyles = (width, height) => {
+    const { contentWidth } = this.props;
+
+    if (!width || !height) {
+      return {};
+    }
+
+    const ratio  = width / contentWidth;
+
+    return {
+      height: Math.round(height / ratio)
+    };
+  };
+
+  /**
    * @param {Event} e
    * @param {boolean} playing
    */
@@ -45,8 +67,16 @@ class GifPlayer extends React.PureComponent {
   /**
    *
    */
-  handleImageLoad = () => {
+  handleGifLoad = () => {
     this.setState({ loaded: true });
+  };
+
+  /**
+   * @param {Event} e
+   */
+  handlePosterLoad = (e) => {
+    const styles = this.getImageStyles(e.target.width, e.target.height);
+    this.setState({ styles });
   };
 
   /**
@@ -54,10 +84,7 @@ class GifPlayer extends React.PureComponent {
    */
   renderPoster = () => {
     const { poster } = this.props;
-
-    const styles = {
-      backgroundImage: `url(${poster})`
-    };
+    const { styles, src } = this.state;
 
     return (
       <div
@@ -65,6 +92,17 @@ class GifPlayer extends React.PureComponent {
         className="activity-gif-player-poster"
         onClick={e => this.handlePlayClick(e, true)}
       >
+        <Image
+          key="poster"
+          data={{ src: poster, alt: 'Poster' }}
+          onLoad={this.handlePosterLoad}
+        />
+        <Image
+          key="gif_pre_load"
+          style={{ opacity: 0 }}
+          data={{ src, alt: 'Gif' }}
+          onLoad={this.handleGifLoad}
+        />
         <div className="activity-gif-player-poster-mask">
           <Icon title="Play" name="play-circle" />
         </div>
@@ -77,12 +115,13 @@ class GifPlayer extends React.PureComponent {
    */
   renderGif = () => {
     const { src, loaded } = this.state;
+    const { styles } = this.state;
 
     return (
-      <div className="activity-gif-player-gif">
+      <div className="activity-gif-player-gif" style={styles}>
         <Image
+          key="gif_playing"
           data={{ src, alt: 'Gif' }}
-          onLoad={this.handleImageLoad}
           onClick={e => this.handlePlayClick(e, false)}
         />
         {!loaded && (
@@ -108,4 +147,10 @@ class GifPlayer extends React.PureComponent {
   }
 }
 
-export default GifPlayer;
+const mapStateToProps = state => (
+  {
+    contentWidth: state.ui.contentWidth
+  }
+);
+
+export default connect(mapStateToProps)(GifPlayer);

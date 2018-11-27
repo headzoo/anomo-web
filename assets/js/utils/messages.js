@@ -26,14 +26,19 @@ const getUserIDFromMention = (mention, tags) => {
  * @returns {*}
  */
 const handleURL = (url, keyIndex) => {
-  const { pathname } = browser.parseURL(url);
+  const { hostname, pathname } = browser.parseURL(url);
   const extension = pathname.toLowerCase().split('.').pop();
 
-  if (extension === '.gif') {
+  if (extension === 'gif') {
+    let poster = url;
+    if (hostname === 'i.scnstr.com') {
+      poster = url.replace('.gif', '-poster.jpg');
+    }
+
     return React.createElement(GifPlayer, {
       'key':    `link_gif_${keyIndex}`,
       'src':    url,
-      'poster': url
+      'poster': poster
     }, url);
   }
 

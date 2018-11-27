@@ -129,7 +129,7 @@ class FeedsController extends Controller
                 'LikeList' => [],
                 'ListComment' => [],
                 'Message' => json_encode([
-                    'message' => 'Hi there. https://anomo-production1.s3.amazonaws.com/upload/9a0232e5e83db08e4c77f17d4ba9ca2d.jpg
+                    'message' => 'Hi there. https://i.scnstr.com/comic23.gif
 How goes it?',
                     'message_tags' => []
                 ])
