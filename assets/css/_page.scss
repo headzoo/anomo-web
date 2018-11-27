@@ -58,6 +58,10 @@
     border-top-right-radius: 0.25rem !important;
     border-bottom-right-radius: 0.25rem !important;
 
+    @include media-xs {
+      font-size: 0.8rem;
+    }
+
     &:hover,
     &.active {
       color: #FFF;

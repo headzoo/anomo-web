@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import AnimateHeight from 'react-animate-height';
 import { objects, connect } from 'utils';
 import { Button } from 'lib/bootstrap';
-import { Image } from 'lib';
+import { Image, Icon } from 'lib';
 
 /**
  *
@@ -62,6 +62,24 @@ class ActivityImage extends React.PureComponent {
   };
 
   /**
+   * @param {Event} e
+   * @param {string} tool
+   */
+  handleToolClick = (e, tool) => {
+    const { activity } = this.props;
+
+    e.stopPropagation();
+    switch (tool) {
+      case 'google':
+        window.open(`http://images.google.com/searchbyimage?image_url=${encodeURIComponent(activity.Image)}`);
+        break;
+      case 'open':
+        window.open(activity.Image);
+        break;
+    }
+  };
+
+  /**
    * @returns {*}
    */
   getImageStyles = () => {
@@ -96,9 +114,9 @@ class ActivityImage extends React.PureComponent {
 
     return (
       <AnimateHeight
-        style={stylesContainer}
         ref={this.wrapper}
         className={classes}
+        style={stylesContainer}
         height={expanded ? 'auto' : animateHeight}
         {...objects.propsFilter(props, ActivityImage.propTypes, 'dispatch')}
       >
@@ -115,6 +133,24 @@ class ActivityImage extends React.PureComponent {
             </Button>
           </div>
         )}
+        <div className="activity-image-tools">
+          <Button
+            theme="none"
+            type="button"
+            title="Google image search"
+            onClick={e => this.handleToolClick(e, 'google')}
+          >
+            <Icon name="google" fab />
+          </Button>
+          <Button
+            theme="none"
+            type="button"
+            title="Open in new window"
+            onClick={e => this.handleToolClick(e, 'open')}
+          >
+            <Icon name="external-link-square-alt" />
+          </Button>
+        </div>
       </AnimateHeight>
     );
   }

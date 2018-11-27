@@ -9,6 +9,7 @@ class Icon extends React.PureComponent {
   static propTypes = {
     name:       PropTypes.string.isRequired,
     regular:    PropTypes.bool,
+    fab:        PropTypes.bool,
     size:       PropTypes.number,
     isSpinning: PropTypes.bool,
     className:  PropTypes.string
@@ -16,6 +17,7 @@ class Icon extends React.PureComponent {
 
   static defaultProps = {
     size:       1,
+    fab:        false,
     regular:    true,
     isSpinning: false,
     className:  ''
@@ -25,7 +27,7 @@ class Icon extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { name, size, regular, isSpinning, className, ...props } = this.props;
+    const { name, size, fab, regular, isSpinning, className, ...props } = this.props;
 
     return (
       <span
@@ -34,8 +36,9 @@ class Icon extends React.PureComponent {
           `icon fa-${size}x fa-${name}`,
           {
             'fa-spin': isSpinning,
-            'fas':     regular,
-            'far':     !regular
+            'fas':     (regular && !fab),
+            'far':     (!regular && !fab),
+            'fab':     fab
           }
         )}
         aria-hidden="true"
