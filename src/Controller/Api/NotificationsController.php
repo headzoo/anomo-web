@@ -31,6 +31,21 @@ class NotificationsController extends Controller
     }
 
     /**
+     * @Route("/history", name="history", methods={"GET"})
+     *
+     * @param Anomo $anomo
+     * @param Request $request
+     * @return array
+     */
+    public function historyAction(Anomo $anomo, Request $request)
+    {
+        return $anomo->get('notificationsHistory', [
+            'status' => 2,
+            'page'   => $request->query->get('page', 1)
+        ]);
+    }
+
+    /**
      * @Route("", name="delete_all", methods={"DELETE"})
      *
      * @param Anomo $anomo
