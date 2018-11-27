@@ -2,7 +2,10 @@
 namespace App\Controller\Api;
 
 use App\Anomo\Anomo;
+use App\Entity\Activity;
+use App\Entity\User;
 use App\Http\Request;
+use DateTime;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -33,10 +36,14 @@ class FeedsController extends Controller
      */
     public function userAction(Anomo $anomo, Request $request, $userID)
     {
-        return $anomo->get('feedProfile', [
+        $feed = $anomo->get('feedProfile', [
             'userID'         => $userID,
             'lastActivityID' => $request->query->get('lastActivityID', 0)
         ]);
+
+        $this->saveActivities($feed['Activities']);
+
+        return $feed;
     }
 
     /**
@@ -60,13 +67,17 @@ class FeedsController extends Controller
      */
     public function hashtagAction(Anomo $anomo, Request $request, $hashtag)
     {
-        return $anomo->post('feedHashtag', [
+        $feed = $anomo->post('feedHashtag', [
             'page'   => $request->query->get('page', 1),
             'minAge' => 13,
             'maxAge' => 100
         ], [
             'HashTag' => $hashtag
         ]);
+
+        $this->saveActivities($feed['Activities']);
+
+        return $feed;
     }
 
     /**
@@ -136,6 +147,8 @@ How goes it?',
             ];
             // array_unshift($feeds['Activities'], $activity);
         }
+
+        $this->saveActivities($feeds['Activities']);
 
         return $feeds;
     }
