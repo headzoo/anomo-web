@@ -111,8 +111,9 @@ class CommentCard extends React.PureComponent {
             <Icon name="ellipsis-h" />
           </div>
           <Link
-            name="comment"
-            params={{ commentID: comment.ID, refID: activity.RefID, actionType: activity.ActionType  }}
+            name="activity"
+            hash={`#comment-${comment.ID}`}
+            params={{ refID: activity.RefID, actionType: activity.ActionType  }}
           >
             <Moment fromNow ago>
               {comment.CreatedDate}

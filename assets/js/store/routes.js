@@ -6,7 +6,6 @@ const pathsAndRoutes = {
   popular:               '/popular',
   following:             '/following',
   activity:              '/activity/:refID/:actionType',
-  comment:               '/activity/:refID/:actionType#comment-:commentID',
   profile:               '/profile/:id',
   editProfile:           '/profile/edit',
   search:                '/search',

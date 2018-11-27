@@ -31,10 +31,6 @@ class ActivityCardFooter extends React.PureComponent {
   render() {
     const { activity, comment, onLikeClick, onCommentClick } = this.props;
 
-    if (objects.isEmpty(activity) || activity.isLoading) {
-      return null;
-    }
-
     const { RefID, ActionType, Comment, Like, IsLike, IsComment, LikeIsLoading } = activity;
     const comments  = parseInt(Comment || 0, 10);
     const likes     = parseInt(Like || 0, 10);
