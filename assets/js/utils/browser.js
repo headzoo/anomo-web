@@ -250,17 +250,18 @@ export default {
   position,
   parseURL,
   storage: {
-    get:                  storageGet,
-    set:                  storageSet,
-    push:                 storagePush,
-    remove:               storageRemove,
-    KEY_USER:             'user',
-    KEY_ID:               'UserID',
-    KEY_DETAILS:          'Details',
-    KEY_TOKEN:            'token',
-    KEY_TAGS:             'tags',
-    KEY_SHOW_PREVIEW:     'showPreview',
-    KEY_SIDEBAR_DOCKED:   'sidebarDocked',
-    KEY_ACTIVITY_HISTORY: 'activityHistory'
+    get:                   storageGet,
+    set:                   storageSet,
+    push:                  storagePush,
+    remove:                storageRemove,
+    KEY_USER:              'user',
+    KEY_ID:                'UserID',
+    KEY_DETAILS:           'Details',
+    KEY_TOKEN:             'token',
+    KEY_TAGS:              'tags',
+    KEY_SHOW_PREVIEW:      'showPreview',
+    KEY_SIDEBAR_DOCKED:    'sidebarDocked',
+    KEY_PINNED_ACTIVITIES: 'pinnedActivities',
+    KEY_ACTIVITY_HISTORY:  'activityHistory'
   }
 };

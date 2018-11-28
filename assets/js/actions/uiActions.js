@@ -8,6 +8,8 @@ export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
 export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
 export const UI_ACTIVE_FEED    = 'UI_ACTIVE_FEED';
 export const UI_SIDEBAR_DOCKED = 'UI_SIDEBAR_DOCKED';
+export const UI_PIN_ACTIVITY   = 'UI_PIN_ACTIVITY';
+export const UI_UNPIN_ACTIVITY = 'UI_UNPIN_ACTIVITY';
 
 /**
  * @param {boolean} isLoading
@@ -102,5 +104,33 @@ export function uiSidebarDocked(sidebarDocked) {
   return {
     type: UI_SIDEBAR_DOCKED,
     sidebarDocked
+  };
+}
+
+/**
+ * @param {*} activity
+ * @returns {function(*, *)}
+ */
+export function uiPinActivity(activity) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: UI_PIN_ACTIVITY,
+      activity
+    });
+    browser.storage.set(browser.storage.KEY_PINNED_ACTIVITIES, getState().ui.pinnedActivities);
+  };
+}
+
+/**
+ * @param {*} activity
+ * @returns {function(*, *)}
+ */
+export function uiUnpinActivity(activity) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: UI_UNPIN_ACTIVITY,
+      activity
+    });
+    browser.storage.set(browser.storage.KEY_PINNED_ACTIVITIES, getState().ui.pinnedActivities);
   };
 }

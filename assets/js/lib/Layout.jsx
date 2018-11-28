@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Container, Row, Column } from 'lib/bootstrap';
-import { PrivateRoute } from 'lib';
+import { PrivateRoute, PinnedActivities } from 'lib';
 import FeedPage from 'pages/FeedPage';
 import HashtagPage from 'pages/HashtagPage';
 import ActivityPage from 'pages/ActivityPage';
@@ -26,7 +26,7 @@ class Layout extends React.PureComponent {
     return (
       <Container className="page-container" fluid>
         <Row>
-          <Column md={4} offsetMd={4} xs={12}>
+          <Column md={4} offsetMd={4} sm={12} xs={12}>
             <Switch>
               <PrivateRoute exact path={routes.path('home')} component={FeedPage} />
               <PrivateRoute exact path={routes.path('popular')} component={FeedPage} />
@@ -46,6 +46,9 @@ class Layout extends React.PureComponent {
               <Route exact path={routes.path('about')} component={AboutPage} />
               <Route exact path="*" component={NotFoundPage} />
             </Switch>
+          </Column>
+          <Column md={4} sm={12} xs={12}>
+            <PinnedActivities />
           </Column>
         </Row>
       </Container>

@@ -129,6 +129,41 @@ function sidebarDocked(state, action) {
   };
 }
 
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function pinActivity(state, action) {
+  const activity         = objects.clone(action.activity);
+  const pinnedActivities = objects.clone(state.pinnedActivities).filter((a) => {
+    return a.ActivityID !== activity.ActivityID;
+  });
+  pinnedActivities.unshift(activity);
+
+  return {
+    ...state,
+    pinnedActivities
+  };
+}
+
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function unpinActivity(state, action) {
+  const activity         = action.activity;
+  const pinnedActivities = objects.clone(state.pinnedActivities).filter((a) => {
+    return a.ActivityID !== activity.ActivityID;
+  });
+
+  return {
+    ...state,
+    pinnedActivities
+  };
+}
+
 export default redux.createReducer({
   [types.UI_LOADING]:        loading,
   [types.UI_ACTIVE_FEED]:    activeFeed,
@@ -137,5 +172,7 @@ export default redux.createReducer({
   [types.UI_CONTENT_WIDTH]:  contentWidth,
   [types.UI_VISIBLE_MODAL]:  visibleModal,
   [types.UI_VISIBLE_DRAWER]: visibleDrawer,
-  [types.UI_SIDEBAR_DOCKED]: sidebarDocked
+  [types.UI_SIDEBAR_DOCKED]: sidebarDocked,
+  [types.UI_PIN_ACTIVITY]:   pinActivity,
+  [types.UI_UNPIN_ACTIVITY]: unpinActivity
 });

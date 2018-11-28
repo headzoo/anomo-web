@@ -1,4 +1,4 @@
-import { objects } from 'utils';
+import { objects, browser } from 'utils';
 import * as constants from 'anomo/constants';
 
 /**
@@ -20,13 +20,14 @@ export const defaultUi = {
     size:     'xs',
     isMobile: false
   },
-  contentWidth:  551,
-  activeFeed:    'recent',
-  isLoading:     true,
-  sidebarDocked: false,
-  errorMessage:  '',
-  errorInfo:     {},
-  visibleModals: {
+  contentWidth:     551,
+  activeFeed:       'recent',
+  isLoading:        true,
+  sidebarDocked:    false,
+  errorMessage:     '',
+  errorInfo:        {},
+  pinnedActivities: browser.storage.get(browser.storage.KEY_PINNED_ACTIVITIES, []),
+  visibleModals:    {
     user:     false,
     tags:     false,
     post:     false,

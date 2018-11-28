@@ -11,16 +11,19 @@ import * as activityActions from 'actions/activityActions';
  */
 class ActivityModal extends React.PureComponent {
   static propTypes = {
-    userID:         PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    following:      PropTypes.array.isRequired,
-    blocked:        PropTypes.array.isRequired,
-    visibleModals:  PropTypes.object.isRequired,
-    uiVisibleModal: PropTypes.func.isRequired,
-    userFollow:     PropTypes.func.isRequired,
-    userBlock:      PropTypes.func.isRequired,
-    activityShare:  PropTypes.func.isRequired,
-    activityReport: PropTypes.func.isRequired,
-    activityDelete: PropTypes.func.isRequired
+    userID:           PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    following:        PropTypes.array.isRequired,
+    blocked:          PropTypes.array.isRequired,
+    visibleModals:    PropTypes.object.isRequired,
+    pinnedActivities: PropTypes.array.isRequired,
+    uiVisibleModal:   PropTypes.func.isRequired,
+    uiPinActivity:    PropTypes.func.isRequired,
+    uiUnpinActivity:  PropTypes.func.isRequired,
+    userFollow:       PropTypes.func.isRequired,
+    userBlock:        PropTypes.func.isRequired,
+    activityShare:    PropTypes.func.isRequired,
+    activityReport:   PropTypes.func.isRequired,
+    activityDelete:   PropTypes.func.isRequired
   };
 
   static defaultProps = {};
@@ -62,6 +65,22 @@ class ActivityModal extends React.PureComponent {
   };
 
   /**
+   * @returns {boolean}
+   */
+  isPinned = () => {
+    const { pinnedActivities, visibleModals } = this.props;
+    const { activity } = visibleModals;
+
+    for (let i = 0; i < pinnedActivities.length; i++) {
+      if (pinnedActivities[i].ActivityID === activity.ActivityID) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
    * @param {Event} e
    * @param {string} item
    */
@@ -69,6 +88,8 @@ class ActivityModal extends React.PureComponent {
     const {
       visibleModals,
       uiVisibleModal,
+      uiPinActivity,
+      uiUnpinActivity,
       userFollow,
       userBlock,
       activityDelete,
@@ -92,6 +113,12 @@ class ActivityModal extends React.PureComponent {
         break;
       case 'block':
         userBlock(activity.FromUserID);
+        break;
+      case 'pin':
+        uiPinActivity(activity);
+        break;
+      case 'unpin':
+        uiUnpinActivity(activity);
         break;
     }
 
@@ -126,6 +153,21 @@ class ActivityModal extends React.PureComponent {
         {...rest}
       >
         <ul className="list-group list-group-flush">
+          {this.isPinned() ? (
+            <li
+              onClick={e => this.handleClick(e, 'unpin')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Unpin Activity
+            </li>
+          ) : (
+            <li
+              onClick={e => this.handleClick(e, 'pin')}
+              className="list-group-item list-group-item-action clickable"
+            >
+              Pin Activity
+            </li>
+          )}
           <li
             onClick={e => this.handleClick(e, 'share')}
             className="list-group-item list-group-item-action clickable"
@@ -184,10 +226,11 @@ class ActivityModal extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    userID:        state.user.UserID,
-    following:     state.user.following,
-    blocked:       state.user.blocked,
-    visibleModals: state.ui.visibleModals
+    userID:           state.user.UserID,
+    following:        state.user.following,
+    blocked:          state.user.blocked,
+    visibleModals:    state.ui.visibleModals,
+    pinnedActivities: state.ui.pinnedActivities
   };
 };
 

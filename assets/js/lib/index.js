@@ -36,3 +36,4 @@ export { default as UserBadge } from './UserBadge';
 export { default as Sidebar } from './Sidebar';
 export { default as TrendingHashtags } from './TrendingHashtags';
 export { default as Ellipsis } from './Ellipsis';
+export { default as PinnedActivities } from './PinnedActivities';

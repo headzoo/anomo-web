@@ -39,6 +39,20 @@
 
     .icon {
       font-size: 1.5rem;
+
+      @include media-xs {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+.card-activity-avatar {
+  .avatar-container.md {
+    @include media-xs {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
     }
   }
 }
@@ -189,6 +203,10 @@
     width: 200px;
     height: 1.5rem;
     margin-bottom: 0.5rem;
+  }
+
+  @include media-xs {
+    font-size: 0.9rem;
   }
 }
 
