@@ -138,3 +138,8 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+.activities-pinned {
+  position: sticky;
+  top: $header-height + $gutter-size;
+}
