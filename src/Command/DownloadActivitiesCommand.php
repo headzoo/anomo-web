@@ -9,12 +9,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use DateTime;
 
 /**
- * Class UpdateActivitiesCommand
+ * Class DownloadFeedsCommand
  */
-class UpdateActivitiesCommand extends Command
+class DownloadActivitiesCommand extends Command
 {
     /**
      * @var Anomo
@@ -53,8 +52,8 @@ class UpdateActivitiesCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:update-activities')
-            ->setDescription('Updates recent activities.')
+            ->setName('app:download-activities')
+            ->setDescription('Downloads recent activities.')
             ->addOption('username', null, InputOption::VALUE_OPTIONAL, 'Authentication username.')
             ->addOption('password', null, InputOption::VALUE_OPTIONAL, 'Authentication password.')
             ->addOption('token', null, InputOption::VALUE_OPTIONAL, 'Authentication token.');
@@ -78,14 +77,18 @@ class UpdateActivitiesCommand extends Command
         }
         $output->writeln('Logged in with token: ' . $token);
 
-        $repoActivities = $this->em->getRepository(Activity::class);
-        $activities = $repoActivities->findSinceDateCreated(new DateTime('1 day ago'));
-        foreach($activities as $activity) {
-            $a = $this->fetchActivity($activity);
-            if ($a) {
-                $output->writeln(sprintf('Saving %s', $a['ActivityID']));
-                $this->saveActivity($a);
-            }
+        $feed = $this->anomo->get('feed', [
+            'gender'         => 0,
+            'minAge'         => 13,
+            'maxAge'         => 100,
+            'actionType'     => 1,
+            'feedType'       => 'recent',
+            'lastActivityID' => 0
+        ]);
+
+        foreach($feed['Activities'] as $activity) {
+            $output->writeln(sprintf('Saving %s', $activity['ActivityID']));
+            $this->saveActivity($activity);
         }
     }
 
@@ -111,23 +114,6 @@ class UpdateActivitiesCommand extends Command
         }
 
         return $token;
-    }
-
-    /**
-     * @param Activity $activity
-     * @return array
-     */
-    public function fetchActivity(Activity $activity)
-    {
-        $resp = $this->anomo->get('activity', [
-            'refID'      => $activity->getRefId(),
-            'actionType' => $activity->getActionType()
-        ]);
-        if ($resp['code'] === 'OK') {
-            return $resp['Activity'];
-        }
-
-        return null;
     }
 
     /**

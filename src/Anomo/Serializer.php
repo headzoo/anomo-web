@@ -146,12 +146,13 @@ class Serializer
      */
     public function unserializeUser(array $user)
     {
+        $anomoId = isset($user['UserID']) ? $user['UserID'] : $user['FromUserID'];
         if (empty($user['UserName']) && empty($user['FromUserName'])) {
-            return null;
+            $username = $anomoId;
+        } else {
+            $username = isset($user['UserName']) ? $user['UserName'] : $user['FromUserName'];
         }
 
-        $anomoId    = isset($user['UserID']) ? $user['UserID'] : $user['FromUserID'];
-        $username   = isset($user['UserName']) ? $user['UserName'] : $user['FromUserName'];
         $userRepo   = $this->em->getRepository(User::class);
         $userEntity = $userRepo->findByAnomoId($anomoId);
 
