@@ -1,15 +1,16 @@
 import { browser } from 'utils';
 
-export const UI_LOADING        = 'UI_LOADING';
-export const UI_WINDOW_RESIZE  = 'UI_WINDOW_RESIZE';
-export const UI_CONTENT_WIDTH  = 'UI_CONTENT_WIDTH';
-export const UI_ERROR_MESSAGE  = 'UI_ERROR_MESSAGE';
-export const UI_VISIBLE_MODAL  = 'UI_VISIBLE_MODAL';
-export const UI_VISIBLE_DRAWER = 'UI_VISIBLE_DRAWER';
-export const UI_ACTIVE_FEED    = 'UI_ACTIVE_FEED';
-export const UI_SIDEBAR_DOCKED = 'UI_SIDEBAR_DOCKED';
-export const UI_PIN_ACTIVITY   = 'UI_PIN_ACTIVITY';
-export const UI_UNPIN_ACTIVITY = 'UI_UNPIN_ACTIVITY';
+export const UI_LOADING         = 'UI_LOADING';
+export const UI_WINDOW_RESIZE   = 'UI_WINDOW_RESIZE';
+export const UI_CONTENT_WIDTH   = 'UI_CONTENT_WIDTH';
+export const UI_ERROR_MESSAGE   = 'UI_ERROR_MESSAGE';
+export const UI_VISIBLE_MODAL   = 'UI_VISIBLE_MODAL';
+export const UI_VISIBLE_DRAWER  = 'UI_VISIBLE_DRAWER';
+export const UI_ACTIVE_FEED     = 'UI_ACTIVE_FEED';
+export const UI_SIDEBAR_DOCKED  = 'UI_SIDEBAR_DOCKED';
+export const UI_PIN_ACTIVITY    = 'UI_PIN_ACTIVITY';
+export const UI_UNPIN_ACTIVITY  = 'UI_UNPIN_ACTIVITY';
+export const UI_UPDATE_ACTIVITY = 'UI_UPDATE_ACTIVITY';
 
 /**
  * @param {boolean} isLoading
@@ -129,6 +130,20 @@ export function uiUnpinActivity(activity) {
   return (dispatch, getState) => {
     dispatch({
       type: UI_UNPIN_ACTIVITY,
+      activity
+    });
+    browser.storage.set(browser.storage.KEY_PINNED_ACTIVITIES, getState().ui.pinnedActivities);
+  };
+}
+
+/**
+ * @param {*} activity
+ * @returns {function(*, *)}
+ */
+export function uiUpdateActivity(activity) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: UI_UPDATE_ACTIVITY,
       activity
     });
     browser.storage.set(browser.storage.KEY_PINNED_ACTIVITIES, getState().ui.pinnedActivities);

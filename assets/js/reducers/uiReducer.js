@@ -1,5 +1,6 @@
 import * as types from 'actions/uiActions';
 import { objects, redux } from 'utils';
+import anomo from 'anomo';
 
 const BREAK_SM = 576;
 const BREAK_MD = 768;
@@ -153,7 +154,7 @@ function pinActivity(state, action) {
  * @returns {*}
  */
 function unpinActivity(state, action) {
-  const activity         = action.activity;
+  const { activity }     = action;
   const pinnedActivities = objects.clone(state.pinnedActivities).filter((a) => {
     return a.ActivityID !== activity.ActivityID;
   });
@@ -164,15 +165,49 @@ function unpinActivity(state, action) {
   };
 }
 
+/**
+ * @param {*} state
+ * @param {*} action
+ * @returns {*}
+ */
+function updateActivity(state, action) {
+  const activity       = objects.clone(action.activity);
+  let pinnedActivities = objects.clone(state.pinnedActivities);
+
+  if (Array.isArray(activity)) {
+    activity.forEach((a) => {
+      pinnedActivities = pinnedActivities.map((aa) => {
+        if (aa.ActivityID === a.ActivityID) {
+          return anomo.activities.sanitizeActivity(a);
+        }
+        return aa;
+      });
+    });
+  } else {
+    pinnedActivities = pinnedActivities.map((a) => {
+      if (a.ActivityID === activity.ActivityID) {
+        return activity;
+      }
+      return a;
+    });
+  }
+
+  return {
+    ...state,
+    pinnedActivities
+  };
+}
+
 export default redux.createReducer({
-  [types.UI_LOADING]:        loading,
-  [types.UI_ACTIVE_FEED]:    activeFeed,
-  [types.UI_ERROR_MESSAGE]:  errorMessage,
-  [types.UI_WINDOW_RESIZE]:  windowResize,
-  [types.UI_CONTENT_WIDTH]:  contentWidth,
-  [types.UI_VISIBLE_MODAL]:  visibleModal,
-  [types.UI_VISIBLE_DRAWER]: visibleDrawer,
-  [types.UI_SIDEBAR_DOCKED]: sidebarDocked,
-  [types.UI_PIN_ACTIVITY]:   pinActivity,
-  [types.UI_UNPIN_ACTIVITY]: unpinActivity
+  [types.UI_LOADING]:         loading,
+  [types.UI_ACTIVE_FEED]:     activeFeed,
+  [types.UI_ERROR_MESSAGE]:   errorMessage,
+  [types.UI_WINDOW_RESIZE]:   windowResize,
+  [types.UI_CONTENT_WIDTH]:   contentWidth,
+  [types.UI_VISIBLE_MODAL]:   visibleModal,
+  [types.UI_VISIBLE_DRAWER]:  visibleDrawer,
+  [types.UI_SIDEBAR_DOCKED]:  sidebarDocked,
+  [types.UI_PIN_ACTIVITY]:    pinActivity,
+  [types.UI_UNPIN_ACTIVITY]:  unpinActivity,
+  [types.UI_UPDATE_ACTIVITY]: updateActivity
 });

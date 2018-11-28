@@ -1,5 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
+import { uiUpdateActivity } from 'actions/uiActions';
 import { formReset, formError, formSubmitting } from 'actions/formActions';
 import { profileIsLikeLoading, profileLikeToggle } from 'actions/profileActions';
 import { objects, redux } from 'utils';
@@ -295,6 +296,7 @@ export function activityFeedFetch(feedType, refresh = false, buffered = true) {
               feedType,
               refresh
             });
+            dispatch(uiUpdateActivity(activities));
           });
       })
       .catch(redux.actionCatch)
@@ -435,7 +437,8 @@ export function activityFeedFetchNewNumber(feedType) {
           .then(() => {
             dispatch(batch(
               activityFeedNewNumber(feedType, feedBuffers[feedType].length),
-              activityFeedUpdate(data.Activities)
+              activityFeedUpdate(data.Activities),
+              uiUpdateActivity(data.Activities)
             ));
           });
       })
@@ -599,6 +602,7 @@ export function activityGet(refID, actionType) {
             activityCache[refID] = activities[0]; // eslint-disable-line
             dispatch(batch(
               activitySet(activities[0]),
+              uiUpdateActivity(activities[0]),
               activityIsActivityLoading(false),
               activityIsCommentsLoading(false),
               activityIsLikeListLoading(false)

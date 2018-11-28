@@ -1,7 +1,7 @@
 import * as types from 'actions/activityActions';
 import { objects, numbers, redux, feeds as feedUtils } from 'utils';
 import anomo from 'anomo';
-import { defaultActivity} from 'store/defaultState';
+import { defaultActivity } from 'store/defaultState';
 
 /**
  * @param {*} state
