@@ -35,7 +35,10 @@ class Serializer
     {
         $activityEntities = [];
         foreach($activities as $a) {
-            $activityEntities[] = $this->unserializeActivity($a);
+            $activity = $this->unserializeActivity($a);
+            if ($activity) {
+                $activityEntities[] = $activity;
+            }
         }
 
         return $activityEntities;
@@ -70,7 +73,11 @@ class Serializer
 
         $activityEntity = $activityRepo->findByAnomoId($activity['ActivityID']);
         if (!$activityEntity) {
-            $user    = $this->unserializeUser($activity);
+            $user = $this->unserializeUser($activity);
+            if (!$user) {
+                return null;
+            }
+
             $message = json_decode($activity['Message'], true);
             if (!isset($message['message_tags']) || !is_array($message['message_tags'])) {
                 $message['message_tags'] = [];
@@ -139,6 +146,10 @@ class Serializer
      */
     public function unserializeUser(array $user)
     {
+        if (empty($user['UserName']) && empty($user['FromUserName'])) {
+            return null;
+        }
+
         $anomoId    = isset($user['UserID']) ? $user['UserID'] : $user['FromUserID'];
         $username   = isset($user['UserName']) ? $user['UserName'] : $user['FromUserName'];
         $userRepo   = $this->em->getRepository(User::class);

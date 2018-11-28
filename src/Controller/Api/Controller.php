@@ -91,8 +91,10 @@ class Controller extends AbstractController
     protected function saveActivity(array $activity)
     {
         $activityEntity = $this->serializer->unserializeActivity($activity);
-        $this->em->persist($activityEntity);
-        $this->em->flush();
+        if ($activityEntity) {
+            $this->em->persist($activityEntity);
+            $this->em->flush();
+        }
 
         return $activityEntity;
     }
