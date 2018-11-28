@@ -146,6 +146,15 @@ class Serializer
      */
     public function unserializeUser(array $user)
     {
+        if ($user['IsAnonymous']) {
+            $user['UserID']         = 0;
+            $user['UserName']       = 'anonymous';
+            $user['Avatar']         = '';
+            $user['Gender']         = 0;
+            $user['NeighborhoodID'] = 0;
+            $user['BirthDate']      = date('Y-m-d H:i:s');
+        }
+
         $anomoId = isset($user['UserID']) ? $user['UserID'] : $user['FromUserID'];
         if (empty($user['UserName']) && empty($user['FromUserName'])) {
             $username = $anomoId;
