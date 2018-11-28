@@ -2,6 +2,7 @@
 namespace App\Repository;
 
 use App\Entity\Activity;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -37,5 +38,18 @@ class ActivityRepository extends ServiceEntityRepository
     public function findByAnomoId($anomoId)
     {
         return $this->findOneBy(['anomoId' => $anomoId]);
+    }
+
+    /**
+     * @param DateTime $dateCreated
+     * @return Activity[]
+     */
+    public function findSinceDateCreated(DateTime $dateCreated)
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.dateCreated >= :dateCreated')
+            ->setParameter(':dateCreated', $dateCreated)
+            ->getQuery()
+            ->execute();
     }
 }
