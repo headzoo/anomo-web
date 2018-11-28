@@ -236,7 +236,7 @@ class ActivityPage extends React.PureComponent {
           </Row>
         )}
         <Row>
-          <Column className="gutter-top">
+          <Column>
             <ActivityCard
               clickable={false}
               activity={activity}
