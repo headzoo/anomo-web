@@ -3,6 +3,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,17 +21,17 @@ class Activity
     private $id;
 
     /**
+     * @var int
+     * @ORM\Column(type="bigint", nullable=false, options={"unsigned" = true})
+     */
+    private $anomoId;
+
+    /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User", cascade={"all"})
      * @ORM\JoinColumn(name="user_id", onDelete="CASCADE", referencedColumnName="id")
      */
     private $user;
-
-    /**
-     * @var int
-     * @ORM\Column(type="bigint", nullable=false, options={"unsigned" = true})
-     */
-    private $anomoId;
 
     /**
      * @var int
@@ -49,6 +50,12 @@ class Activity
      * @ORM\Column(type="smallint", nullable=false, options={"unsigned" = true})
      */
     private $type;
+
+    /**
+     * @var int
+     * @ORM\Column(type="smallint", nullable=false, options={"unsigned" = true})
+     */
+    private $isAnonymous;
 
     /**
      * @var string
@@ -123,6 +130,12 @@ class Activity
     private $poll;
 
     /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="activity")
+     */
+    private $comments;
+
+    /**
      * @var DateTime
      * @ORM\Column(type="datetime", nullable=false)
      */
@@ -135,7 +148,9 @@ class Activity
     {
         $this->imageHeight = 0;
         $this->imageWidth  = 0;
+        $this->isAnonymous = 0;
         $this->tags        = new ArrayCollection();
+        $this->comments    = new ArrayCollection();
         $this->dateCreated = new DateTime();
     }
 
@@ -234,6 +249,24 @@ class Activity
     public function setType(int $type): Activity
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function isAnonymous(): int
+    {
+        return $this->isAnonymous;
+    }
+
+    /**
+     * @param int $isAnonymous
+     * @return Activity
+     */
+    public function setIsAnonymous(int $isAnonymous): Activity
+    {
+        $this->isAnonymous = $isAnonymous;
         return $this;
     }
 
@@ -450,6 +483,24 @@ class Activity
     public function setPoll(Poll $poll): Activity
     {
         $this->poll = $poll;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param Collection $comments
+     * @return Activity
+     */
+    public function setComments(Collection $comments): Activity
+    {
+        $this->comments = $comments;
         return $this;
     }
 

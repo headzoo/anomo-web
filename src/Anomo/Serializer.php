@@ -2,7 +2,9 @@
 namespace App\Anomo;
 
 use App\Entity\Activity;
+use App\Entity\Comment;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -40,14 +42,14 @@ class Serializer
     }
 
     /**
-     * @param array $a
+     * @param array $activity
      * @return Activity
      */
-    public function unserializeActivity(array $a)
+    public function unserializeActivity(array $activity)
     {
         $activityRepo = $this->em->getRepository(Activity::class);
 
-        $a = array_merge([
+        $activity = array_merge([
             'Type'           => 0,
             'Like'           => 0,
             'Image'          => '',
@@ -56,45 +58,79 @@ class Serializer
             'VideoID'        => 0,
             'VideoSource'    => '',
             'VideoURL'       => '',
-            'VideoThumbnail' => ''
-        ], $a);
-        if (!$a['Type']) {
-            $a['Type'] = $a['ActionType'];
+            'VideoThumbnail' => '',
+            'IsAnonymous'    => 0
+        ], $activity);
+        if (!$activity['Type']) {
+            $activity['Type'] = $activity['ActionType'];
         }
-        if (!$a['Message']) {
-            $a['Message'] = json_encode(['message' => '', 'message_tags' => []]);
+        if (!$activity['Message']) {
+            $activity['Message'] = json_encode(['message' => '', 'message_tags' => []]);
         }
 
-        $activity = $activityRepo->findByAnomoId($a['ActivityID']);
-        if (!$activity) {
-            $user     = $this->unserializeUser($a);
-            $message  = json_decode($a['Message'], true);
+        $activityEntity = $activityRepo->findByAnomoId($activity['ActivityID']);
+        if (!$activityEntity) {
+            $user    = $this->unserializeUser($activity);
+            $message = json_decode($activity['Message'], true);
             if (!isset($message['message_tags']) || !is_array($message['message_tags'])) {
                 $message['message_tags'] = [];
             }
 
-            $activity = (new Activity())
-                ->setAnomoId($a['ActivityID'])
-                ->setRefId($a['RefID'])
-                ->setActionType($a['ActionType'])
-                ->setType($a['Type'])
+            $activityEntity = (new Activity())
+                ->setAnomoId($activity['ActivityID'])
+                ->setRefId($activity['RefID'])
+                ->setActionType($activity['ActionType'])
+                ->setType($activity['Type'])
+                ->setIsAnonymous($activity['IsAnonymous'])
                 ->setUser($user)
-                ->setImage($a['Image'])
+                ->setImage($activity['Image'])
                 ->setMessage($message['message'])
-                ->setTags(join(',', $message['message_tags']))
-                ->setImage($a['Image'])
-                ->setVideoId($a['VideoID'])
-                ->setVideoSource($a['VideoSource'])
-                ->setVideoURL($a['VideoURL'])
-                ->setVideoThumbnail($a['VideoThumbnail'])
-                ->setNumComments($a['Comment'])
-                ->setNumLikes($a['Like']);
+                ->setTags(json_encode($message['message_tags']))
+                ->setImage($activity['Image'])
+                ->setVideoId($activity['VideoID'])
+                ->setVideoSource($activity['VideoSource'])
+                ->setVideoURL($activity['VideoURL'])
+                ->setVideoThumbnail($activity['VideoThumbnail'])
+                ->setNumComments($activity['Comment'])
+                ->setNumLikes($activity['Like'])
+                ->setDateCreated(new DateTime($activity['CreatedDate']));
         } else {
-            $activity->setNumComments($a['Comment']);
-            $activity->setNumLikes($a['Like']);
+            $activityEntity->setNumComments($activity['Comment']);
+            $activityEntity->setNumLikes($activity['Like']);
         }
 
-        return $activity;
+        return $activityEntity;
+    }
+
+    /**
+     * @param array $comment
+     * @param Activity $activity
+     * @return Comment|object
+     */
+    public function unserializeComment(array $comment, Activity $activity)
+    {
+        $commentRepo = $this->em->getRepository(Comment::class);
+
+        $comment = array_merge([
+            'Content'      => '',
+            'NumberOfLike' => 0,
+            'IsAnonymous'  => 0
+        ], $comment);
+
+        $commentEntity = $commentRepo->findByAnomoId($comment['ID']);
+        if (!$commentEntity) {
+            $commentEntity = (new Comment())
+                ->setAnomoId($comment['ID'])
+                ->setContent($comment['Content'])
+                ->setIsAnonymous($comment['IsAnonymous'])
+                ->setNumLikes($comment['NumberOfLike'])
+                ->setActivity($activity)
+                ->setDateCreated(new DateTime($comment['CreatedDate']));
+        } else {
+            $commentEntity->setNumLikes($comment['NumberOfLike']);
+        }
+
+        return $commentEntity;
     }
 
     /**
@@ -115,14 +151,14 @@ class Serializer
                 ->setAvatar($user['Avatar'])
                 ->setGender($user['Gender'])
                 ->setNeighborhoodId($user['NeighborhoodID'])
-                ->setDateBirth(new \DateTime($user['BirthDate']));
+                ->setDateBirth(new DateTime($user['BirthDate']));
         } else {
             $userEntity
                 ->setUsername($username)
                 ->setAvatar($user['Avatar'])
                 ->setGender($user['Gender'])
                 ->setNeighborhoodId($user['NeighborhoodID'])
-                ->setDateBirth(new \DateTime($user['BirthDate']));
+                ->setDateBirth(new DateTime($user['BirthDate']));
         }
 
         return $userEntity;
