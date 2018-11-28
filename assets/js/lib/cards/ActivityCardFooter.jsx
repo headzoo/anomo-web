@@ -29,7 +29,7 @@ class ActivityCardFooter extends React.PureComponent {
    * @returns {*}
    */
   render() {
-    const { activity, comment, onLikeClick, onCommentClick } = this.props;
+    const { activity, loading, comment, onLikeClick, onCommentClick } = this.props;
 
     const { RefID, ActionType, Comment, Like, IsLike, IsComment, LikeIsLoading } = activity;
     const comments  = parseInt(Comment || 0, 10);
@@ -41,6 +41,23 @@ class ActivityCardFooter extends React.PureComponent {
       'card-activity-comment-commented': isComment
     });
 
+    if (loading || objects.isEmpty(activity)) {
+      return (
+        <CardFooter>
+          <div className="card-activity-like">
+            <LikeIcon />&nbsp;<Number value={0} />&nbsp;Likes
+          </div>
+          <div className={commentClasses}>
+            {!comment && (
+              <span>
+                <Number value={0} />&nbsp;Comments
+              </span>
+            )}
+          </div>
+        </CardFooter>
+      );
+    }
+
     return (
       <CardFooter>
         <div className="card-activity-like">
@@ -49,7 +66,7 @@ class ActivityCardFooter extends React.PureComponent {
             loading={LikeIsLoading || false}
             onClick={onLikeClick}
           />&nbsp;
-          {likes}&nbsp;
+          <Number value={likes} />&nbsp;
           <Pluralize number={likes} singular="Like" plural="Likes" />
         </div>
         <div className={commentClasses}>
