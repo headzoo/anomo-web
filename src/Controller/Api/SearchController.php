@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Anomo\Anomo;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -11,20 +10,19 @@ use Symfony\Component\Routing\Annotation\Route;
  *     options={"expose"=true}
  * )
  */
-class SearchController
+class SearchController extends Controller
 {
     /**
      * @Route("/users/{userID}/{latitude}/{longitude}", name="users", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param int $userID
      * @param float $latitude
      * @param float $longitude
      * @return array
      */
-    public function usersAction(Anomo $anomo, $userID, $latitude, $longitude)
+    public function usersAction($userID, $latitude, $longitude)
     {
-        return $anomo->get('userSearch', [
+        return $this->anomo->get('userSearch', [
             'minAge'    => 13,
             'maxAge'    => 100,
             'userID'    => $userID,

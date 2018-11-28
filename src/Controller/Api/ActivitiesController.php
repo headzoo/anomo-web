@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Anomo\Anomo;
 use App\Http\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,11 +18,10 @@ class ActivitiesController extends Controller
     /**
      * @Route("", name="submit", methods={"POST"})
      *
-     * @param Anomo $anomo
      * @param Request $request
      * @return array
      */
-    public function submitAction(Anomo $anomo, Request $request)
+    public function submitAction(Request $request)
     {
         /** @var UploadedFile[] $files */
         $files = $request->files->all();
@@ -49,7 +47,7 @@ class ActivitiesController extends Controller
                 ];
             }
 
-            return $anomo->post('userPicture', [], $body);
+            return $this->anomo->post('userPicture', [], $body);
         } else {
             $body = $this->getRequired($request->json->all(), [
                 'ProfileStatus',
@@ -57,21 +55,20 @@ class ActivitiesController extends Controller
                 'TopicID'
             ]);
 
-            return $anomo->post('userStatus', [], $body);
+            return $this->anomo->post('userStatus', [], $body);
         }
     }
 
     /**
      * @Route("/polls/{pollID}/{answerID}", name="polls_answer", methods={"PUT"})
      *
-     * @param Anomo $anomo
      * @param int $pollID
      * @param int $answerID
      * @return array
      */
-    public function answerPollAction(Anomo $anomo, $pollID, $answerID)
+    public function answerPollAction($pollID, $answerID)
     {
-        return $anomo->get('activityAnswerPoll', [
+        return $this->anomo->get('activityAnswerPoll', [
             'pollID'   => $pollID,
             'answerID' => $answerID
         ]);
@@ -80,13 +77,12 @@ class ActivitiesController extends Controller
     /**
      * @Route("/{activityID}", name="delete", methods={"DELETE"})
      *
-     * @param Anomo $anomo
      * @param int $activityID
      * @return array
      */
-    public function deleteAction(Anomo $anomo, $activityID)
+    public function deleteAction($activityID)
     {
-        return $anomo->get('activityDelete', [
+        return $this->anomo->get('activityDelete', [
             'activityID' => $activityID
         ]);
     }
@@ -94,14 +90,13 @@ class ActivitiesController extends Controller
     /**
      * @Route("/{refID}/{actionType}", name="fetch", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param int $refID
      * @param int $actionType
      * @return array
      */
-    public function fetchAction(Anomo $anomo, $refID, $actionType)
+    public function fetchAction($refID, $actionType)
     {
-        return $anomo->get('activity', [
+        return $this->anomo->get('activity', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);
@@ -110,14 +105,13 @@ class ActivitiesController extends Controller
     /**
      * @Route("/{refID}/{actionType}/likes", name="likes", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param int $refID
      * @param int $actionType
      * @return array
      */
-    public function likesAction(Anomo $anomo, $refID, $actionType)
+    public function likesAction($refID, $actionType)
     {
-        return $anomo->get('activityLikeList', [
+        return $this->anomo->get('activityLikeList', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);
@@ -126,14 +120,13 @@ class ActivitiesController extends Controller
     /**
      * @Route("/{refID}/{actionType}/likes", name="like", methods={"PUT"})
      *
-     * @param Anomo $anomo
      * @param int $refID
      * @param int $actionType
      * @return array
      */
-    public function likeAction(Anomo $anomo, $refID, $actionType)
+    public function likeAction($refID, $actionType)
     {
-        return $anomo->get('activityLike', [
+        return $this->anomo->get('activityLike', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);
@@ -142,14 +135,13 @@ class ActivitiesController extends Controller
     /**
      * @Route("/{refID}/{actionType}/notifications", name="stop_notify", methods={"PUT"})
      *
-     * @param Anomo $anomo
      * @param int $refID
      * @param int $actionType
      * @return array
      */
-    public function notificationsAction(Anomo $anomo, $refID, $actionType)
+    public function notificationsAction($refID, $actionType)
     {
-        return $anomo->get('commentStopNotify', [
+        return $this->anomo->get('commentStopNotify', [
             'refID'      => $refID,
             'actionType' => $actionType
         ]);

@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Anomo\Anomo;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -11,27 +10,25 @@ use Symfony\Component\Routing\Annotation\Route;
  *     options={"expose"=true}
  * )
  */
-class AnomoController
+class AnomoController extends Controller
 {
     /**
      * @Route("/intents", name="intents", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @return array
      */
-    public function intentsAction(Anomo $anomo)
+    public function intentsAction()
     {
-        return $anomo->get('anomoListIntent');
+        return $this->anomo->get('anomoListIntent');
     }
 
     /**
      * @Route("/interest", name="interests", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @return array
      */
-    public function interestAction(Anomo $anomo)
+    public function interestAction()
     {
-        return $anomo->get('anomoListInterest');
+        return $this->anomo->get('anomoListInterest');
     }
 }

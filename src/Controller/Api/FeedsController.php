@@ -1,11 +1,7 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Anomo\Anomo;
-use App\Entity\Activity;
-use App\Entity\User;
 use App\Http\Request;
-use DateTime;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -29,14 +25,13 @@ class FeedsController extends Controller
     /**
      * @Route("/users/{userID}", name="user", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param Request $request
      * @param int $userID
      * @return array
      */
-    public function userAction(Anomo $anomo, Request $request, $userID)
+    public function userAction(Request $request, $userID)
     {
-        $feed = $anomo->get('feedProfile', [
+        $feed = $this->anomo->get('feedProfile', [
             'userID'         => $userID,
             'lastActivityID' => $request->query->get('lastActivityID', 0)
         ]);
@@ -49,25 +44,23 @@ class FeedsController extends Controller
     /**
      * @Route("/hashtags/_trending", name="hashtags_trending", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @return array
      */
-    public function trendingHashtagsAction(Anomo $anomo)
+    public function trendingHashtagsAction()
     {
-        return $anomo->get('trendingHashtags');
+        return $this->anomo->get('trendingHashtags');
     }
 
     /**
      * @Route("/hashtags/{hashtag}", name="hashtag", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param Request $request
      * @param string $hashtag
      * @return array
      */
-    public function hashtagAction(Anomo $anomo, Request $request, $hashtag)
+    public function hashtagAction(Request $request, $hashtag)
     {
-        $feed = $anomo->post('feedHashtag', [
+        $feed = $this->anomo->post('feedHashtag', [
             'page'   => $request->query->get('page', 1),
             'minAge' => 13,
             'maxAge' => 100
@@ -83,12 +76,11 @@ class FeedsController extends Controller
     /**
      * @Route("/{name}", name="fetch", methods={"GET"})
      *
-     * @param Anomo $anomo
      * @param Request $request
      * @param string $name
      * @return array
      */
-    public function fetchAction(Anomo $anomo, Request $request, $name)
+    public function fetchAction(Request $request, $name)
     {
         $name = strtolower($name);
         $feedTypes = [
@@ -100,7 +92,7 @@ class FeedsController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $feeds = $anomo->get('feed', [
+        $feeds = $this->anomo->get('feed', [
             'gender'         => 0,
             'minAge'         => 13,
             'maxAge'         => 100,
