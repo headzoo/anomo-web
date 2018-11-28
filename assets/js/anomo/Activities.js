@@ -79,6 +79,9 @@ class Activities {
     if (a.Message) {
       a.Message = this.filterMessage(a.Message);
     }
+    if (!a.UserName && !a.FromUserName) {
+      a.UserName = (a.UserID || a.FromUserID);
+    }
 
     a.ListComment = a.ListComment.map((comment) => {
       comment.Content         = this.unescapeUnicode(comment.Content);
