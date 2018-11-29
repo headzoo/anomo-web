@@ -200,7 +200,7 @@ export function userBlock(userID) {
   return (dispatch, getState, { batch }) => {
     dispatch(userBlockedIsSubmitting(true));
 
-    api.request('api_users_block')
+    api.request('api_users_block', { userID })
       .send({ userID })
       .then(() => {
         dispatch(batch(
