@@ -18,7 +18,7 @@ class PinnedActivities extends React.PureComponent {
     const { pinnedActivities } = this.props;
 
     return (
-      <div className="activities-pinned">
+      <div>
         {pinnedActivities.map(a => (
           <ActivityCard key={a.ActivityID} activity={a} />
         ))}

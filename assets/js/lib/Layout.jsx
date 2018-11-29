@@ -47,7 +47,7 @@ class Layout extends React.PureComponent {
               <Route exact path="*" component={NotFoundPage} />
             </Switch>
           </Column>
-          <Column md={4} sm={12} xs={12}>
+          <Column className="activities-pinned" md={4} offsetMd={8} sm={12} xs={12}>
             <PinnedActivities />
           </Column>
         </Row>

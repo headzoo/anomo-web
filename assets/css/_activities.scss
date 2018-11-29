@@ -140,6 +140,9 @@
 }
 
 .activities-pinned {
-  position: sticky;
-  top: $header-height + $gutter-size;
+  position: fixed;
+
+  @include media-xs {
+    display: none;
+  }
 }
