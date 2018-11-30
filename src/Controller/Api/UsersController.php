@@ -182,6 +182,8 @@ class UsersController extends Controller
             'userID'
         ]);
 
-        return $this->anomo->post('userBlock', [], $body);
+        return $this->anomo->post('userBlock', [
+            'userID' => $body['userID']
+        ]);
     }
 }
