@@ -1,8 +1,10 @@
 <?php
 namespace App\Controller\Api;
 
+use App\Entity\User;
 use App\Http\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @Route(
@@ -81,10 +83,22 @@ class UsersController extends Controller
             'Password'
         ]);
 
-        return $this->anomo->post('userLogin', [], [
+        $resp = $this->anomo->post('userLogin', [], [
             'UserName' => $body['UserName'],
             'Password' => md5($body['Password'])
         ]);
+        if ($resp['code'] !== 'OK') {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->saveUser($resp);
+        if (!($user instanceof User)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->get('session')->set('user', serialize($user));
+
+        return $resp;
     }
 
     /**
@@ -101,7 +115,19 @@ class UsersController extends Controller
             'FbAccessToken'
         ]);
 
-        return $this->anomo->post('userFBLogin', [], $body);
+        $resp = $this->anomo->post('userFBLogin', [], $body);
+        if ($resp['code'] !== 'OK') {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->saveUser($resp);
+        if (!($user instanceof User)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->get('session')->set('user', serialize($user));
+
+        return $resp;
     }
 
     /**
@@ -111,6 +137,7 @@ class UsersController extends Controller
      */
     public function logoutAction()
     {
+        $this->get('session')->remove('user');
         return $this->anomo->post('userLogout');
     }
 

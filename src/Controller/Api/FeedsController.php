@@ -140,7 +140,10 @@ How goes it?',
             // array_unshift($feeds['Activities'], $activity);
         }
 
-        $this->saveActivities($feeds['Activities']);
+        if (!empty($feeds['Activities'])) {
+            $activities = $this->saveActivities($feeds['Activities']);
+            $feeds['Activities'] = $this->serializer->serializeActivities($activities, $feeds['Activities']);
+        }
 
         return $feeds;
     }

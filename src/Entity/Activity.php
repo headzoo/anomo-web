@@ -113,7 +113,7 @@ class Activity
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=520, nullable=false)
+     * @ORM\Column(type="string", length=1200, nullable=false)
      */
     private $message;
 

@@ -44,6 +44,19 @@ class Controller extends AbstractController
     }
 
     /**
+     * @return mixed
+     */
+    protected function getUser()
+    {
+        $user = $this->get('session')->get('user');
+        if ($user) {
+            $user = unserialize($user);
+        }
+
+        return $user;
+    }
+
+    /**
      * @param array $values
      * @param array $required
      * @return array

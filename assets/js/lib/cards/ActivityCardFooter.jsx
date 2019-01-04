@@ -34,8 +34,8 @@ class ActivityCardFooter extends React.PureComponent {
     const { RefID, ActionType, Comment, Like, IsLike, IsComment, LikeIsLoading } = activity;
     const comments  = parseInt(Comment || 0, 10);
     const likes     = parseInt(Like || 0, 10);
-    const isLiked   = (IsLike && IsLike === '1');
-    const isComment = (IsComment && IsComment === '1');
+    const isLiked   = !!(IsLike && IsLike === '1');
+    const isComment = !!(IsComment && IsComment === '1');
 
     const commentClasses = classNames('card-activity-comment', {
       'card-activity-comment-commented': isComment

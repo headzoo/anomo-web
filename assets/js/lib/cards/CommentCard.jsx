@@ -92,6 +92,9 @@ class CommentCard extends React.PureComponent {
     const { comment, activity, followingUserNames } = this.props;
 
     const isFollowing = followingUserNames.indexOf(comment.UserName) !== -1;
+    if (comment.IsAnonymous === '1') {
+      comment.UserName = 'Anonymous';
+    }
 
     return (
       <CardHeader>

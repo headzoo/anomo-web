@@ -4,6 +4,8 @@ namespace App\Anomo;
 use App\Entity\Activity;
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Entity\UserTag;
+use App\Repository\UserTagRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,13 +20,19 @@ class Serializer
     private $em;
 
     /**
+     * @var UserTagRepository
+     */
+    private $repoUserTag;
+
+    /**
      * Constructor
      *
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->em = $em;
+        $this->em          = $em;
+        $this->repoUserTag = $em->getRepository(UserTag::class);
     }
 
     /**
@@ -146,7 +154,7 @@ class Serializer
      */
     public function unserializeUser(array $user)
     {
-        if ($user['IsAnonymous']) {
+        if (!empty($user['IsAnonymous'])) {
             $user['UserID']         = 0;
             $user['UserName']       = 'anonymous';
             $user['Avatar']         = '';
@@ -160,6 +168,12 @@ class Serializer
             $username = $anomoId;
         } else {
             $username = isset($user['UserName']) ? $user['UserName'] : $user['FromUserName'];
+        }
+        if (empty($user['NeighborhoodID'])) {
+            $user['NeighborhoodID'] = 0;
+        }
+        if (empty($user['Avatar'])) {
+            $user['Avatar'] = '';
         }
 
         $userRepo   = $this->em->getRepository(User::class);
@@ -183,5 +197,108 @@ class Serializer
         }
 
         return $userEntity;
+    }
+
+    /**
+     * @param Activity[] $activities
+     * @param array $original
+     * @return array
+     */
+    public function serializeActivities(array $activities, array $original)
+    {
+        $serialized = [];
+        for($i = 0, $l = count($activities); $i < $l; $i++) {
+            if ($activities[$i]->getActionType() !== 28) {
+                $serialized[] = $this->serializeActivity($activities[$i], $original[$i]);
+            }
+        }
+
+        return $serialized;
+    }
+
+    /**
+     * @param Activity $activity
+     * @param array $original
+     * @return array
+     */
+    public function serializeActivity(Activity $activity, array $original)
+    {
+        $original = array_merge([
+            'Type'           => 0,
+            'Like'           => 0,
+            'Image'          => '',
+            'Message'        => '',
+            'Comment'        => 0,
+            'VideoID'        => 0,
+            'VideoSource'    => '',
+            'VideoURL'       => '',
+            'VideoThumbnail' => '',
+            'IsAnonymous'    => 0,
+            'IsFavorite'     => 0,
+            'IsLike'         => 0
+        ], $original);
+
+        $user = $this->serializeUser($activity->getUser());
+
+        $serialized = [
+            'ActivityID'     => $activity->getAnomoId(),
+            'Image'          => $activity->getImage(),
+            'RefID'          => $activity->getRefId(),
+            'Type'           => $activity->getType(),
+            'ActionType'     => $activity->getActionType(),
+            'CreatedDate'    => $activity->getDateCreated()->format('Y-m-d H:i:s'),
+            'Gender'         => $user['Gender'],
+            'BirthDate'      => $user['BirthDate'],
+            'NeighborhoodID' => $user['NeighborhoodID'],
+            'Avatar'         => $user['Avatar'],
+            'IsAnonymous'    => $original['IsAnonymous'],
+            'IsFavorite'     => $original['IsFavorite'],
+            'IsLike'         => $original['IsLike'],
+            'Like'           => $original['Like'],
+            'Comment'        => $original['Comment'],
+            'ImageHeight'    => $activity->getImageHeight(),
+            'ImageWidth'     => $activity->getImageWidth(),
+            'VideoID'        => $activity->getVideoId(),
+            'VideoSource'    => $activity->getVideoSource(),
+            'VideoThumbnail' => $activity->getVideoThumbnail(),
+            'VideoURL'       => $activity->getVideoURL(),
+            'Message'        => json_encode([
+                'message'      => $activity->getMessage(),
+                'message_tags' => json_decode($activity->getTags(), true)
+            ])
+        ];
+
+        if (isset($original['FromUserID'])) {
+            $serialized['FromUserID']   = $user['UserID'];
+            $serialized['FromUserName'] = $user['UserName'];
+        } else if (isset($original['UserID'])) {
+            $serialized['UserID']   = $user['UserID'];
+            $serialized['UserName'] = $user['UserName'];
+        }
+
+        if (isset($original['Poll'])) {
+            $serialized['Poll'] = $original['Poll'];
+        }
+
+        return $serialized;
+    }
+
+    /**
+     * @param User $user
+     * @param array $original
+     * @return array
+     */
+    public function serializeUser(User $user, array $original = [])
+    {
+        // $tags = $this->repoUserTag->findForUserTo($user);
+
+        return array_merge($original, [
+            'UserID'         => $user->getAnomoId(),
+            'UserName'       => $user->getUsername(),
+            'Gender'         => $user->getGender(),
+            'BirthDate'      => $user->getDateBirth()->format('Y-m-d'),
+            'NeighborhoodID' => $user->getNeighborhoodId(),
+            'Avatar'         => $user->getAvatar()
+        ]);
     }
 }
