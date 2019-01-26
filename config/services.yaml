@@ -27,6 +27,12 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    # adding the required tag to all repository services
+    App\Repository\:
+        resource: '../src/Repository'
+        autowire: true
+        tags: ['doctrine.repository_service']
+
     App\EventListener\ApiResponseListener:
         tags:
             - { name: kernel.event_listener, method: onKernelView, event: kernel.view }
